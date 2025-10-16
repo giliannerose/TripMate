@@ -218,28 +218,24 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_home"
-            android:tint="#3A4DE7"
             android:layout_weight="1"/>
 
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_airplane"
-            android:tint="#3A4DE7"
             android:layout_weight="1"/>
 
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_notifications"
-            android:tint="#3A4DE7"
             android:layout_weight="1"/>
 
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_user"
-            android:tint="#3A4DE7"
             android:layout_weight="1"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
