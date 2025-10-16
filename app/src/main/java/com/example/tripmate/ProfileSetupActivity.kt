@@ -47,7 +47,8 @@ class ProfileSetupActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Profile saved successfully!", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, DashboardActivity::class.java)
+                // Go to Welcome Dialog
+                val intent = Intent(this, LoginSuccessActivity::class.java)
                 startActivity(intent)
                 finish()
             }
@@ -55,7 +56,7 @@ class ProfileSetupActivity : AppCompatActivity() {
 
         // Skip button
         btnSkip.setOnClickListener {
-            val intent = Intent(this, DashboardActivity::class.java)
+            val intent = Intent(this, LoginSuccessActivity::class.java)
             startActivity(intent)
             finish()
         }

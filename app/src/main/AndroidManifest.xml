@@ -17,6 +17,8 @@
         <activity android:name=".LoginSuccessActivity" />
         <activity android:name=".DashboardActivity" />
         <activity android:name=".ProfileSetupActivity" />
+        <activity android:name=".ForgotPasswordActivity" />
+        <activity android:name=".TripDetailsActivity" />
 
         <activity
             android:name=".WelcomeActivity"
