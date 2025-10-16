@@ -27,7 +27,10 @@ class SignupActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Account created for $name!", Toast.LENGTH_SHORT).show()
-                // TODO: navigate to next screen later
+
+                val intent = Intent(this, ProfileSetupActivity::class.java)
+                startActivity(intent)
+                finish() // optional, to prevent going back to signup screen
             }
         }
 

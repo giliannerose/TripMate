@@ -26,8 +26,9 @@ class LoginActivity : AppCompatActivity() {
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Welcome back, traveler!", Toast.LENGTH_SHORT).show()
-                // TODO: Navigate to HomeActivity later
+                val intent = Intent(this, LoginSuccessActivity::class.java)
+                startActivity(intent)
+                finish()
             }
         }
 

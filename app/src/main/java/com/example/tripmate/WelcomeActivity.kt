@@ -14,11 +14,13 @@ class WelcomeActivity : AppCompatActivity() {
         val btnLogin = findViewById<Button>(R.id.btnLogin)
 
         btnGetStarted.setOnClickListener {
-            // Navigate to Sign Up
+            val intent = Intent(this, SignupActivity::class.java)
+            startActivity(intent)
         }
 
         btnLogin.setOnClickListener {
-            // Navigate to Login
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
     }
 }

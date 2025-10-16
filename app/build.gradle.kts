@@ -60,5 +60,5 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation(libs.androidx.appcompat)
     implementation(libs.google.material)
-
+    implementation("androidx.cardview:cardview:1.0.0")
 }

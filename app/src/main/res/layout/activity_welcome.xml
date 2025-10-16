@@ -47,36 +47,39 @@
         android:layout_marginTop="4dp"/>
 
     <!-- Get Started Button -->
+
+    <!-- Already have account Button -->
     <Button
         android:id="@+id/btnGetStarted"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Get Started"
-        android:backgroundTint="#2196F3"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="100dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="80dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="12dp"
+        android:background="@drawable/rounded_button_primary"
+        android:backgroundTint="#2196F3"
         android:fontFamily="sans-serif-medium"
         android:padding="12dp"
-        android:background="@drawable/rounded_button_primary"
-        app:layout_constraintTop_toBottomOf="@id/tagline"
+        android:text="Get Started"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/tagline" />
 
-    <!-- Already have account Button -->
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/rounded_button_secondary"
+        android:fontFamily="sans-serif"
         android:text="I already have an account"
         android:textColor="#2196F3"
-        android:background="@drawable/rounded_button_secondary"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:fontFamily="sans-serif"
-        app:layout_constraintTop_toBottomOf="@id/btnGetStarted"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/btnGetStarted" />
 </androidx.constraintlayout.widget.ConstraintLayout>
