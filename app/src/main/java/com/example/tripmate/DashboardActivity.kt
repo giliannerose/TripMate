@@ -43,7 +43,8 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         actionInvite.setOnClickListener {
-            Toast.makeText(this, "Invite members clicked!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, InviteMembersActivity::class.java)
+            startActivity(intent)
         }
 
         actionExpenses.setOnClickListener {
