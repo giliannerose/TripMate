@@ -25,7 +25,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:layout_marginBottom="16dp">
 
@@ -42,13 +41,12 @@
                     android:id="@+id/btnCreateTrip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="+ Create Trip"
+                    android:text="+ CREATE TRIP"
                     android:textColor="#FFFFFF"
                     android:backgroundTint="#2196F3"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp"
                     android:textSize="13sp"
-                    android:layout_marginStart="8dp"/>
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"/>
             </LinearLayout>
 
             <TextView
@@ -57,19 +55,16 @@
                 android:text="Tap a trip to open"
                 android:textColor="#777"
                 android:textSize="13sp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="12dp"/>
 
-            <!-- Trip Cards -->
+            <!-- Trip 1: New Trip -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardNewTrip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                android:foreground="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true">
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -80,16 +75,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="New Trip"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
                             android:textColor="#000"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -100,20 +96,20 @@
                                 android:id="@+id/btnEditNewTrip"
                                 android:layout_width="wrap_content"
                                 android:layout_height="34dp"
-                                android:layout_marginEnd="4dp"
-                                android:background="@drawable/rounded_button_secondary"
-                                android:text="Edit"
-                                android:textColor="#2196F3"
-                                android:textSize="12sp" />
+                                android:text="EDIT"
+                                android:textColor="#FFFFFF"
+                                android:backgroundTint="#673AB7"
+                                android:textSize="12sp"
+                                android:layout_marginEnd="6dp"/>
 
                             <Button
                                 android:id="@+id/btnDeleteNewTrip"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Delete"
-                                android:textSize="12sp"
+                                android:layout_height="34dp"
+                                android:text="DELETE"
                                 android:textColor="#FFFFFF"
-                                android:backgroundTint="#F44336"/>
+                                android:backgroundTint="#F44336"
+                                android:textSize="12sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -127,13 +123,14 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Trip 2: Siargao Weekend (Clickable) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardSiargao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
+                app:cardElevation="6dp"
                 android:foreground="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true">
@@ -147,16 +144,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="Siargao Weekend"
                             android:textColor="#000"
                             android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -166,21 +164,21 @@
                             <Button
                                 android:id="@+id/btnEditSiargao"
                                 android:layout_width="wrap_content"
-                                android:layout_height="35dp"
-                                android:layout_marginEnd="4dp"
-                                android:background="@drawable/rounded_button_secondary"
-                                android:text="Edit"
-                                android:textColor="#2196F3"
-                                android:textSize="12sp" />
+                                android:layout_height="34dp"
+                                android:text="EDIT"
+                                android:textColor="#FFFFFF"
+                                android:backgroundTint="#673AB7"
+                                android:textSize="12sp"
+                                android:layout_marginEnd="6dp"/>
 
                             <Button
                                 android:id="@+id/btnDeleteSiargao"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Delete"
-                                android:textSize="12sp"
+                                android:layout_height="34dp"
+                                android:text="DELETE"
                                 android:textColor="#FFFFFF"
-                                android:backgroundTint="#F44336"/>
+                                android:backgroundTint="#F44336"
+                                android:textSize="12sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -194,16 +192,14 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Trip 3: Madrid x Barcelona -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardMadrid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                android:foreground="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true">
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -214,16 +210,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="Madrid x Barcelona"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
                             android:textColor="#000"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -233,21 +230,21 @@
                             <Button
                                 android:id="@+id/btnEditMadrid"
                                 android:layout_width="wrap_content"
-                                android:layout_height="33dp"
-                                android:layout_marginEnd="4dp"
-                                android:background="@drawable/rounded_button_secondary"
-                                android:text="Edit"
-                                android:textColor="#2196F3"
-                                android:textSize="12sp" />
+                                android:layout_height="34dp"
+                                android:text="EDIT"
+                                android:textColor="#FFFFFF"
+                                android:backgroundTint="#673AB7"
+                                android:textSize="12sp"
+                                android:layout_marginEnd="6dp"/>
 
                             <Button
                                 android:id="@+id/btnDeleteMadrid"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:backgroundTint="#F44336"
-                                android:text="Delete"
+                                android:layout_height="34dp"
+                                android:text="DELETE"
                                 android:textColor="#FFFFFF"
-                                android:textSize="12sp" />
+                                android:backgroundTint="#F44336"
+                                android:textSize="12sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -274,22 +271,22 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginBottom="12dp">
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Invite"
-                    android:textColor="#2196F3"
-                    android:background="@drawable/rounded_button_secondary"
+                    android:text="INVITE"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#673AB7"
                     android:layout_marginEnd="8dp"/>
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Expense"
+                    android:text="EXPENSE"
                     android:textColor="#FFFFFF"
                     android:backgroundTint="#FFB300"
                     android:layout_marginEnd="8dp"/>
@@ -297,19 +294,19 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Notifications"
+                    android:text="NOTIFICATIONS"
                     android:textColor="#000000"
                     android:backgroundTint="#B2FF59"/>
             </LinearLayout>
 
-            <!-- Footer Note -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Note for reviewers: Please click 'Siargao Weekend' trip to view trip details as other trip cards are non-interactive."
                 android:textColor="#666"
                 android:textSize="12sp"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:layout_marginBottom="16dp"/>
         </LinearLayout>
     </ScrollView>
 
@@ -324,5 +321,5 @@
         app:menu="@menu/bottom_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

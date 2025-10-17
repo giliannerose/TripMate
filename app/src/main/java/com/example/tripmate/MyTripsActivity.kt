@@ -27,6 +27,10 @@ class MyTripsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
+// Highlight the Trips (plane) tab
+        bottomNav.selectedItemId = R.id.nav_create
+
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
