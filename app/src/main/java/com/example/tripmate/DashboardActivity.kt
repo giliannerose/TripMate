@@ -67,7 +67,10 @@ class DashboardActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
 
-                R.id.nav_profile -> Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
+                R.id.nav_profile -> {
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
+                }
             }
             true
         }
