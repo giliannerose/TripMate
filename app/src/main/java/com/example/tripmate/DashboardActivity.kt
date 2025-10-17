@@ -3,6 +3,7 @@ package com.example.tripmate
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -18,18 +19,35 @@ class DashboardActivity : AppCompatActivity() {
         val btnViewItinerary = findViewById<Button>(R.id.btnViewItinerary)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
+        // Quick Actions
+        val actionCreate = findViewById<LinearLayout>(R.id.actionCreate)
+        val actionInvite = findViewById<LinearLayout>(R.id.actionInvite)
+        val actionExpenses = findViewById<LinearLayout>(R.id.actionExpenses)
+
         // When user clicks anywhere on the Siargao trip card
         cardTripSiargao.setOnClickListener {
             val intent = Intent(this, TripDetailsActivity::class.java)
             startActivity(intent)
         }
 
-        // When user clicks the View Itinerary button )
+        // When user clicks the View Itinerary button
         btnViewItinerary.setOnClickListener {
             val intent = Intent(this, ItineraryActivity::class.java)
             startActivity(intent)
         }
 
+        // Quick Actions (temporary Toasts for now)
+        actionCreate.setOnClickListener {
+            Toast.makeText(this, "Create new trip clicked!", Toast.LENGTH_SHORT).show()
+        }
+
+        actionInvite.setOnClickListener {
+            Toast.makeText(this, "Invite members clicked!", Toast.LENGTH_SHORT).show()
+        }
+
+        actionExpenses.setOnClickListener {
+            Toast.makeText(this, "View expenses clicked!", Toast.LENGTH_SHORT).show()
+        }
 
         // Bottom navigation interactions
         bottomNav.setOnItemSelectedListener { item ->

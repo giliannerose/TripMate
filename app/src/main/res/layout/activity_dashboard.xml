@@ -117,12 +117,17 @@
                 android:gravity="center"
                 android:layout_marginBottom="20dp">
 
+                <!-- Create Trip Action -->
                 <LinearLayout
+                    android:id="@+id/actionCreate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="50dp"
@@ -140,12 +145,18 @@
                         android:layout_marginTop="4dp"/>
                 </LinearLayout>
 
+
+                     <!-- Invite Action -->
                 <LinearLayout
+                    android:id="@+id/actionInvite"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="50dp"
@@ -163,12 +174,18 @@
                         android:layout_marginTop="4dp"/>
                 </LinearLayout>
 
+                <!-- Expenses Action -->
+
                 <LinearLayout
+                    android:id="@+id/actionExpenses"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="50dp"
@@ -186,7 +203,6 @@
                         android:layout_marginTop="4dp"/>
                 </LinearLayout>
             </LinearLayout>
-
             <!-- Discover -->
             <!-- Discover -->
             <TextView
