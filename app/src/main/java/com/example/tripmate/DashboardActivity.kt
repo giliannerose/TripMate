@@ -56,7 +56,12 @@ class DashboardActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
-                R.id.nav_create -> Toast.makeText(this, "Create Trip", Toast.LENGTH_SHORT).show()
+
+                R.id.nav_create -> {
+                    val intent = Intent(this, MyTripsActivity::class.java)
+                    startActivity(intent)
+                }
+
                 R.id.nav_notifications -> Toast.makeText(this, "Notifications", Toast.LENGTH_SHORT).show()
                 R.id.nav_profile -> Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
             }
