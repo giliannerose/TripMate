@@ -38,7 +38,8 @@ class DashboardActivity : AppCompatActivity() {
 
         // Quick Actions (temporary Toasts for now)
         actionCreate.setOnClickListener {
-            Toast.makeText(this, "Create new trip clicked!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, CreateTripActivity::class.java)
+            startActivity(intent)
         }
 
         actionInvite.setOnClickListener {
