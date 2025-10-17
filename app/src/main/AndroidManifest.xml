@@ -19,6 +19,7 @@
         <activity android:name=".ProfileSetupActivity" />
         <activity android:name=".ForgotPasswordActivity" />
         <activity android:name=".TripDetailsActivity" />
+        <activity android:name=".ItineraryActivity" />
 
         <activity
             android:name=".WelcomeActivity"

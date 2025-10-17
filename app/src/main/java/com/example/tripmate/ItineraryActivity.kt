@@ -1,37 +1,39 @@
 package com.example.tripmate
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class DashboardActivity : AppCompatActivity() {
+class ItineraryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dashboard)
+        setContentView(R.layout.activity_itinerary)
 
-        // References to UI elements
-        val cardTripSiargao = findViewById<CardView>(R.id.cardTripSiargao)
-        val btnViewItinerary = findViewById<Button>(R.id.btnViewItinerary)
+        val btnAddActivity = findViewById<Button>(R.id.btnAddActivity)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        // When user clicks anywhere on the Siargao trip card
-        cardTripSiargao.setOnClickListener {
-            val intent = Intent(this, TripDetailsActivity::class.java)
-            startActivity(intent)
+        btnAddActivity.setOnClickListener {
+            Toast.makeText(this, "Add new activity clicked!", Toast.LENGTH_SHORT).show()
         }
 
-        // When user clicks the View Itinerary button )
-        btnViewItinerary.setOnClickListener {
-            val intent = Intent(this, ItineraryActivity::class.java)
-            startActivity(intent)
+        // Tab navigation (placeholders)
+        val tabs = listOf(
+            R.id.tabParticipants,
+            R.id.tabPolls,
+            R.id.tabExpenses,
+            R.id.tabDocs,
+            R.id.tabItinerary
+        )
+
+        for (tab in tabs) {
+            findViewById<Button>(tab).setOnClickListener {
+                val tabName = resources.getResourceEntryName(tab)
+                Toast.makeText(this, "$tabName tab clicked", Toast.LENGTH_SHORT).show()
+            }
         }
 
-
-        // Bottom navigation interactions
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
