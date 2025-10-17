@@ -48,7 +48,8 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         actionExpenses.setOnClickListener {
-            Toast.makeText(this, "View expenses clicked!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, AddExpenseActivity::class.java)
+            startActivity(intent)
         }
 
         // Bottom navigation interactions
