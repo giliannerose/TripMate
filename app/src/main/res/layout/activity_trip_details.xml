@@ -112,6 +112,7 @@
         app:layout_constraintBottom_toTopOf="@id/bottomNav">
 
         <LinearLayout
+            android:id="@+id/participantsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -152,6 +153,7 @@
                         android:paddingStart="12dp">
 
                         <TextView
+                            android:id="@+id/tvName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Niko Diaz"
@@ -160,6 +162,7 @@
                             android:textSize="15sp"/>
 
                         <TextView
+                            android:id="@+id/tvEmail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="nikodiaz@email.com"
@@ -191,6 +194,7 @@
                             android:layout_marginTop="4dp">
 
                             <ImageView
+                                android:id="@+id/ic_edit"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_edit"
@@ -198,6 +202,7 @@
                                 android:layout_marginEnd="8dp"/>
 
                             <ImageView
+                                android:id="@+id/ic_delete"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_delete"
