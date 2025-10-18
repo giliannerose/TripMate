@@ -1,6 +1,7 @@
 package com.example.tripmate
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +29,14 @@ class AddExpenseActivity : AppCompatActivity() {
 
         val members = arrayOf("Jane Doe", "Alice", "Bob", "You")
         spPaidBy.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, members)
+
+        // remove blue highlight in bottom nav
+        bottomNav.menu.setGroupCheckable(0, true, false)
+        for (i in 0 until bottomNav.menu.size()) {
+            bottomNav.menu.getItem(i).isChecked = false
+        }
+        bottomNav.menu.setGroupCheckable(0, true, true)
+        //----------
 
         // Date Picker
         btnPickDate.setOnClickListener {
@@ -62,11 +71,12 @@ class AddExpenseActivity : AppCompatActivity() {
         // Bottom Navigation
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
-                R.id.nav_create -> Toast.makeText(this, "Create Trip", Toast.LENGTH_SHORT).show()
-                R.id.nav_notifications -> Toast.makeText(this, "Notifications", Toast.LENGTH_SHORT).show()
-                R.id.nav_profile -> Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
+                R.id.nav_home -> startActivity(Intent(this, DashboardActivity::class.java))
+                R.id.nav_create -> startActivity(Intent(this, MyTripsActivity::class.java))
+                R.id.nav_notifications -> startActivity(Intent(this, NotificationsActivity::class.java))
+                R.id.nav_profile -> startActivity(Intent(this, ProfileActivity::class.java))
             }
+            overridePendingTransition(0, 0)
             true
         }
     }
