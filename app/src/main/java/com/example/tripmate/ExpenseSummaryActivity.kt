@@ -15,8 +15,13 @@ class ExpenseSummaryActivity : AppCompatActivity() {
         val btnAddExpense = findViewById<Button>(R.id.btnAddExpense)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        // Highlight Expenses tab
-        bottomNav.selectedItemId = R.id.nav_create
+        // remove blue highlight in bottom nav
+        bottomNav.menu.setGroupCheckable(0, true, false)
+        for (i in 0 until bottomNav.menu.size()) {
+            bottomNav.menu.getItem(i).isChecked = false
+        }
+        bottomNav.menu.setGroupCheckable(0, true, true)
+        //----------
 
         // Add expense button
         btnAddExpense.setOnClickListener {
@@ -24,27 +29,51 @@ class ExpenseSummaryActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Tabs (top navigation)
+        // Top Tabs navigation
         findViewById<Button>(R.id.tabParticipants).setOnClickListener {
-            Toast.makeText(this, "Participants tab clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, TripDetailsActivity::class.java)
+            startActivity(intent)
         }
 
+
+
         findViewById<Button>(R.id.tabPolls).setOnClickListener {
-            Toast.makeText(this, "Polls tab clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, CreatePollActivity::class.java)
+                       startActivity(intent)
         }
 
         findViewById<Button>(R.id.tabExpenses).setOnClickListener {
-            Toast.makeText(this, "You’re already on Expenses", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "You're already on Expenses", Toast.LENGTH_SHORT).show()
         }
 
         findViewById<Button>(R.id.tabDocs).setOnClickListener {
-            Toast.makeText(this, "Docs tab clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, DocumentsActivity::class.java)
+            startActivity(intent)
         }
 
         findViewById<Button>(R.id.tabItinerary).setOnClickListener {
             val intent = Intent(this, ItineraryActivity::class.java)
             startActivity(intent)
         }
+
+        val btnMarkSettled = findViewById<Button>(R.id.btnMarkSettled)
+
+        btnMarkSettled.setOnClickListener {
+            // Change color to gray
+            btnMarkSettled.setBackgroundTintList(
+                getColorStateList(android.R.color.darker_gray)
+            )
+
+            // Change text to "Settled"
+            btnMarkSettled.text = "Settled"
+
+            // Disable the button
+            btnMarkSettled.isEnabled = false
+
+
+            Toast.makeText(this, "Expense marked as settled", Toast.LENGTH_SHORT).show()
+        }
+
 
         // Bottom navigation
         bottomNav.setOnItemSelectedListener { item ->
