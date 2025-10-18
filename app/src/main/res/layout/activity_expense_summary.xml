@@ -119,6 +119,7 @@
 
             <!-- Sample Expense Card -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/expenseCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
@@ -195,6 +196,7 @@
                             android:textColor="#FFFFFF"/>
 
                         <Button
+                            android:id="@+id/btnDeleteExpense"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"

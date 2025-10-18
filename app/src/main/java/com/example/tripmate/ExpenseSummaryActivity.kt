@@ -6,6 +6,10 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.View
+import androidx.cardview.widget.CardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+
 
 class ExpenseSummaryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,6 +18,9 @@ class ExpenseSummaryActivity : AppCompatActivity() {
 
         val btnAddExpense = findViewById<Button>(R.id.btnAddExpense)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        val expenseCard = findViewById<CardView>(R.id.expenseCard)
+        val btnDeleteExpense = findViewById<Button>(R.id.btnDeleteExpense)
+
 
         // remove blue highlight in bottom nav
         bottomNav.menu.setGroupCheckable(0, true, false)
@@ -28,6 +35,8 @@ class ExpenseSummaryActivity : AppCompatActivity() {
             val intent = Intent(this, AddExpenseActivity::class.java)
             startActivity(intent)
         }
+
+
 
         // Top Tabs navigation
         findViewById<Button>(R.id.tabParticipants).setOnClickListener {
@@ -74,6 +83,21 @@ class ExpenseSummaryActivity : AppCompatActivity() {
             Toast.makeText(this, "Expense marked as settled", Toast.LENGTH_SHORT).show()
         }
 
+        // Delete button
+        btnDeleteExpense.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Delete Expense")
+                .setMessage("Are you sure you want to delete this expense?")
+                .setPositiveButton("Yes") { dialog, _ ->
+                    expenseCard.visibility = View.GONE
+                    Toast.makeText(this, "Expense deleted", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
 
         // Bottom navigation
         bottomNav.setOnItemSelectedListener { item ->
