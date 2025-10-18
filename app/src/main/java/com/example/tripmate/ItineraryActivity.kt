@@ -1,5 +1,6 @@
 package com.example.tripmate
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -18,30 +19,50 @@ class ItineraryActivity : AppCompatActivity() {
             Toast.makeText(this, "Add new activity clicked!", Toast.LENGTH_SHORT).show()
         }
 
-        // Tab navigation (placeholders)
-        val tabs = listOf(
-            R.id.tabParticipants,
-            R.id.tabPolls,
-            R.id.tabExpenses,
-            R.id.tabDocs,
-            R.id.tabItinerary
-        )
-
-        for (tab in tabs) {
-            findViewById<Button>(tab).setOnClickListener {
-                val tabName = resources.getResourceEntryName(tab)
-                Toast.makeText(this, "$tabName tab clicked", Toast.LENGTH_SHORT).show()
-            }
+        // Top Tabs navigation
+        findViewById<Button>(R.id.tabParticipants).setOnClickListener {
+            val intent = Intent(this, TripDetailsActivity::class.java)
+            startActivity(intent)
         }
 
+        findViewById<Button>(R.id.tabPolls).setOnClickListener {
+            val intent = Intent(this, CreatePollActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.tabExpenses).setOnClickListener {
+            val intent = Intent(this, ExpenseSummaryActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.tabDocs).setOnClickListener {
+            val intent = Intent(this, DocumentsActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.tabItinerary).setOnClickListener {
+            Toast.makeText(this, "You're already on Itinerary", Toast.LENGTH_SHORT).show()
+        }
+
+        // remove blue highlight in bottom nav
+        bottomNav.menu.setGroupCheckable(0, true, false)
+        for (i in 0 until bottomNav.menu.size()) {
+            bottomNav.menu.getItem(i).isChecked = false
+        }
+        bottomNav.menu.setGroupCheckable(0, true, true)
+        //----------
+
+        // Bottom Navigation
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
-                R.id.nav_create -> Toast.makeText(this, "Create Trip", Toast.LENGTH_SHORT).show()
-                R.id.nav_notifications -> Toast.makeText(this, "Notifications", Toast.LENGTH_SHORT).show()
-                R.id.nav_profile -> Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
+                R.id.nav_home -> startActivity(Intent(this, DashboardActivity::class.java))
+                R.id.nav_create -> startActivity(Intent(this, MyTripsActivity::class.java))
+                R.id.nav_notifications -> startActivity(Intent(this, NotificationsActivity::class.java))
+                R.id.nav_profile -> startActivity(Intent(this, ProfileActivity::class.java))
             }
+            overridePendingTransition(0, 0)
             true
         }
+
     }
 }
