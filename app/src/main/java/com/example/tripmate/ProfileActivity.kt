@@ -13,12 +13,13 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        val btnEditProfile = findViewById<LinearLayout>(R.id.btnEditProfile)
-        val btnSettings = findViewById<LinearLayout>(R.id.btnSettings)
+        val btnEditProfile = findViewById<Button>(R.id.btnEditProfile)
+        val btnSettings = findViewById<Button>(R.id.btnSettings)
+
         val btnSignOut = findViewById<Button>(R.id.btnSignOut)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        // ✅ Highlight the Profile icon
+        //  Highlight the Profile icon
         bottomNav.selectedItemId = R.id.nav_profile
 
         btnEditProfile.setOnClickListener {

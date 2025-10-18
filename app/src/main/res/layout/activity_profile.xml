@@ -8,6 +8,7 @@
     android:background="@drawable/bg_gradient"
     tools:context=".ProfileActivity">
 
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -23,29 +24,31 @@
 
             <!-- Profile Header -->
             <LinearLayout
-                android:id="@+id/headerSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center_horizontal"
-                android:padding="16dp"
-                android:background="#BBE3F2FD"
-                android:layout_marginBottom="12dp">
+                android:gravity="center"
+                android:padding="20dp"
+                android:background="@drawable/rounded_card_bg"
+                android:elevation="2dp"
+                android:layout_marginBottom="16dp">
 
                 <ImageView
                     android:id="@+id/imgProfile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_marginBottom="8dp"
+                    android:src="@drawable/sample_avatar"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/sample_avatar" />
+                    android:background="@drawable/circle_bg"
+                    android:padding="2dp"/>
 
                 <TextView
                     android:id="@+id/tvUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Jane Doe"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="#000000"/>
 
@@ -54,158 +57,258 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Traveller | Explorer | Island Lover 🌴"
-                    android:textColor="#444444"
-                    android:textSize="13sp"/>
+                    android:textColor="#555"
+                    android:textSize="13sp"
+                    android:layout_marginTop="2dp"/>
 
-                <!-- Quick Stats -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🏝️ Trips Joined 8"
-                        android:textSize="13sp"
-                        android:textColor="#1E88E5"
-                        android:layout_marginEnd="10dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🌍 Countries 5"
-                        android:textSize="13sp"
-                        android:textColor="#1E88E5"
-                        android:layout_marginEnd="10dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="👥 Buddies 12"
-                        android:textSize="13sp"
-                        android:textColor="#1E88E5"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Edit & Settings Section -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                android:backgroundTint="#FFFFFF">
-
+                <!-- Stats Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp">
 
-                    <LinearLayout
+                    <TextView
+                        style="@style/ProfileStatStyle"
+                        android:text="🏝️ Trips\n8"/>
+
+                    <TextView
+                        style="@style/ProfileStatStyle"
+                        android:text="🌍 Countries\n5"/>
+
+                    <TextView
+                        style="@style/ProfileStatStyle"
+                        android:text="👥 Buddies\n12"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Buttons Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
                         android:id="@+id/btnEditProfile"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:padding="14dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Edit Profile"
-                            android:textColor="#000000"
-                            android:textSize="15sp"/>
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_edit"
-                            app:tint="#1E88E5" />
-                    </LinearLayout>
+                        style="@style/ProfileButton"
+                        android:text="✏️ Edit Profile"/>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="#E0E0E0"/>
 
-                    <LinearLayout
+                    <Button
                         android:id="@+id/btnSettings"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:padding="14dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Settings"
-                            android:textColor="#000000"
-                            android:textSize="15sp"/>
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_settings"
-                            app:tint="#1E88E5" />
-                    </LinearLayout>
+                        style="@style/ProfileButton"
+                        android:text="⚙️ Settings"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Profile Details -->
+            <!-- Details Card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
                 android:backgroundTint="#FFFFFF"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="20dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="10dp">
+                    android:orientation="vertical">
 
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:text="Trips Joined: 8" android:textSize="14sp" android:textColor="#000"/>
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:text="Countries Visited: 5" android:textSize="14sp" android:textColor="#000"/>
-                    <TextView  android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:text="Buddies: 12" android:textSize="14sp" android:textColor="#000"/>
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"  android:text="Asia based" android:textSize="14sp" android:textColor="#000"/>
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"  android:text="Female" android:textSize="14sp" android:textColor="#000"/>
-                    <TextView  android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"  android:text="20 years old" android:textSize="14sp" android:textColor="#000"/>
-                    <TextView  android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:text="Member Since 2023" android:textSize="14sp" android:textColor="#000"/>
+                    <!-- Row Template -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp"
+                        android:background="#F8FAFC"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Trips Joined"
+                            android:textColor="#444"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="8"
+                            android:textStyle="bold"
+                            android:textColor="#1E88E5"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp"
+                        android:background="#F8FAFC"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Countries Visited"
+                            android:textColor="#444"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5"
+                            android:textStyle="bold"
+                            android:textColor="#1E88E5"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp"
+                        android:background="#F8FAFC"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Buddies"
+                            android:textColor="#444"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="12"
+                            android:textStyle="bold"
+                            android:textColor="#1E88E5"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+                    <!-- The rest of the fields -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp"
+                        android:background="#F8FAFC"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Asia based"
+                            android:textColor="#444"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp"
+                        android:background="#F8FAFC"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Female"
+                            android:textColor="#444"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp"
+                        android:background="#F8FAFC"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="20 years old"
+                            android:textColor="#444"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp"
+                        android:background="#F8FAFC"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Member Since"
+                            android:textColor="#444"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2023"
+                            android:textStyle="bold"
+                            android:textColor="#1E88E5"
+                            android:textSize="14sp" />
+                    </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Sign Out Button -->
+            <!-- Sign Out -->
             <Button
                 android:id="@+id/btnSignOut"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Sign Out"
-                android:backgroundTint="#FFFFFF"
-                android:textColor="#2196F3"
+                android:backgroundTint="#E3F2FD"
+                android:textColor="#1E88E5"
                 android:textStyle="bold"
-                android:layout_marginBottom="20dp"
-                android:paddingVertical="10dp"/>
+                android:padding="12dp"
+                android:layout_marginBottom="40dp"/>
         </LinearLayout>
     </ScrollView>
 
