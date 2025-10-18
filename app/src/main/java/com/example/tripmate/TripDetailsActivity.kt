@@ -20,6 +20,14 @@ class TripDetailsActivity : AppCompatActivity() {
         val btnAddParticipant = findViewById<Button>(R.id.btnAddParticipant)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
+        // remove blue highlight in bottom nav
+        bottomNav.menu.setGroupCheckable(0, true, false)
+        for (i in 0 until bottomNav.menu.size()) {
+            bottomNav.menu.getItem(i).isChecked = false
+        }
+        bottomNav.menu.setGroupCheckable(0, true, true)
+        //----------
+
         // Top tab navigation
         tabParticipants.setOnClickListener { Toast.makeText(this, "You're in Participants", Toast.LENGTH_SHORT).show() }
 
