@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.content.Intent
 
 class TripDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,22 +17,59 @@ class TripDetailsActivity : AppCompatActivity() {
         val tabExpenses = findViewById<Button>(R.id.tabExpenses)
         val tabDocs = findViewById<Button>(R.id.tabDocs)
         val tabItinerary = findViewById<Button>(R.id.tabItinerary)
+        val btnAddParticipant = findViewById<Button>(R.id.btnAddParticipant)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        // Tab clicks
-        tabParticipants.setOnClickListener { Toast.makeText(this, "Participants tab selected", Toast.LENGTH_SHORT).show() }
-        tabPolls.setOnClickListener { Toast.makeText(this, "Polls tab selected", Toast.LENGTH_SHORT).show() }
-        tabExpenses.setOnClickListener { Toast.makeText(this, "Expenses tab selected", Toast.LENGTH_SHORT).show() }
-        tabDocs.setOnClickListener { Toast.makeText(this, "Docs tab selected", Toast.LENGTH_SHORT).show() }
-        tabItinerary.setOnClickListener { Toast.makeText(this, "Itinerary tab selected", Toast.LENGTH_SHORT).show() }
+        // Top tab navigation
+        tabParticipants.setOnClickListener { Toast.makeText(this, "You're in Participants", Toast.LENGTH_SHORT).show() }
+
+        tabPolls.setOnClickListener {
+            val intent = Intent(this, CreatePollActivity::class.java)
+            startActivity(intent)
+        }
+
+        tabExpenses.setOnClickListener {
+            val intent = Intent(this, ExpenseSummaryActivity::class.java)
+            startActivity(intent)
+        }
+
+        tabDocs.setOnClickListener {
+            val intent = Intent(this, DocumentsActivity::class.java)
+            startActivity(intent)
+        }
+
+        tabItinerary.setOnClickListener {
+            val intent = Intent(this, ItineraryActivity::class.java)
+            startActivity(intent)
+        }
+
+        //add participant button
+        btnAddParticipant.setOnClickListener {
+            val intent = Intent(this, InviteMembersActivity::class.java)
+            startActivity(intent)
+        }
 
         // Bottom nav interactions
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
-                R.id.nav_create -> Toast.makeText(this, "Create Trip", Toast.LENGTH_SHORT).show()
-                R.id.nav_notifications -> Toast.makeText(this, "Notifications", Toast.LENGTH_SHORT).show()
-                R.id.nav_profile -> Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
+                R.id.nav_home -> {
+                    startActivity(Intent(this, DashboardActivity::class.java))
+                }
+
+                R.id.nav_create -> {
+                    val intent = Intent(this, MyTripsActivity::class.java)
+                    startActivity(intent)
+                }
+
+                R.id.nav_notifications -> {
+                    val intent = Intent(this, NotificationsActivity::class.java)
+                    startActivity(intent)
+                }
+
+                R.id.nav_profile -> {
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
+                }
             }
             true
         }
