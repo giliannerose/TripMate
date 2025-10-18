@@ -77,7 +77,7 @@
         android:background="@drawable/rounded_button_secondary"
         android:fontFamily="sans-serif"
         android:text="I already have an account"
-        android:textColor="#2196F3"
+        android:textColor= "#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

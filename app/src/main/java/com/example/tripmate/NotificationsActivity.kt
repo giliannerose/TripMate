@@ -60,8 +60,13 @@ class NotificationsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+            // ack button
         btnAcknowledge.setOnClickListener {
             Toast.makeText(this, "Acknowledged.", Toast.LENGTH_SHORT).show()
+            btnAcknowledge.isEnabled = false
+            // Change background to gray
+            btnAcknowledge.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
+            btnAcknowledge.setTextColor(resources.getColor(android.R.color.white))
         }
 
         //highlight notif

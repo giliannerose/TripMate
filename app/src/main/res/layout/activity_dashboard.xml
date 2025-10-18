@@ -92,7 +92,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="View Itinerary"
-                            android:textColor="#2196F3"
+                            android:textColor="#FFFFFF"
                             android:textSize="13sp"
                             android:background="@drawable/rounded_button_secondary"
                             android:layout_marginTop="8dp"/>
