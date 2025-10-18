@@ -183,7 +183,9 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp"/>
 
-            <include layout="@layout/item_itinerary_activity"
+            <include
+                android:id="@+id/include_day2_activity"
+                layout="@layout/item_itinerary_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

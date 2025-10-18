@@ -27,27 +27,31 @@ class ItineraryActivity : AppCompatActivity() {
         btnAddActivity.setOnClickListener {
             Toast.makeText(this, "Add new activity clicked!", Toast.LENGTH_SHORT).show()
         }
+    // day 1
+        val day1Layout = findViewById<View>(R.id.include_day1_activity)
+        val day1Title = day1Layout.findViewById<TextView>(R.id.tvActivityTitle)
+        val day1Time = day1Layout.findViewById<TextView>(R.id.tvActivityTime)
+        val day1Edit = day1Layout.findViewById<Button>(R.id.btnEditActivity)
 
-        editButton.setOnClickListener {
-            // Show a simple pop-up dialog to edit details
-            val dialogView = layoutInflater.inflate(R.layout.dialog_edit_activity, null)
-            val etTitle = dialogView.findViewById<EditText>(R.id.etTitle)
-            val etTime = dialogView.findViewById<EditText>(R.id.etTime)
+        // day 2
+        val day2Layout = findViewById<View>(R.id.include_day2_activity)
+        val day2Title = day2Layout.findViewById<TextView>(R.id.tvActivityTitle)
+        val day2Time = day2Layout.findViewById<TextView>(R.id.tvActivityTime)
+        val day2Edit = day2Layout.findViewById<Button>(R.id.btnEditActivity)
 
-            etTitle.setText(titleView.text.toString())
-            etTime.setText(timeView.text.toString())
-
-            androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Edit Activity")
-                .setView(dialogView)
-                .setPositiveButton("Save") { _, _ ->
-                    titleView.text = etTitle.text.toString()
-                    timeView.text = etTime.text.toString()
-                    Toast.makeText(this, "Activity updated!", Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
+        // 🔧 Day 1 edit button
+        day1Edit.setOnClickListener {
+            showEditDialog(day1Title, day1Time)
         }
+
+        // 🔧 Day 2 edit button
+        day2Edit.setOnClickListener {
+            showEditDialog(day2Title, day2Time)
+        }
+
+
+
+
 
         // Top Tabs navigation
         findViewById<Button>(R.id.tabParticipants).setOnClickListener {
@@ -95,4 +99,25 @@ class ItineraryActivity : AppCompatActivity() {
         }
 
     }
+
+    private fun showEditDialog(titleView: TextView, timeView: TextView) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_activity, null)
+        val etTitle = dialogView.findViewById<EditText>(R.id.etTitle)
+        val etTime = dialogView.findViewById<EditText>(R.id.etTime)
+
+        etTitle.setText(titleView.text.toString())
+        etTime.setText(timeView.text.toString())
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Edit Activity")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                titleView.text = etTitle.text.toString()
+                timeView.text = etTime.text.toString()
+                Toast.makeText(this, "Activity updated!", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
 }
+
