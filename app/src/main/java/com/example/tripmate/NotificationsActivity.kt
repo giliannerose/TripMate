@@ -19,7 +19,7 @@ class NotificationsActivity : AppCompatActivity() {
         val btnAcknowledge = findViewById<Button>(R.id.btnAcknowledge)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        // ✅ Confirmation dialog for Accept button
+        // Confirmation dialog for Accept button
         btnAccept.setOnClickListener {
             MaterialAlertDialogBuilder(this)
                 .setTitle("Accept Invitation")
@@ -34,7 +34,7 @@ class NotificationsActivity : AppCompatActivity() {
                 .show()
         }
 
-// ✅ Confirmation dialog for Decline button
+//  Confirmation dialog for Decline button
         btnDecline.setOnClickListener {
             MaterialAlertDialogBuilder(this)
                 .setTitle("Decline Invitation")
@@ -51,7 +51,8 @@ class NotificationsActivity : AppCompatActivity() {
 
 
         btnViewPoll.setOnClickListener {
-            Toast.makeText(this, "Opening Poll...", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, CreatePollActivity::class.java)
+            startActivity(intent)
         }
 
         btnViewExpenses.setOnClickListener {

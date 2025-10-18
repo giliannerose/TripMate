@@ -27,9 +27,7 @@
         <activity android:name=".NotificationsActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".ExpenseSummaryActivity" />
-
-
-
+        <activity android:name=".CreatePollActivity" />
 
 
         <activity
