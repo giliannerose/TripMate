@@ -6,8 +6,17 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.app.Activity
+import android.app.ProgressDialog
+import android.net.Uri
+import android.os.Handler
+
 
 class DocumentsActivity : AppCompatActivity() {
+
+    private lateinit var btnUpload: Button
+    private val PICK_FILE_REQUEST = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_documents)
@@ -28,10 +37,15 @@ class DocumentsActivity : AppCompatActivity() {
         bottomNav.menu.setGroupCheckable(0, true, true)
         //----------
 
-        // Upload Button (temporary Toast)
+        // Upload Button
         btnUpload.setOnClickListener {
-            Toast.makeText(this, "Upload feature coming soon!", Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "*/*"
+            startActivityForResult(Intent.createChooser(intent, "Select a file to upload"), PICK_FILE_REQUEST)
         }
+
+
 
         // Tab navigation
         tabParticipants.setOnClickListener {
@@ -62,4 +76,29 @@ class DocumentsActivity : AppCompatActivity() {
             true
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PICK_FILE_REQUEST && resultCode == Activity.RESULT_OK) {
+            val fileUri: Uri? = data?.data
+
+            if (fileUri != null) {
+                // Show mock uploading progress
+                val progressDialog = ProgressDialog(this)
+                progressDialog.setMessage("Uploading file...")
+                progressDialog.setCancelable(false)
+                progressDialog.show()
+
+                // Simulate upload delay (2 seconds)
+                Handler().postDelayed({
+                    progressDialog.dismiss()
+                    Toast.makeText(this, "File uploaded successfully!", Toast.LENGTH_LONG).show()
+                }, 2000)
+            } else {
+                Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 }
