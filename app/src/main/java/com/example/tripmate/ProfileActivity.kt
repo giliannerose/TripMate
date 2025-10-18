@@ -33,8 +33,23 @@
             }
 
             btnSignOut.setOnClickListener {
-                Toast.makeText(this, "Signed out successfully", Toast.LENGTH_SHORT).show()
-                // You can later add actual logout logic here
+                // confirmation dialog
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Sign Out")
+                    .setMessage("Are you sure you want to sign out?")
+                    .setPositiveButton("Yes") { dialog, _ ->
+                        Toast.makeText(this, "Signed out successfully", Toast.LENGTH_SHORT).show()
+
+                        // Route to Welcome page
+                        val intent = Intent(this, WelcomeActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                        finish() //
+                    }
+                    .setNegativeButton("Cancel") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
             }
 
             //highlight profile
