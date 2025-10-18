@@ -2,8 +2,7 @@ package com.example.tripmate
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
 class VoteActivity : AppCompatActivity() {
@@ -11,6 +10,8 @@ class VoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_vote)
 
+        val rgPoll1 = findViewById<RadioGroup>(R.id.rgPoll1)
+        val rgPoll2 = findViewById<RadioGroup>(R.id.rgPoll2)
         val btnSubmitVote1 = findViewById<Button>(R.id.btnSubmitVote1)
         val btnSubmitVote2 = findViewById<Button>(R.id.btnSubmitVote2)
 
@@ -21,18 +22,30 @@ class VoteActivity : AppCompatActivity() {
         val tabItinerary = findViewById<Button>(R.id.tabItinerary)
 
         btnSubmitVote1.setOnClickListener {
-            Toast.makeText(this, "Vote submitted for first poll!", Toast.LENGTH_SHORT).show()
-            it.isEnabled = false
-            it.alpha = 0.5f
+            val selected = rgPoll1.checkedRadioButtonId
+            if (selected == -1) {
+                Toast.makeText(this, "Please select an option!", Toast.LENGTH_SHORT).show()
+            } else {
+                val option = findViewById<RadioButton>(selected).text
+                Toast.makeText(this, "Voted for: $option", Toast.LENGTH_SHORT).show()
+                it.isEnabled = false
+                it.alpha = 0.5f
+            }
         }
 
         btnSubmitVote2.setOnClickListener {
-            Toast.makeText(this, "Vote submitted for second poll!", Toast.LENGTH_SHORT).show()
-            it.isEnabled = false
-            it.alpha = 0.5f
+            val selected = rgPoll2.checkedRadioButtonId
+            if (selected == -1) {
+                Toast.makeText(this, "Please select an option!", Toast.LENGTH_SHORT).show()
+            } else {
+                val option = findViewById<RadioButton>(selected).text
+                Toast.makeText(this, "Voted for: $option", Toast.LENGTH_SHORT).show()
+                it.isEnabled = false
+                it.alpha = 0.5f
+            }
         }
 
-        // Top Navigation tabs
+        // Navigation Tabs
         tabParticipants.setOnClickListener {
             startActivity(Intent(this, TripDetailsActivity::class.java))
         }
