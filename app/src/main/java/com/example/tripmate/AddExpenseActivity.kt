@@ -68,6 +68,32 @@ class AddExpenseActivity : AppCompatActivity() {
             Toast.makeText(this, "View Summary clicked!", Toast.LENGTH_SHORT).show()
         }
 
+        // Top Tabs navigation
+        findViewById<Button>(R.id.tabParticipants).setOnClickListener {
+            val intent = Intent(this, TripDetailsActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.tabPolls).setOnClickListener {
+            val intent = Intent(this, CreatePollActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.tabExpenses).setOnClickListener {
+            Toast.makeText(this, "Expenses", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<Button>(R.id.tabDocs).setOnClickListener {
+            val intent = Intent(this, DocumentsActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.tabItinerary).setOnClickListener {
+            val intent = Intent(this, ItineraryActivity::class.java)
+            startActivity(intent)
+        }
+
+
         // Bottom Navigation
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
