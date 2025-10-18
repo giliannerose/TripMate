@@ -6,38 +6,56 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 class NotificationsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notifications)
 
         val btnAccept = findViewById<Button>(R.id.btnAccept)
-        val btnTentative = findViewById<Button>(R.id.btnTentative)
         val btnDecline = findViewById<Button>(R.id.btnDecline)
         val btnViewPoll = findViewById<Button>(R.id.btnViewPoll)
         val btnViewExpenses = findViewById<Button>(R.id.btnViewExpenses)
         val btnAcknowledge = findViewById<Button>(R.id.btnAcknowledge)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
+        // ✅ Confirmation dialog for Accept button
         btnAccept.setOnClickListener {
-            Toast.makeText(this, "Invitation accepted!", Toast.LENGTH_SHORT).show()
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Accept Invitation")
+                .setMessage("Are you sure you want to accept this invitation?")
+                .setPositiveButton("Yes") { _, _ ->
+                    Toast.makeText(this, "Invitation accepted!", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setCancelable(true)
+                .show()
         }
 
-        btnTentative.setOnClickListener {
-            Toast.makeText(this, "Marked as tentative.", Toast.LENGTH_SHORT).show()
-        }
-
+// ✅ Confirmation dialog for Decline button
         btnDecline.setOnClickListener {
-            Toast.makeText(this, "Invitation declined.", Toast.LENGTH_SHORT).show()
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Decline Invitation")
+                .setMessage("Are you sure you want to decline this invitation?")
+                .setPositiveButton("Yes") { _, _ ->
+                    Toast.makeText(this, "Invitation declined.", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setCancelable(true)
+                .show()
         }
+
 
         btnViewPoll.setOnClickListener {
             Toast.makeText(this, "Opening Poll...", Toast.LENGTH_SHORT).show()
         }
 
         btnViewExpenses.setOnClickListener {
-            val intent = Intent(this, AddExpenseActivity::class.java)
+            val intent = Intent(this, ExpenseSummaryActivity::class.java)
             startActivity(intent)
         }
 
@@ -62,7 +80,10 @@ class NotificationsActivity : AppCompatActivity() {
                 R.id.nav_notifications -> {
                     Toast.makeText(this, "You're already on Notifications", Toast.LENGTH_SHORT).show()
                 }
-                R.id.nav_profile -> Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
+                R.id.nav_profile -> {
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
+                }
             }
             true
         }

@@ -108,16 +108,6 @@
                             android:layout_marginEnd="6dp"/>
 
                         <Button
-                            android:id="@+id/btnTentative"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tentative"
-                            android:backgroundTint="#FFC107"
-                            android:textColor="#FFFFFF"
-                            android:textSize="13sp"
-                            android:layout_marginEnd="6dp"/>
-
-                        <Button
                             android:id="@+id/btnDecline"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
