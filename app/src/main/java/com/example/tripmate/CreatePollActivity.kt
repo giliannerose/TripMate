@@ -15,16 +15,23 @@ class CreatePollActivity : AppCompatActivity() {
         val btnCreatePoll = findViewById<Button>(R.id.btnCreatePoll)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        // Highlight the Trips tab
-        bottomNav.selectedItemId = R.id.nav_create
+        // remove blue highlight in bottom nav
+        bottomNav.menu.setGroupCheckable(0, true, false)
+        for (i in 0 until bottomNav.menu.size()) {
+            bottomNav.menu.getItem(i).isChecked = false
+        }
+        bottomNav.menu.setGroupCheckable(0, true, true)
+        //----------
 
         btnCreatePoll.setOnClickListener {
-            Toast.makeText(this, "Poll Created!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, VoteActivity::class.java)
+            startActivity(intent)
         }
 
         // Top Tabs navigation
         findViewById<Button>(R.id.tabParticipants).setOnClickListener {
-            Toast.makeText(this, "Participants tab clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, TripDetailsActivity::class.java)
+            startActivity(intent)
         }
 
         findViewById<Button>(R.id.tabPolls).setOnClickListener {
@@ -37,7 +44,8 @@ class CreatePollActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.tabDocs).setOnClickListener {
-            Toast.makeText(this, "Docs tab clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, DocumentsActivity::class.java)
+            startActivity(intent)
         }
 
         findViewById<Button>(R.id.tabItinerary).setOnClickListener {

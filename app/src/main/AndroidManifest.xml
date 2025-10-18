@@ -31,6 +31,8 @@
         <activity android:name=".EditProfileActivity"/>
         <activity android:name=".SettingsActivity"/>
         <activity android:name=".DocumentsActivity" />
+        <activity android:name=".VoteActivity" />
+
 
 
 
