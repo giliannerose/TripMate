@@ -92,24 +92,15 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <Button
-                                android:id="@+id/btnEditNewTrip"
-                                android:layout_width="wrap_content"
-                                android:layout_height="34dp"
-                                android:text="EDIT"
-                                android:textColor="#FFFFFF"
-                                android:backgroundTint="#673AB7"
-                                android:textSize="12sp"
-                                android:layout_marginEnd="6dp"/>
 
                             <Button
                                 android:id="@+id/btnDeleteNewTrip"
                                 android:layout_width="wrap_content"
-                                android:layout_height="34dp"
+                                android:layout_height="match_parent"
+                                android:backgroundTint="#F44336"
                                 android:text="DELETE"
                                 android:textColor="#FFFFFF"
-                                android:backgroundTint="#F44336"
-                                android:textSize="12sp"/>
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -161,24 +152,15 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <Button
-                                android:id="@+id/btnEditSiargao"
-                                android:layout_width="wrap_content"
-                                android:layout_height="34dp"
-                                android:text="EDIT"
-                                android:textColor="#FFFFFF"
-                                android:backgroundTint="#673AB7"
-                                android:textSize="12sp"
-                                android:layout_marginEnd="6dp"/>
 
                             <Button
                                 android:id="@+id/btnDeleteSiargao"
                                 android:layout_width="wrap_content"
-                                android:layout_height="34dp"
+                                android:layout_height="match_parent"
+                                android:backgroundTint="#F44336"
                                 android:text="DELETE"
                                 android:textColor="#FFFFFF"
-                                android:backgroundTint="#F44336"
-                                android:textSize="12sp"/>
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -227,24 +209,15 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <Button
-                                android:id="@+id/btnEditMadrid"
-                                android:layout_width="wrap_content"
-                                android:layout_height="34dp"
-                                android:text="EDIT"
-                                android:textColor="#FFFFFF"
-                                android:backgroundTint="#673AB7"
-                                android:textSize="12sp"
-                                android:layout_marginEnd="6dp"/>
 
                             <Button
                                 android:id="@+id/btnDeleteMadrid"
                                 android:layout_width="wrap_content"
-                                android:layout_height="34dp"
+                                android:layout_height="match_parent"
+                                android:backgroundTint="#F44336"
                                 android:text="DELETE"
                                 android:textColor="#FFFFFF"
-                                android:backgroundTint="#F44336"
-                                android:textSize="12sp"/>
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -276,27 +249,24 @@
                 android:layout_marginBottom="16dp">
 
                 <Button
+                    android:id="@+id/btnInvite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="INVITE"
                     android:textColor="#FFFFFF"
-                    android:backgroundTint="#673AB7"
+                    android:backgroundTint="#2196F3"
+                    android:drawableStart="@drawable/ic_invite"
                     android:layout_marginEnd="8dp"/>
 
                 <Button
+                    android:id="@+id/btnExpense"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="EXPENSE"
                     android:textColor="#FFFFFF"
                     android:backgroundTint="#FFB300"
+                    android:drawableStart="@drawable/ic_expenses"
                     android:layout_marginEnd="8dp"/>
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="NOTIFICATIONS"
-                    android:textColor="#000000"
-                    android:backgroundTint="#B2FF59"/>
             </LinearLayout>
 
             <TextView

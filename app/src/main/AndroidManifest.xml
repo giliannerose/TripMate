@@ -26,6 +26,8 @@
         <activity android:name=".MyTripsActivity" />
         <activity android:name=".NotificationsActivity" />
         <activity android:name=".ProfileActivity" />
+        <activity android:name=".ExpenseSummaryActivity" />
+
 
 
 
