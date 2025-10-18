@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DocumentsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,6 +18,15 @@ class DocumentsActivity : AppCompatActivity() {
         val tabExpenses = findViewById<Button>(R.id.tabExpenses)
         val tabDocs = findViewById<Button>(R.id.tabDocs)
         val tabItinerary = findViewById<Button>(R.id.tabItinerary)
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+
+        // remove blue highlight in bottom nav
+        bottomNav.menu.setGroupCheckable(0, true, false)
+        for (i in 0 until bottomNav.menu.size()) {
+            bottomNav.menu.getItem(i).isChecked = false
+        }
+        bottomNav.menu.setGroupCheckable(0, true, true)
+        //----------
 
         // Upload Button (temporary Toast)
         btnUpload.setOnClickListener {
@@ -38,6 +48,18 @@ class DocumentsActivity : AppCompatActivity() {
         }
         tabItinerary.setOnClickListener {
             startActivity(Intent(this, ItineraryActivity::class.java))
+        }
+
+        // Bottom Navigation
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> startActivity(Intent(this, DashboardActivity::class.java))
+                R.id.nav_create -> startActivity(Intent(this, MyTripsActivity::class.java))
+                R.id.nav_notifications -> startActivity(Intent(this, NotificationsActivity::class.java))
+                R.id.nav_profile -> startActivity(Intent(this, ProfileActivity::class.java))
+            }
+            overridePendingTransition(0, 0)
+            true
         }
     }
 }

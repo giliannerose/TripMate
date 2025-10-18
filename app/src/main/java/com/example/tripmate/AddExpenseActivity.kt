@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.*
 
 class AddExpenseActivity : AppCompatActivity() {
@@ -59,13 +60,26 @@ class AddExpenseActivity : AppCompatActivity() {
             Toast.makeText(this, "Simulated upload complete", Toast.LENGTH_SHORT).show()
         }
 
-        // Buttons
+        // Save Button
         btnSave.setOnClickListener {
-            Toast.makeText(this, "Expense saved successfully!", Toast.LENGTH_SHORT).show()
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Save Expense")
+                .setMessage("Do you want to save this expense and go to the summary?")
+                .setPositiveButton("Yes") { dialog, _ ->
+                    Toast.makeText(this, "Expense saved successfully!", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, ExpenseSummaryActivity::class.java)
+                    startActivity(intent)
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .show()
         }
 
+        //  view summary button
         btnViewSummary.setOnClickListener {
-            Toast.makeText(this, "View Summary clicked!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ExpenseSummaryActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(0, 0)
         }
 
         // Top Tabs navigation
