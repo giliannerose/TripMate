@@ -33,6 +33,8 @@
         <activity android:name=".DocumentsActivity" />
         <activity android:name=".VoteActivity" />
         <activity android:name=".PollResultsActivity" />
+        <activity android:name=".AddActivityActivity" />
+
 
 
 

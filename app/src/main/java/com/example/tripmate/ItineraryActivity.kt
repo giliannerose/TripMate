@@ -23,12 +23,16 @@ class ItineraryActivity : AppCompatActivity() {
         val titleView = includedLayout.findViewById<TextView>(R.id.tvActivityTitle)
         val timeView = includedLayout.findViewById<TextView>(R.id.tvActivityTime)
 
-
+//add Activity button
 
         btnAddActivity.setOnClickListener {
-            Toast.makeText(this, "Add new activity clicked!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, AddActivityActivity::class.java)
+            startActivity(intent)
         }
-    // day 1
+
+
+
+        // day 1
         val day1Layout = findViewById<View>(R.id.include_day1_activity)
         val day1Title = day1Layout.findViewById<TextView>(R.id.tvActivityTitle)
         val day1Time = day1Layout.findViewById<TextView>(R.id.tvActivityTime)
