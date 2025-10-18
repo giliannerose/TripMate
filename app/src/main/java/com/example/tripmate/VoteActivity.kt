@@ -84,5 +84,12 @@ class VoteActivity : AppCompatActivity() {
             overridePendingTransition(0, 0)
             true
         }
+
+        val btnViewResults = findViewById<Button>(R.id.btnViewResults)
+
+        btnViewResults.setOnClickListener {
+            val intent = Intent(this, PollResultsActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
