@@ -6,6 +6,9 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.widget.EditText
+import android.widget.TextView
+import android.view.View
 
 class ItineraryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,9 +17,36 @@ class ItineraryActivity : AppCompatActivity() {
 
         val btnAddActivity = findViewById<Button>(R.id.btnAddActivity)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        val editButton = findViewById<Button>(R.id.btnEditActivity)
+        val includedLayout = findViewById<View>(R.id.include_day1_activity)
+        val titleView = includedLayout.findViewById<TextView>(R.id.tvActivityTitle)
+        val timeView = includedLayout.findViewById<TextView>(R.id.tvActivityTime)
+
+
 
         btnAddActivity.setOnClickListener {
             Toast.makeText(this, "Add new activity clicked!", Toast.LENGTH_SHORT).show()
+        }
+
+        editButton.setOnClickListener {
+            // Show a simple pop-up dialog to edit details
+            val dialogView = layoutInflater.inflate(R.layout.dialog_edit_activity, null)
+            val etTitle = dialogView.findViewById<EditText>(R.id.etTitle)
+            val etTime = dialogView.findViewById<EditText>(R.id.etTime)
+
+            etTitle.setText(titleView.text.toString())
+            etTime.setText(timeView.text.toString())
+
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Edit Activity")
+                .setView(dialogView)
+                .setPositiveButton("Save") { _, _ ->
+                    titleView.text = etTitle.text.toString()
+                    timeView.text = etTime.text.toString()
+                    Toast.makeText(this, "Activity updated!", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
 
         // Top Tabs navigation
