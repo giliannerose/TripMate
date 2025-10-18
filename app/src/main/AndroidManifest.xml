@@ -28,6 +28,10 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".ExpenseSummaryActivity" />
         <activity android:name=".CreatePollActivity" />
+        <activity android:name=".EditProfileActivity"/>
+        <activity android:name=".SettingsActivity"/>
+
+
 
 
         <activity
