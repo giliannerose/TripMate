@@ -9,6 +9,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.widget.EditText
 import android.widget.TextView
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 
 class ItineraryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +40,11 @@ class ItineraryActivity : AppCompatActivity() {
         val day2Time = day2Layout.findViewById<TextView>(R.id.tvActivityTime)
         val day2Edit = day2Layout.findViewById<Button>(R.id.btnEditActivity)
 
+        // for delete
+        val day1Delete = day1Layout.findViewById<Button>(R.id.btnDeleteActivity)
+        val day2Delete = day2Layout.findViewById<Button>(R.id.btnDeleteActivity)
+
+
         // 🔧 Day 1 edit button
         day1Edit.setOnClickListener {
             showEditDialog(day1Title, day1Time)
@@ -48,6 +54,11 @@ class ItineraryActivity : AppCompatActivity() {
         day2Edit.setOnClickListener {
             showEditDialog(day2Title, day2Time)
         }
+
+        //  Delete buttons
+        day1Delete.setOnClickListener { showDeleteDialog(day1Layout, "Day 1 activity deleted!") }
+        day2Delete.setOnClickListener { showDeleteDialog(day2Layout, "Day 2 activity deleted!") }
+
 
 
 
@@ -118,6 +129,21 @@ class ItineraryActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+
+
     }
+
+    private fun showDeleteDialog(layoutToRemove: View, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete Activity")
+            .setMessage("Are you sure you want to delete this activity?")
+            .setPositiveButton("Delete") { _, _ ->
+                layoutToRemove.visibility = View.GONE
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
 }
 
