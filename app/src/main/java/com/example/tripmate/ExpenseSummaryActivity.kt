@@ -20,6 +20,10 @@ class ExpenseSummaryActivity : AppCompatActivity() {
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
         val expenseCard = findViewById<CardView>(R.id.expenseCard)
         val btnDeleteExpense = findViewById<Button>(R.id.btnDeleteExpense)
+        val expenseCard2 = findViewById<CardView>(R.id.expenseCard2)
+        val btnMark2 = findViewById<Button>(R.id.btnMarkSettled2)
+        val btnDelete2 = findViewById<Button>(R.id.btnDeleteExpense2)
+
 
 
         // remove blue highlight in bottom nav
@@ -91,6 +95,29 @@ class ExpenseSummaryActivity : AppCompatActivity() {
                 .setPositiveButton("Yes") { dialog, _ ->
                     expenseCard.visibility = View.GONE
                     Toast.makeText(this, "Expense deleted", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
+
+        // 2nd expense
+        btnMark2.setOnClickListener {
+            btnMark2.setBackgroundTintList(getColorStateList(android.R.color.darker_gray))
+            btnMark2.text = "Settled"
+            btnMark2.isEnabled = false
+            Toast.makeText(this, "Expenses settled", Toast.LENGTH_SHORT).show()
+        }
+
+        btnDelete2.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Delete Expense")
+                .setMessage("Are you sure you want to delete this expense?")
+                .setPositiveButton("Yes") { dialog, _ ->
+                    expenseCard2.visibility = View.GONE
+                    Toast.makeText(this, "Deleted successfully", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
