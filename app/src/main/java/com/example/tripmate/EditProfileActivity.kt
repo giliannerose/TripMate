@@ -1,6 +1,8 @@
 package com.example.tripmate
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -11,22 +13,33 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 
 class EditProfileActivity : AppCompatActivity() {
+
+    private lateinit var imgProfile: ImageView
+    private val PICK_IMAGE_REQUEST = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
 
         val tvBack = findViewById<TextView>(R.id.tvBack)
-        val imgProfilePhoto = findViewById<ImageView>(R.id.imgProfilePhoto)
         val tvUploadPhoto = findViewById<TextView>(R.id.tvUploadPhoto)
         val etName = findViewById<EditText>(R.id.etName)
         val etBio = findViewById<EditText>(R.id.etBio)
         val btnSaveProfile = findViewById<Button>(R.id.btnSaveProfile)
+        imgProfile = findViewById(R.id.imgProfile)
 
         // Back to Profile Page
         tvBack.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
             finish()
+        }
+
+        // ptofile photo clickable
+        imgProfile.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
 
 
@@ -58,6 +71,15 @@ class EditProfileActivity : AppCompatActivity() {
                     Toast.makeText(this, "Save canceled.", Toast.LENGTH_SHORT).show()
                 }
                 .show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
+            val imageUri: Uri? = data.data
+            imgProfile.setImageURI(imageUri)
+            Toast.makeText(this, "Profile photo updated!", Toast.LENGTH_SHORT).show()
         }
     }
 }
