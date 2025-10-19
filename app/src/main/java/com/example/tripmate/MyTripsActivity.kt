@@ -20,6 +20,8 @@ class MyTripsActivity : AppCompatActivity() {
         val btnInvite = findViewById<Button>(R.id.btnInvite)   // INVITE BUTTON
         val btnExpense = findViewById<Button>(R.id.btnExpense) // expense
 
+        bottomNav.selectedItemId = R.id.nav_create
+
         btnCreateTrip.setOnClickListener {
             val intent = Intent(this, CreateTripActivity::class.java)
             startActivity(intent)
@@ -59,8 +61,6 @@ class MyTripsActivity : AppCompatActivity() {
         }
 
 
-// Highlight the Trips (plane) tab
-        bottomNav.selectedItemId = R.id.nav_create
 
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {

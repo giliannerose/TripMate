@@ -19,6 +19,9 @@ class NotificationsActivity : AppCompatActivity() {
         val btnAcknowledge = findViewById<Button>(R.id.btnAcknowledge)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
+        bottomNav.selectedItemId = R.id.nav_notifications
+
+
         // Confirmation dialog for Accept button
         btnAccept.setOnClickListener {
             MaterialAlertDialogBuilder(this)
@@ -90,8 +93,6 @@ class NotificationsActivity : AppCompatActivity() {
             btnAcknowledge.setTextColor(resources.getColor(android.R.color.white))
         }
 
-        //highlight notif
-        bottomNav.selectedItemId = R.id.nav_notifications
 
         // Bottom navigation
         bottomNav.setOnItemSelectedListener { item ->
