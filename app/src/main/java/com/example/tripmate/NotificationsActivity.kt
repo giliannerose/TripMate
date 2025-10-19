@@ -26,6 +26,16 @@ class NotificationsActivity : AppCompatActivity() {
                 .setMessage("Are you sure you want to accept this invitation?")
                 .setPositiveButton("Yes") { _, _ ->
                     Toast.makeText(this, "Invitation accepted!", Toast.LENGTH_SHORT).show()
+
+                    // Disable and gray out buttons
+                    btnAccept.isEnabled = false
+                    btnDecline.isEnabled = false
+
+                    btnAccept.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
+                    btnDecline.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
+
+                    btnAccept.setTextColor(resources.getColor(android.R.color.white))
+                    btnDecline.setTextColor(resources.getColor(android.R.color.white))
                 }
                 .setNegativeButton("No") { dialog, _ ->
                     dialog.dismiss()
@@ -34,6 +44,7 @@ class NotificationsActivity : AppCompatActivity() {
                 .show()
         }
 
+
 //  Confirmation dialog for Decline button
         btnDecline.setOnClickListener {
             MaterialAlertDialogBuilder(this)
@@ -41,6 +52,16 @@ class NotificationsActivity : AppCompatActivity() {
                 .setMessage("Are you sure you want to decline this invitation?")
                 .setPositiveButton("Yes") { _, _ ->
                     Toast.makeText(this, "Invitation declined.", Toast.LENGTH_SHORT).show()
+
+                    // Disable and gray out buttons
+                    btnAccept.isEnabled = false
+                    btnDecline.isEnabled = false
+
+                    btnAccept.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
+                    btnDecline.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
+
+                    btnAccept.setTextColor(resources.getColor(android.R.color.white))
+                    btnDecline.setTextColor(resources.getColor(android.R.color.white))
                 }
                 .setNegativeButton("No") { dialog, _ ->
                     dialog.dismiss()
@@ -51,7 +72,7 @@ class NotificationsActivity : AppCompatActivity() {
 
 
         btnViewPoll.setOnClickListener {
-            val intent = Intent(this, CreatePollActivity::class.java)
+            val intent = Intent(this, VoteActivity::class.java)
             startActivity(intent)
         }
 
