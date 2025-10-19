@@ -8,6 +8,7 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,18 +41,36 @@ class SettingsActivity : AppCompatActivity() {
             tvPrivacyStatus.text = if (tvPrivacyStatus.text == "Public") "Private" else "Public"
         }
 
-        // Save Settings
         btnSaveSettings.setOnClickListener {
-            val newPass = etNewPassword.text.toString()
-            val confirmPass = etConfirmPassword.text.toString()
+            val newPass = etNewPassword.text.toString().trim()
+            val confirmPass = etConfirmPassword.text.toString().trim()
 
-            if (newPass.isNotEmpty() && newPass == confirmPass) {
-                Toast.makeText(this, "Settings saved successfully!", Toast.LENGTH_SHORT).show()
-            } else if (newPass.isNotEmpty()) {
-                Toast.makeText(this, "Passwords do not match!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Settings saved (no password change)", Toast.LENGTH_SHORT).show()
-            }
+            AlertDialog.Builder(this)
+                .setTitle("Save Settings")
+                .setMessage("Are you sure you want to save these changes?")
+                .setPositiveButton("Yes") { dialog, _ ->
+                    if (newPass.isNotEmpty() && newPass == confirmPass) {
+                        Toast.makeText(this, "Settings saved successfully!", Toast.LENGTH_SHORT).show()
+                    } else if (newPass.isNotEmpty()) {
+                        Toast.makeText(this, "Passwords do not match!", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    } else {
+                        Toast.makeText(this, "Settings saved (no password change).", Toast.LENGTH_SHORT).show()
+                    }
+
+                    dialog.dismiss()
+
+                    // Route back to Profile page
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                    Toast.makeText(this, "Save canceled.", Toast.LENGTH_SHORT).show()
+                }
+                .show()
         }
     }
 }
+

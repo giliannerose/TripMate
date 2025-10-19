@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 
 class EditProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,20 +29,35 @@ class EditProfileActivity : AppCompatActivity() {
             finish()
         }
 
-        // Upload photo (placeholder toast)
-        tvUploadPhoto.setOnClickListener {
-            Toast.makeText(this, "Upload feature coming soon!", Toast.LENGTH_SHORT).show()
-        }
 
-        imgProfilePhoto.setOnClickListener {
-            Toast.makeText(this, "Profile photo clicked", Toast.LENGTH_SHORT).show()
-        }
-
-        // Save changes (no backend yet)
+        // Confirmation dialog before saving
         btnSaveProfile.setOnClickListener {
-            val name = etName.text.toString()
-            val bio = etBio.text.toString()
-            Toast.makeText(this, "Profile saved!\nName: $name\nBio: $bio", Toast.LENGTH_SHORT).show()
+            val name = etName.text.toString().trim()
+            val bio = etBio.text.toString().trim()
+
+            if (name.isEmpty() || bio.isEmpty()) {
+                Toast.makeText(this, "Please fill out all fields.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Show confirmation dialog
+            AlertDialog.Builder(this)
+                .setTitle("Save Changes")
+                .setMessage("Are you sure you want to save your profile changes?")
+                .setPositiveButton("Yes") { dialog, _ ->
+                    Toast.makeText(this, "Profile saved!\nName: $name\nBio: $bio", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+
+                    //  navigate back to ProfileActivity after saving
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                    Toast.makeText(this, "Save canceled.", Toast.LENGTH_SHORT).show()
+                }
+                .show()
         }
     }
 }
