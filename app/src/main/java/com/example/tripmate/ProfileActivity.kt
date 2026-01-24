@@ -98,10 +98,17 @@
             }
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
             super.onActivityResult(requestCode, resultCode, data)
-            if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
-                val imageUri: Uri? = data.data
-                imgProfile.setImageURI(imageUri)
-                Toast.makeText(this, "Profile photo updated!", Toast.LENGTH_SHORT).show()
+
+            if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+                val imageUri: Uri? = data?.data
+
+                if (imageUri != null) {
+                    imgProfile.setImageURI(imageUri)
+                    Toast.makeText(this, "Profile photo updated!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+                }
             }
         }
+
     }

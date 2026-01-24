@@ -18,20 +18,28 @@ class ForgotPasswordActivity : AppCompatActivity() {
         val tvBackLogin = findViewById<TextView>(R.id.tvBackLogin)
 
         btnSendResetLink.setOnClickListener {
-            val email = etEmail.text.toString()
+            val email = etEmail.text.toString().trim()
+
 
             if (email.isEmpty()) {
                 Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show()
-            } else {
-                // In a real app, this would send a reset link via API
-                Toast.makeText(this, "Password reset link sent to $email", Toast.LENGTH_LONG).show()
-
-                // Optional: Navigate back to login after confirmation
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
+                return@setOnClickListener
             }
+
+            // 2. Email format validation
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+
+            Toast.makeText(this, "Password reset link sent to $email", Toast.LENGTH_LONG).show()
+
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
         }
+
 
         tvBackLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)

@@ -13,6 +13,10 @@ class CreateTripActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_trip)
 
+        val etTripName = findViewById<EditText>(R.id.etTripName)
+        val etDestination = findViewById<EditText>(R.id.etDestination)
+
+
         val etStartDate = findViewById<EditText>(R.id.etStartDate)
         val etEndDate = findViewById<EditText>(R.id.etEndDate)
         val btnStartDate = findViewById<ImageView>(R.id.btnStartDate)
@@ -31,22 +35,57 @@ class CreateTripActivity : AppCompatActivity() {
         }
 
         btnSaveTrip.setOnClickListener {
-            // Show confirmation dialog before saving
+
+            val tripName = etTripName.text.toString().trim()
+            val destination = etDestination.text.toString().trim()
+            val startDate = etStartDate.text.toString().trim()
+            val endDate = etEndDate.text.toString().trim()
+
+
+            etTripName.error = null
+            etDestination.error = null
+            etStartDate.error = null
+            etEndDate.error = null
+
+            if (tripName.isEmpty()) {
+                etTripName.error = "Trip name is required"
+                etTripName.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (destination.isEmpty()) {
+                etDestination.error = "Destination is required"
+                etDestination.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (startDate.isEmpty()) {
+                etStartDate.error = "Start date is required"
+                etStartDate.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (endDate.isEmpty()) {
+                etEndDate.error = "End date is required"
+                etEndDate.requestFocus()
+                return@setOnClickListener
+            }
+
+
             androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Save Trip")
                 .setMessage("Are you sure you want to save this trip?")
                 .setPositiveButton("Save") { dialog, _ ->
                     Toast.makeText(this, "Trip saved successfully!", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
-                    // Optional: navigate or reset fields after saving
-                    // startActivity(Intent(this, MyTripsActivity::class.java))
+                    // navigation unchanged
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }
-                .create()
                 .show()
         }
+
 
 
         btnInviteMembers.setOnClickListener {

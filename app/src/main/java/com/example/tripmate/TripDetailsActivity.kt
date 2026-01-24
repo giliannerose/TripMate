@@ -46,17 +46,31 @@ class TripDetailsActivity : AppCompatActivity() {
                 val input = EditText(this)
                 input.setText(nameText?.text)
 
-                AlertDialog.Builder(this)
+                val dialog = AlertDialog.Builder(this)
                     .setTitle("Edit Participant")
                     .setMessage("Update name for this participant:")
                     .setView(input)
-                    .setPositiveButton("Save") { _, _ ->
-                        nameText?.text = input.text.toString()
-                        Toast.makeText(this, "Name updated!", Toast.LENGTH_SHORT).show()
-                    }
+                    .setPositiveButton("Save", null) // override later
                     .setNegativeButton("Cancel", null)
-                    .show()
+                    .create()
+
+                dialog.setOnShowListener {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                        val newName = input.text.toString().trim()
+
+                        if (newName.isEmpty()) {
+                            input.error = "Name cannot be empty"
+                        } else {
+                            nameText?.text = newName
+                            Toast.makeText(this, "Participant updated!", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        }
+                    }
+                }
+
+                dialog.show()
             }
+
 
             // Delete button click
             deleteIcon?.setOnClickListener {

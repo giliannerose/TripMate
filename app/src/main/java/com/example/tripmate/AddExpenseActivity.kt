@@ -14,6 +14,14 @@ class AddExpenseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_expense)
 
+        val etTitle = findViewById<EditText>(R.id.etTitle)
+        val etAmount = findViewById<EditText>(R.id.etAmount)
+        val etNotes = findViewById<EditText>(R.id.etNotes)
+
+        val cbAlice = findViewById<CheckBox>(R.id.cbAlice)
+        val cbBob = findViewById<CheckBox>(R.id.cbBob)
+        val cbJane = findViewById<CheckBox>(R.id.cbJane)
+
         val etDate = findViewById<EditText>(R.id.etDate)
         val btnPickDate = findViewById<ImageView>(R.id.btnPickDate)
         val btnSave = findViewById<Button>(R.id.btnSave)
@@ -62,18 +70,60 @@ class AddExpenseActivity : AppCompatActivity() {
 
         // Save Button
         btnSave.setOnClickListener {
+
+            val title = etTitle.text.toString().trim()
+            val amountText = etAmount.text.toString().trim()
+            val date = etDate.text.toString().trim()
+
+            etTitle.error = null
+            etAmount.error = null
+            etDate.error = null
+
+            if (title.isEmpty()) {
+                etTitle.error = "Expense title is required"
+                etTitle.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (amountText.isEmpty()) {
+                etAmount.error = "Amount is required"
+                etAmount.requestFocus()
+                return@setOnClickListener
+            }
+
+            val amount = amountText.toDoubleOrNull()
+            if (amount == null || amount <= 0) {
+                etAmount.error = "Enter a valid amount"
+                etAmount.requestFocus()
+                return@setOnClickListener
+            }
+
+
+            if (date.isEmpty()) {
+                etDate.error = "Date is required"
+                etDate.requestFocus()
+                return@setOnClickListener
+            }
+
+
+            if (!cbAlice.isChecked && !cbBob.isChecked && !cbJane.isChecked) {
+                Toast.makeText(this, "Select at least one person to split with", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+
             MaterialAlertDialogBuilder(this)
                 .setTitle("Save Expense")
                 .setMessage("Do you want to save this expense and go to the summary?")
                 .setPositiveButton("Yes") { dialog, _ ->
                     Toast.makeText(this, "Expense saved successfully!", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, ExpenseSummaryActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, ExpenseSummaryActivity::class.java))
                     dialog.dismiss()
                 }
                 .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
                 .show()
         }
+
 
         //  view summary button
         btnViewSummary.setOnClickListener {

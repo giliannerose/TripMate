@@ -20,17 +20,46 @@ class LoginActivity : AppCompatActivity() {
         val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)
 
         btnLogin.setOnClickListener {
-            val email = etEmail.text.toString()
-            val password = etPassword.text.toString()
+            val email = etEmail.text.toString().trim()
+            val password = etPassword.text.toString().trim()
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
-            } else {
-                val intent = Intent(this, LoginSuccessActivity::class.java)
-                startActivity(intent)
-                finish()
+
+            etEmail.error = null
+            etPassword.error = null
+
+            if (email.isEmpty()) {
+                etEmail.error = "Email is required"
+                etEmail.requestFocus()
+                return@setOnClickListener
             }
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etEmail.error = "Invalid email format"
+                etEmail.requestFocus()
+                return@setOnClickListener
+            }
+
+
+            if (password.isEmpty()) {
+                etPassword.error = "Password is required"
+                etPassword.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (password.length < 6) {
+                etPassword.error = "Password must be at least 6 characters"
+                etPassword.requestFocus()
+                return@setOnClickListener
+            }
+
+
+            Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(this, LoginSuccessActivity::class.java)
+            startActivity(intent)
+            finish()
         }
+
 
         btnRegister.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)

@@ -27,8 +27,15 @@ class ProfileSetupActivity : AppCompatActivity() {
         val imagePicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val imageUri: Uri? = result.data?.data
-                imgProfile.setImageURI(imageUri)
+
+                if (imageUri != null) {
+                    imgProfile.setImageURI(imageUri)
+                    Toast.makeText(this, "Profile photo added", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+                }
             }
+
         }
 
         imgProfile.setOnClickListener {
@@ -39,20 +46,36 @@ class ProfileSetupActivity : AppCompatActivity() {
 
         // Save changes
         btnSaveChanges.setOnClickListener {
-            val name = etName.text.toString()
-            val bio = etBio.text.toString()
-            val location = etLocation.text.toString()
+            val name = etName.text.toString().trim()
+            val bio = etBio.text.toString().trim()
+            val location = etLocation.text.toString().trim()
 
-            if (name.isEmpty() || bio.isEmpty() || location.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
-            } else {
+            var isValid = true
+
+            if (name.isEmpty()) {
+                etName.error = "Name is required"
+                isValid = false
+            }
+
+            if (bio.isEmpty()) {
+                etBio.error = "Bio is required"
+                isValid = false
+            }
+
+            if (location.isEmpty()) {
+                etLocation.error = "Location is required"
+                isValid = false
+            }
+
+            if (isValid) {
                 Toast.makeText(this, "Profile saved successfully!", Toast.LENGTH_SHORT).show()
-                // Go to Welcome Dialog
+
                 val intent = Intent(this, LoginSuccessActivity::class.java)
                 startActivity(intent)
                 finish()
             }
         }
+
 
         // Skip button
         btnSkip.setOnClickListener {

@@ -10,11 +10,20 @@ import android.widget.EditText
 import android.widget.TextView
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 class ItineraryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_itinerary)
+
+        val swipeRefresh = findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
+
+        swipeRefresh.setOnRefreshListener {
+            Toast.makeText(this, "Itinerary refreshed", Toast.LENGTH_SHORT).show()
+            swipeRefresh.isRefreshing = false
+        }
+
 
         val btnAddActivity = findViewById<Button>(R.id.btnAddActivity)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
@@ -123,16 +132,38 @@ class ItineraryActivity : AppCompatActivity() {
         etTitle.setText(titleView.text.toString())
         etTime.setText(timeView.text.toString())
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle("Edit Activity")
             .setView(dialogView)
-            .setPositiveButton("Save") { _, _ ->
-                titleView.text = etTitle.text.toString()
-                timeView.text = etTime.text.toString()
-                Toast.makeText(this, "Activity updated!", Toast.LENGTH_SHORT).show()
-            }
+            .setPositiveButton("Save", null)   // override click
             .setNegativeButton("Cancel", null)
-            .show()
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                var isValid = true
+
+                if (etTitle.text.isBlank()) {
+                    etTitle.error = "Title is required"
+                    isValid = false
+                }
+
+                if (etTime.text.isBlank()) {
+                    etTime.error = "Time is required"
+                    isValid = false
+                }
+
+                if (isValid) {
+                    titleView.text = etTitle.text.toString()
+                    timeView.text = etTime.text.toString()
+                    Toast.makeText(this, "Activity updated!", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            }
+        }
+
+        dialog.show()
+
 
 
     }

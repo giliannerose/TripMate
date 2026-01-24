@@ -48,17 +48,21 @@ class MyTripsActivity : AppCompatActivity() {
         val btnDeleteSiargao = findViewById<Button>(R.id.btnDeleteSiargao)
         val btnDeleteMadrid = findViewById<Button>(R.id.btnDeleteMadrid)
 
+        val cardNewTrip = findViewById<CardView>(R.id.cardNewTrip)
+        val cardMadrid = findViewById<CardView>(R.id.cardMadrid)
+
         btnDeleteNewTrip.setOnClickListener {
-            showDeleteConfirmation("New Trip")
+            showDeleteConfirmation("New Trip", cardNewTrip)
         }
 
         btnDeleteSiargao.setOnClickListener {
-            showDeleteConfirmation("Siargao Weekend")
+            showDeleteConfirmation("Siargao Weekend", cardSiargao)
         }
 
         btnDeleteMadrid.setOnClickListener {
-            showDeleteConfirmation("Madrid x Barcelona")
+            showDeleteConfirmation("Madrid x Barcelona", cardMadrid)
         }
+
 
 
 
@@ -85,12 +89,15 @@ class MyTripsActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDeleteConfirmation(tripName: String) {
+    private fun showDeleteConfirmation(tripName: String, tripCard: CardView) {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
         builder.setTitle("Delete Trip?")
-        builder.setMessage("This will permanently delete the trip \"$tripName\" and its itineraries. This action cannot be undone.")
+        builder.setMessage(
+            "This will permanently delete the trip \"$tripName\" and its itineraries. This action cannot be undone."
+        )
 
         builder.setPositiveButton("Delete") { dialog, _ ->
+            tripCard.visibility = CardView.GONE
             Toast.makeText(this, "$tripName deleted", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
@@ -99,14 +106,8 @@ class MyTripsActivity : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        val dialog = builder.create()
-        dialog.show()
-
-        // Optional: customize button colors
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
-            .setTextColor(resources.getColor(android.R.color.holo_red_dark))
-        dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE)
-            .setTextColor(resources.getColor(android.R.color.darker_gray))
+        builder.create().show()
     }
+
 
 }

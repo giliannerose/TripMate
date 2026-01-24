@@ -30,16 +30,15 @@ class NotificationsActivity : AppCompatActivity() {
                 .setPositiveButton("Yes") { _, _ ->
                     Toast.makeText(this, "Invitation accepted!", Toast.LENGTH_SHORT).show()
 
-                    // Disable and gray out buttons
-                    btnAccept.isEnabled = false
-                    btnDecline.isEnabled = false
-
-                    btnAccept.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
-                    btnDecline.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
-
-                    btnAccept.setTextColor(resources.getColor(android.R.color.white))
-                    btnDecline.setTextColor(resources.getColor(android.R.color.white))
+                    disableInvitationActions(
+                        btnAccept,
+                        btnDecline,
+                        btnViewPoll,
+                        btnViewExpenses
+                    )
                 }
+
+
                 .setNegativeButton("No") { dialog, _ ->
                     dialog.dismiss()
                 }
@@ -115,5 +114,23 @@ class NotificationsActivity : AppCompatActivity() {
             }
             true
         }
+
+
     }
+
+    private fun disableInvitationActions(
+        btnAccept: Button,
+        btnDecline: Button,
+        btnViewPoll: Button,
+        btnViewExpenses: Button
+    ) {
+        val buttons = listOf(btnAccept, btnDecline, btnViewPoll, btnViewExpenses)
+
+        buttons.forEach { button ->
+            button.isEnabled = false
+            button.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
+            button.setTextColor(resources.getColor(android.R.color.white))
+        }
+    }
+
 }

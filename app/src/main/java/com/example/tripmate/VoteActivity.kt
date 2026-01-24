@@ -33,26 +33,42 @@ class VoteActivity : AppCompatActivity() {
         //----------
 
         btnSubmitVote1.setOnClickListener {
-            val selected = rgPoll1.checkedRadioButtonId
-            if (selected == -1) {
-                Toast.makeText(this, "Please select an option!", Toast.LENGTH_SHORT).show()
+            val selectedId = rgPoll1.checkedRadioButtonId
+
+            if (selectedId == -1) {
+                Toast.makeText(this, "Please select an option for Poll 1", Toast.LENGTH_SHORT).show()
             } else {
-                val option = findViewById<RadioButton>(selected).text
-                Toast.makeText(this, "Voted for: $option", Toast.LENGTH_SHORT).show()
-                it.isEnabled = false
-                it.alpha = 0.5f
+                val option = findViewById<RadioButton>(selectedId).text
+                Toast.makeText(this, "Poll 1 vote submitted: $option", Toast.LENGTH_SHORT).show()
+
+                // Lock poll
+                btnSubmitVote1.isEnabled = false
+                btnSubmitVote1.alpha = 0.5f
+                rgPoll1.isEnabled = false
+
+                for (i in 0 until rgPoll1.childCount) {
+                    rgPoll1.getChildAt(i).isEnabled = false
+                }
             }
         }
 
         btnSubmitVote2.setOnClickListener {
-            val selected = rgPoll2.checkedRadioButtonId
-            if (selected == -1) {
-                Toast.makeText(this, "Please select an option!", Toast.LENGTH_SHORT).show()
+            val selectedId = rgPoll2.checkedRadioButtonId
+
+            if (selectedId == -1) {
+                Toast.makeText(this, "Please select an option for Poll 2", Toast.LENGTH_SHORT).show()
             } else {
-                val option = findViewById<RadioButton>(selected).text
-                Toast.makeText(this, "Voted for: $option", Toast.LENGTH_SHORT).show()
-                it.isEnabled = false
-                it.alpha = 0.5f
+                val option = findViewById<RadioButton>(selectedId).text
+                Toast.makeText(this, "Poll 2 vote submitted: $option", Toast.LENGTH_SHORT).show()
+
+                // Lock poll
+                btnSubmitVote2.isEnabled = false
+                btnSubmitVote2.alpha = 0.5f
+                rgPoll2.isEnabled = false
+
+                for (i in 0 until rgPoll2.childCount) {
+                    rgPoll2.getChildAt(i).isEnabled = false
+                }
             }
         }
 

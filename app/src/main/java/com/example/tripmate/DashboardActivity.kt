@@ -8,11 +8,68 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import android.view.GestureDetector
+import android.view.MotionEvent
+
+
 
 class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
+
+
+        //swipe refresh
+        val swipeRefresh = findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
+
+        swipeRefresh.setOnRefreshListener {
+            Toast.makeText(this, "Dashboard refreshed", Toast.LENGTH_SHORT).show()
+            swipeRefresh.isRefreshing = false
+        }
+
+        val gestureDetector = GestureDetector(
+            this,
+            object : GestureDetector.SimpleOnGestureListener() {
+
+                override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                    Toast.makeText(
+                        this@DashboardActivity,
+                        "Single tap detected",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return true
+                }
+
+                override fun onDoubleTap(e: MotionEvent): Boolean {
+                    Toast.makeText(
+                        this@DashboardActivity,
+                        "Double tap detected",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return true
+                }
+
+                override fun onFling(
+                    e1: MotionEvent?,
+                    e2: MotionEvent,
+                    velocityX: Float,
+                    velocityY: Float
+                ): Boolean {
+                    if (velocityX < -1000) {
+                        Toast.makeText(
+                            this@DashboardActivity,
+                            "Swipe left detected",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return true
+                    }
+                    return false
+                }
+            }
+        )
+
+
 
         // References to UI elements
         val cardTripSiargao = findViewById<CardView>(R.id.cardTripSiargao)
@@ -25,10 +82,17 @@ class DashboardActivity : AppCompatActivity() {
         val actionExpenses = findViewById<LinearLayout>(R.id.actionExpenses)
 
         // When user clicks anywhere on the Siargao trip card
-        cardTripSiargao.setOnClickListener {
-            val intent = Intent(this, TripDetailsActivity::class.java)
-            startActivity(intent)
+        cardTripSiargao.setOnTouchListener { view, event ->
+            val handled = gestureDetector.onTouchEvent(event)
+
+            if (event.action == MotionEvent.ACTION_UP) {
+                view.performClick()
+            }
+
+            handled
         }
+
+
 
         // When user clicks the View Itinerary button
         btnViewItinerary.setOnClickListener {

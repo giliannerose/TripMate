@@ -20,23 +20,42 @@ class AddActivityActivity : AppCompatActivity() {
         val btnCancel = findViewById<Button>(R.id.btnCancel)
 
         btnSave.setOnClickListener {
-            val date = etDate.text.toString()
-            val time = etTime.text.toString()
-            val title = etTitle.text.toString()
-            val notes = etNotes.text.toString()
 
-            if (date.isEmpty() || time.isEmpty() || title.isEmpty()) {
-                Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show()
-            } else {
-                // For now, just show confirmation
-                Toast.makeText(this, "Activity added successfully!", Toast.LENGTH_SHORT).show()
+            val date = etDate.text.toString().trim()
+            val time = etTime.text.toString().trim()
+            val title = etTitle.text.toString().trim()
+            val notes = etNotes.text.toString().trim()
 
-                // Return to ItineraryActivity
-                val intent = Intent(this, ItineraryActivity::class.java)
-                startActivity(intent)
-                finish()
+
+            etDate.error = null
+            etTime.error = null
+            etTitle.error = null
+
+            if (date.isEmpty()) {
+                etDate.error = "Date is required"
+                etDate.requestFocus()
+                return@setOnClickListener
             }
+
+            if (time.isEmpty()) {
+                etTime.error = "Time is required"
+                etTime.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (title.isEmpty()) {
+                etTitle.error = "Title is required"
+                etTitle.requestFocus()
+                return@setOnClickListener
+            }
+
+            // All inputs valid
+            Toast.makeText(this, "Activity added successfully!", Toast.LENGTH_SHORT).show()
+
+            startActivity(Intent(this, ItineraryActivity::class.java))
+            finish()
         }
+
 
         btnCancel.setOnClickListener {
             // Go back to itinerary page without saving

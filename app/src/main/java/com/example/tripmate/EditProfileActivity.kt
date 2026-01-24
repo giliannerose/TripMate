@@ -48,10 +48,18 @@ class EditProfileActivity : AppCompatActivity() {
             val name = etName.text.toString().trim()
             val bio = etBio.text.toString().trim()
 
-            if (name.isEmpty() || bio.isEmpty()) {
-                Toast.makeText(this, "Please fill out all fields.", Toast.LENGTH_SHORT).show()
+            if (name.isEmpty()) {
+                etName.error = "Name is required"
+                etName.requestFocus()
                 return@setOnClickListener
             }
+
+            if (bio.isEmpty()) {
+                etBio.error = "Bio is required"
+                etBio.requestFocus()
+                return@setOnClickListener
+            }
+
 
             // Show confirmation dialog
             AlertDialog.Builder(this)
@@ -82,4 +90,5 @@ class EditProfileActivity : AppCompatActivity() {
             Toast.makeText(this, "Profile photo updated!", Toast.LENGTH_SHORT).show()
         }
     }
+
 }

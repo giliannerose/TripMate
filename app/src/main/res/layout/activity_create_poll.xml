@@ -157,6 +157,7 @@
                         android:layout_marginBottom="4dp"/>
 
                     <EditText
+                        android:id="@+id/etOption1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Spring"
@@ -165,6 +166,7 @@
                         android:layout_marginBottom="6dp"/>
 
                     <EditText
+                        android:id="@+id/etOption2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Autumn"
@@ -173,6 +175,7 @@
                         android:layout_marginBottom="6dp"/>
 
                     <EditText
+                        android:id="@+id/etOption3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Winter"
@@ -181,6 +184,7 @@
                         android:layout_marginBottom="6dp"/>
 
                     <EditText
+                        android:id="@+id/etOption4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Add Option"
