@@ -7,34 +7,27 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient">
 
-    <!-- Header Section -->
+    <!-- Header -->
     <LinearLayout
         android:id="@+id/headerSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
         android:padding="16dp"
+        android:gravity="center_horizontal"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/tvExpenseTitle"
+            android:id="@+id/tvHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Expense Summary"
-            android:textColor="#1E88E5"
+            android:text="Add Expense"
             android:textStyle="bold"
-            android:textSize="20sp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Recent expenses and balances per person."
-            android:textColor="#555555"
-            android:textSize="13sp"/>
+            android:textSize="20sp"
+            android:textColor="#1E88E5" />
     </LinearLayout>
 
-    <!-- Tabs (consistent with Itinerary screen) -->
+    <!-- Consistent Tabs -->
     <HorizontalScrollView
         android:id="@+id/tabScroll"
         android:layout_width="match_parent"
@@ -57,7 +50,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:textColor="#2196F3"
                 android:backgroundTint="#FFFFFF"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp" />
 
             <Button
                 android:id="@+id/tabPolls"
@@ -67,7 +60,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:textColor="#2196F3"
                 android:backgroundTint="#FFFFFF"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp" />
 
             <Button
                 android:id="@+id/tabExpenses"
@@ -77,7 +70,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:textColor="#FFFFFF"
                 android:backgroundTint="#2196F3"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp" />
 
             <Button
                 android:id="@+id/tabDocs"
@@ -87,7 +80,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:textColor="#2196F3"
                 android:backgroundTint="#FFFFFF"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp" />
 
             <Button
                 android:id="@+id/tabItinerary"
@@ -96,254 +89,240 @@
                 android:text="Itinerary"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:textColor="#2196F3"
-                android:backgroundTint="#FFFFFF"/>
+                android:backgroundTint="#FFFFFF" />
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- Scrollable Expense List -->
+    <!-- Scrollable Form Content -->
     <ScrollView
-        android:id="@+id/scrollExpenses"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="12dp"
+        android:padding="16dp"
         app:layout_constraintTop_toBottomOf="@id/tabScroll"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintBottom_toTopOf="@id/bottomNav">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Sample Expense Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/expenseCard2"
+            <!-- Expense Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Expense Title"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/etTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="e.g. Dinner at Beachfront"
+                android:background="@drawable/edittext_bg"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Amount -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Amount (₱)"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/etAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:hint="Enter Amount"
+                android:background="@drawable/edittext_bg"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Category -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="4dp"/>
+            <Spinner
+                android:id="@+id/spCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_bg"
+                android:padding="8dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Date -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="4dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <EditText
+                    android:id="@+id/etDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="dd/mm/yy"
+                    android:background="@drawable/edittext_bg"
+                    android:padding="12dp"
+                    android:focusable="false"/>
+
+                <ImageView
+                    android:id="@+id/btnPickDate"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_calendar"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <!-- Paid By -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Paid by"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="4dp"/>
+            <Spinner
+                android:id="@+id/spPaidBy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_bg"
+                android:padding="8dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Notes -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notes"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/etNotes"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:hint="Add a description or remarks"
+                android:background="@drawable/edittext_bg"
+                android:padding="12dp"
+                android:gravity="top"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Upload Receipt -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload Receipt"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="4dp"/>
+
+            <!-- Split With -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Split With:"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="4dp"/>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="6dp"
-                android:backgroundTint="#FFFFFF">
+                android:background="@drawable/edittext_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/btnUpload"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:background="@drawable/rounded_button_secondary"
+                    android:text="Choose File" />
 
-                    <!-- Header (Title + Amount) -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="4dp">
+                <TextView
+                    android:id="@+id/tvFileChosen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="No file chosen"
+                    android:textColor="#666" />
+            </LinearLayout>
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Accommodation"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="#000000"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="₱ 3,333"
-                            android:textColor="#1E88E5"
-                            android:textStyle="bold"
-                            android:textSize="15sp"/>
-                    </LinearLayout>
-
-                    <!-- Subtext -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Alice paid: 10,000"
-                        android:textColor="#555555"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="6dp"/>
-
-                    <!-- Checkboxes aligned left -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="start"
-                        android:layout_marginBottom="10dp">
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Alice"
-                            android:textColor="#000000"/>
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Bob"
-                            android:textColor="#000000"/>
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="You"
-                            android:textColor="#000000"/>
-                    </LinearLayout>
-
-                    <!-- Action Buttons -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
-
-                        <Button
-                            android:id="@+id/btnMarkSettled2"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Mark Settled"
-                            android:backgroundTint="#2196F3"
-                            android:textColor="#FFFFFF"
-                            android:layout_marginEnd="8dp"/>
-
-                        <Button
-                            android:id="@+id/btnDeleteExpense2"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Delete"
-                            android:backgroundTint="#BBDEFB"
-                            android:textColor="#1565C0"/>
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/expenseCard"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="6dp"
-                android:backgroundTint="#FFFFFF">
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <CheckBox
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:id="@+id/cbAlice"
+                    android:text="Alice"
+                    android:checked="true"
+                    android:layout_marginEnd="16dp"/>
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/cbBob"
+                    android:text="Bob"
+                    android:checked="true"
+                    android:layout_marginEnd="16dp"/>
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/cbJane"
+                    android:text="Jane"
+                    android:checked="false"/>
+            </LinearLayout>
 
-                    <!-- Header (Title + Amount) -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="4dp">
+            <!-- Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Activities"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="#000000"/>
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Save"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/rounded_button_primary"
+                    android:layout_marginEnd="8dp"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="₱ 5,051"
-                            android:textColor="#1E88E5"
-                            android:textStyle="bold"
-                            android:textSize="15sp"/>
-                    </LinearLayout>
-
-                    <!-- Subtext -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Alice paid: 10,000"
-                        android:textColor="#555555"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="6dp"/>
-
-                    <!-- Checkboxes aligned left -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="start"
-                        android:layout_marginBottom="10dp">
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Alice"
-                            android:textColor="#000000"/>
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Bob"
-                            android:textColor="#000000"/>
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="You"
-                            android:textColor="#000000"/>
-                    </LinearLayout>
-
-                    <!-- Action Buttons -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
-
-                        <Button
-                            android:id="@+id/btnMarkSettled"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Mark Settled"
-                            android:backgroundTint="#2196F3"
-                            android:textColor="#FFFFFF"
-                            android:layout_marginEnd="8dp"/>
-
-                        <Button
-                            android:id="@+id/btnDeleteExpense"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Delete"
-                            android:backgroundTint="#BBDEFB"
-                            android:textColor="#1565C0"/>
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
+                <Button
+                    android:id="@+id/btnViewSummary"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="View Summary"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/rounded_button_secondary"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <!-- Add Expense Button -->
-    <Button
-        android:id="@+id/btnAddExpense"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="+ Add Expense"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#2196F3"
-        android:layout_margin="16dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -356,5 +335,5 @@
         app:menu="@menu/bottom_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
