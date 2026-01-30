@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/WelcomeFragment">
+
+    <fragment
+        android:id="@+id/WelcomeFragment"
+        android:name="com.example.tripmate.WelcomeFragment"
+        android:label="Welcome">
+
+        <action
+            android:id="@+id/action_welcomeFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+
+        <action
+            android:id="@+id/action_WelcomeFragment_to_loginFragment"
+            app:destination="@id/LoginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.example.tripmate.SignupFragment"
+        android:label="Signup">
+
+        <action
+            android:id="@+id/action_signupFragment_to_loginFragment"
+            app:destination="@id/LoginFragment" />
+
+        <action
+            android:id="@+id/action_signupFragment_to_profileSetupFragment"
+            app:destination="@id/profileSetupFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/LoginFragment"
+        android:name="com.example.tripmate.LoginFragment"
+        android:label="Login">
+
+        <action
+            android:id="@+id/action_loginFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+
+        <action
+            android:id="@+id/action_loginFragment_to_loginSuccessFragment"
+            app:destination="@id/loginSuccessFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileSetupFragment"
+        android:name="com.example.tripmate.ProfileSetupFragment"
+        android:label="Profile Setup">
+
+        <action
+            android:id="@+id/action_profileSetupFragment_to_loginSuccessFragment"
+            app:destination="@id/loginSuccessFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginSuccessFragment"
+        android:name="com.example.tripmate.LoginSuccessFragment"
+        android:label="Login Success">
+
+        <action
+            android:id="@+id/action_loginSuccessFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.tripmate.ForgotPasswordFragment"
+        android:label="Forgot Password">
+
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
+            app:destination="@id/LoginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.example.tripmate.DashboardFragment"
+        android:label="Dashboard">
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_itineraryFragment"
+            app:destination="@id/itineraryFragment" />
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_createTripFragment"
+            app:destination="@id/createTripFragment" />
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_inviteMembersFragment"
+            app:destination="@id/inviteMembersFragment" />
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_addExpenseFragment"
+            app:destination="@id/addExpenseFragment" />
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_myTripsFragment"
+            app:destination="@id/myTripsFragment" />
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_notificationsFragment"
+            app:destination="@id/notificationsFragment" />
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/itineraryFragment"
+        android:name="com.example.tripmate.ItineraryFragment"
+        android:label="Itinerary">
+
+        <action
+            android:id="@+id/action_itineraryFragment_to_addActivityFragment"
+            app:destination="@id/addActivityFragment" />
+
+        <action
+            android:id="@+id/action_itineraryFragment_to_tripDetailsFragment"
+            app:destination="@id/tripDetailsFragment" />
+
+        <action
+            android:id="@+id/action_itineraryFragment_to_createPollFragment"
+            app:destination="@id/createPollFragment" />
+
+        <action
+            android:id="@+id/action_itineraryFragment_to_expenseSummaryFragment"
+            app:destination="@id/expenseSummaryFragment" />
+
+        <action
+            android:id="@+id/action_itineraryFragment_to_documentsFragment"
+            app:destination="@id/documentsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createTripFragment"
+        android:name="com.example.tripmate.CreateTripFragment"
+        android:label="Create Trip">
+
+        <action
+            android:id="@+id/action_createTripFragment_to_inviteMembersFragment"
+            app:destination="@id/inviteMembersFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/inviteMembersFragment"
+        android:name="com.example.tripmate.InviteMembersFragment"
+        android:label="Invite Members" />
+
+    <fragment
+        android:id="@+id/addExpenseFragment"
+        android:name="com.example.tripmate.AddExpenseFragment"
+        android:label="Add Expense" />
+
+    <fragment
+        android:id="@+id/myTripsFragment"
+        android:name="com.example.tripmate.MyTripsFragment"
+        android:label="My Trips" />
+
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.example.tripmate.ui.notifications.NotificationsFragment"
+        android:label="Notifications">
+
+            <action
+                android:id="@+id/action_notificationsFragment_to_voteFragment"
+                app:destination="@id/voteFragment" />
+
+            <action
+                android:id="@+id/action_notificationsFragment_to_expenseSummaryFragment"
+                app:destination="@id/expenseSummaryFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.tripmate.ui.profile.ProfileFragment"
+        android:label="Profile">
+
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+
+        <action
+            android:id="@+id/action_profileFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+
+        <action
+            android:id="@+id/action_profileFragment_to_welcomeFragment"
+            app:destination="@id/WelcomeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addActivityFragment"
+        android:name="com.example.tripmate.ui.itinerary.AddActivityFragment"
+        android:label="Add Activity">
+
+        <action
+            android:id="@+id/action_addActivityFragment_to_itineraryFragment"
+            app:destination="@id/itineraryFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/tripDetailsFragment"
+        android:name="com.example.tripmate.ui.tripdetails.TripDetailsFragment"
+        android:label="Trip Details">
+
+        <action
+            android:id="@+id/action_tripDetailsFragment_to_createPollFragment"
+            app:destination="@id/createPollFragment" />
+
+        <action
+            android:id="@+id/action_tripDetailsFragment_to_expenseSummaryFragment"
+            app:destination="@id/expenseSummaryFragment" />
+
+        <action
+            android:id="@+id/action_tripDetailsFragment_to_documentsFragment"
+            app:destination="@id/documentsFragment" />
+
+        <action
+            android:id="@+id/action_tripDetailsFragment_to_itineraryFragment"
+            app:destination="@id/itineraryFragment" />
+
+        <action
+            android:id="@+id/action_tripDetailsFragment_to_inviteMembersFragment"
+            app:destination="@id/inviteMembersFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createPollFragment"
+        android:name="com.example.tripmate.ui.polls.CreatePollFragment"
+        android:label="Create Poll">
+
+        <action
+            android:id="@+id/action_createPollFragment_to_voteFragment"
+            app:destination="@id/voteFragment" />
+
+        <action
+            android:id="@+id/action_createPollFragment_to_tripDetailsFragment"
+            app:destination="@id/tripDetailsFragment" />
+
+        <action
+            android:id="@+id/action_createPollFragment_to_expenseSummaryFragment"
+            app:destination="@id/expenseSummaryFragment" />
+
+        <action
+            android:id="@+id/action_createPollFragment_to_documentsFragment"
+            app:destination="@id/documentsFragment" />
+
+        <action
+            android:id="@+id/action_createPollFragment_to_itineraryFragment"
+            app:destination="@id/itineraryFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/expenseSummaryFragment"
+        android:name="com.example.tripmate.ui.expense.ExpenseSummaryFragment"
+        android:label="Expense Summary">
+
+        <action
+            android:id="@+id/action_expenseSummaryFragment_to_addExpenseFragment"
+            app:destination="@id/addExpenseFragment" />
+
+        <action
+            android:id="@+id/action_expenseSummaryFragment_to_tripDetailsFragment"
+            app:destination="@id/tripDetailsFragment" />
+
+        <action
+            android:id="@+id/action_expenseSummaryFragment_to_createPollFragment"
+            app:destination="@id/createPollFragment" />
+
+        <action
+            android:id="@+id/action_expenseSummaryFragment_to_documentsFragment"
+            app:destination="@id/documentsFragment" />
+
+        <action
+            android:id="@+id/action_expenseSummaryFragment_to_itineraryFragment"
+            app:destination="@id/itineraryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/documentsFragment"
+        android:name="com.example.tripmate.ui.documents.DocumentsFragment"
+        android:label="Documents">
+
+        <action
+            android:id="@+id/action_documentsFragment_to_tripDetailsFragment"
+            app:destination="@id/tripDetailsFragment" />
+
+        <action
+            android:id="@+id/action_documentsFragment_to_createPollFragment"
+            app:destination="@id/createPollFragment" />
+
+        <action
+            android:id="@+id/action_documentsFragment_to_expenseSummaryFragment"
+            app:destination="@id/expenseSummaryFragment" />
+
+        <action
+            android:id="@+id/action_documentsFragment_to_itineraryFragment"
+            app:destination="@id/itineraryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/voteFragment"
+        android:name="com.example.tripmate.ui.polls.VoteFragment"
+        android:label="Vote">
+
+        <action
+            android:id="@+id/action_voteFragment_to_tripDetailsFragment"
+            app:destination="@id/tripDetailsFragment" />
+
+        <action
+            android:id="@+id/action_voteFragment_to_expenseSummaryFragment"
+            app:destination="@id/expenseSummaryFragment" />
+
+        <action
+            android:id="@+id/action_voteFragment_to_documentsFragment"
+            app:destination="@id/documentsFragment" />
+
+        <action
+            android:id="@+id/action_voteFragment_to_itineraryFragment"
+            app:destination="@id/itineraryFragment" />
+
+        <action
+            android:id="@+id/action_voteFragment_to_pollResultsFragment"
+            app:destination="@id/pollResultsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.tripmate.ui.profile.EditProfileFragment"
+        android:label="Edit Profile" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.tripmate.ui.settings.SettingsFragment"
+        android:label="Settings" />
+
+    <fragment
+        android:id="@+id/pollResultsFragment"
+        android:name="com.example.tripmate.ui.polls.PollResultsFragment"
+        android:label="Poll Results" />
+
+
+
+
+</navigation>
