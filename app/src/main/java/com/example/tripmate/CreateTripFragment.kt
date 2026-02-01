@@ -16,6 +16,10 @@ import android.app.DatePickerDialog
 
 
 class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
+
+        private var startDateCalendar: Calendar? = null
+        private var endDateCalendar: Calendar? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -30,12 +34,13 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
 
         btnStartDate.setOnClickListener {
-            showDatePicker(etStartDate)
+            showDatePicker(etStartDate, true)
         }
 
         btnEndDate.setOnClickListener {
-            showDatePicker(etEndDate)
+            showDatePicker(etEndDate, false)
         }
+
 
         btnSaveTrip.setOnClickListener {
             val tripName = etTripName.text.toString().trim()
@@ -70,6 +75,14 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
                 etEndDate.error = "End date is required"
                 etEndDate.requestFocus()
                 return@setOnClickListener
+            }
+
+            if (startDateCalendar != null && endDateCalendar != null) {
+                if (endDateCalendar!!.before(startDateCalendar)) {
+                    etEndDate.error = "End date cannot be earlier than start date"
+                    etEndDate.requestFocus()
+                    return@setOnClickListener
+                }
             }
 
             AlertDialog.Builder(requireContext())
@@ -117,20 +130,44 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
     }
 
 
-    private fun showDatePicker(targetEditText: EditText) {
+    private fun showDatePicker(
+        targetEditText: EditText,
+        isStartDate: Boolean
+    ) {
         val calendar = Calendar.getInstance()
+
         val datePicker = DatePickerDialog(
             requireContext(),
             { _, year, month, dayOfMonth ->
+
+                val selectedCalendar = Calendar.getInstance().apply {
+                    set(year, month, dayOfMonth)
+                }
+
                 val selectedDate = "${dayOfMonth}/${month + 1}/$year"
                 targetEditText.setText(selectedDate)
+
+                if (isStartDate) {
+                    startDateCalendar = selectedCalendar
+                    endDateCalendar = null
+                    view?.findViewById<EditText>(R.id.etEndDate)?.setText("")
+                } else {
+                    endDateCalendar = selectedCalendar
+                }
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         )
+
+        //  start date - end date makes sense
+        if (!isStartDate && startDateCalendar != null) {
+            datePicker.datePicker.minDate = startDateCalendar!!.timeInMillis
+        }
+
         datePicker.show()
     }
+
 
 
 }
