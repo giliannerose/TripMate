@@ -1,5 +1,6 @@
 package com.example.tripmate.ui.settings
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -26,6 +27,22 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             findNavController().popBackStack()
         }
 
+        fun updateSwitchColor(isChecked: Boolean) {
+            if (isChecked) {
+                switchNotifications.thumbTintList =
+                    ColorStateList.valueOf(requireContext().getColor(R.color.blue))
+                switchNotifications.trackTintList =
+                    ColorStateList.valueOf(requireContext().getColor(R.color.blue_light))
+            } else {
+                switchNotifications.thumbTintList =
+                    ColorStateList.valueOf(requireContext().getColor(R.color.gray))
+                switchNotifications.trackTintList =
+                    ColorStateList.valueOf(requireContext().getColor(R.color.gray_light))
+            }
+        }
+
+
+
         // Notifications toggle
         switchNotifications.setOnCheckedChangeListener { _, isChecked ->
             val message =
@@ -50,23 +67,35 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
             var isValid = true
 
-            if (newPass.isNotEmpty() || confirmPass.isNotEmpty()) {
+            val anyPasswordEntered =
+                currentPass.isNotEmpty() ||
+                        newPass.isNotEmpty() ||
+                        confirmPass.isNotEmpty()
+
+            if (anyPasswordEntered) {
 
                 if (currentPass.isEmpty()) {
                     etCurrentPassword.error = "Current password is required"
                     isValid = false
                 }
 
-                if (newPass.length < 6) {
+                if (newPass.isEmpty()) {
+                    etNewPassword.error = "New password is required"
+                    isValid = false
+                } else if (newPass.length < 6) {
                     etNewPassword.error = "Password must be at least 6 characters"
                     isValid = false
                 }
 
-                if (newPass != confirmPass) {
+                if (confirmPass.isEmpty()) {
+                    etConfirmPassword.error = "Please confirm your new password"
+                    isValid = false
+                } else if (newPass != confirmPass) {
                     etConfirmPassword.error = "Passwords do not match"
                     isValid = false
                 }
             }
+
 
             if (!isValid) return@setOnClickListener
 
