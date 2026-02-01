@@ -36,39 +36,12 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
             val editIcon = card.findViewById<ImageView>(R.id.ic_edit)
             val deleteIcon = card.findViewById<ImageView>(R.id.ic_delete)
             val nameText = card.findViewById<TextView>(R.id.tvName)
+            val emailText = card.findViewById<TextView>(R.id.tvEmail)
 
             editIcon?.setOnClickListener {
-                val input = EditText(requireContext())
-                input.setText(nameText?.text)
-
-                val dialog = AlertDialog.Builder(requireContext())
-                    .setTitle("Edit Participant")
-                    .setMessage("Update name for this participant:")
-                    .setView(input)
-                    .setPositiveButton("Save", null)
-                    .setNegativeButton("Cancel", null)
-                    .create()
-
-                dialog.setOnShowListener {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                        val newName = input.text.toString().trim()
-
-                        if (newName.isEmpty()) {
-                            input.error = "Name cannot be empty"
-                        } else {
-                            nameText?.text = newName
-                            Toast.makeText(
-                                requireContext(),
-                                "Participant updated!",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            dialog.dismiss()
-                        }
-                    }
-                }
-
-                dialog.show()
+                showEditDialog(nameText, emailText)
             }
+
 
             deleteIcon?.setOnClickListener {
                 AlertDialog.Builder(requireContext())
@@ -135,4 +108,57 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
             true
         }
     }
+
+    private fun showEditDialog(
+        nameText: TextView,
+        emailText: TextView
+    ) {
+        val layout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(50, 40, 50, 10)
+        }
+
+        val etName = EditText(requireContext()).apply {
+            hint = "Name"
+            setText(nameText.text)
+        }
+
+        val etEmail = EditText(requireContext()).apply {
+            hint = "Email"
+            inputType = android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            setText(emailText.text)
+        }
+
+        layout.addView(etName)
+        layout.addView(etEmail)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Edit Participant")
+            .setView(layout)
+            .setPositiveButton("Save", null)
+            .setNegativeButton("Cancel", null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val newName = etName.text.toString().trim()
+                val newEmail = etEmail.text.toString().trim()
+
+                when {
+                    newName.isEmpty() -> etName.error = "Name cannot be empty"
+                    newEmail.isEmpty() -> etEmail.error = "Email cannot be empty"
+                    !android.util.Patterns.EMAIL_ADDRESS.matcher(newEmail).matches() ->
+                        etEmail.error = "Invalid email format"
+                    else -> {
+                        nameText.text = newName
+                        emailText.text = newEmail
+                        dialog.dismiss()
+                    }
+                }
+            }
+        }
+
+        dialog.show()
+    }
+
 }
