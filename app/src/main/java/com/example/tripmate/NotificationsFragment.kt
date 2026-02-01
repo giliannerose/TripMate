@@ -35,8 +35,6 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
                     disableInvitationActions(
                         btnAccept,
                         btnDecline,
-                        btnViewPoll,
-                        btnViewExpenses
                     )
                 }
                 .setNegativeButton("No") { dialog, _ ->
@@ -125,13 +123,9 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
 
     private fun disableInvitationActions(
         btnAccept: Button,
-        btnDecline: Button,
-        btnViewPoll: Button,
-        btnViewExpenses: Button
+        btnDecline: Button
     ) {
-        val buttons = listOf(btnAccept, btnDecline, btnViewPoll, btnViewExpenses)
-
-        buttons.forEach { button ->
+        listOf(btnAccept, btnDecline).forEach { button ->
             button.isEnabled = false
             button.setBackgroundColor(
                 requireContext().resources.getColor(android.R.color.darker_gray)
@@ -141,4 +135,5 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
             )
         }
     }
+
 }
