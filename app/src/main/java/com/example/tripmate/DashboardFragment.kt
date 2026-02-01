@@ -19,6 +19,10 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val tapHandler = android.os.Handler(android.os.Looper.getMainLooper())
+        var singleTapRunnable: Runnable? = null
+
+
         val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
         val cardTripSiargao = view.findViewById<CardView>(R.id.cardTripSiargao)
         val btnViewItinerary = view.findViewById<Button>(R.id.btnViewItinerary)
@@ -28,25 +32,33 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         val actionInvite = view.findViewById<LinearLayout>(R.id.actionInvite)
         val actionExpenses = view.findViewById<LinearLayout>(R.id.actionExpenses)
 
+
+
         // Swipe refresh
         swipeRefresh.setOnRefreshListener {
             Toast.makeText(requireContext(), "Dashboard refreshed", Toast.LENGTH_SHORT).show()
             swipeRefresh.isRefreshing = false
         }
 
+
+
         val gestureDetector = GestureDetector(
             requireContext(),
             object : GestureDetector.SimpleOnGestureListener() {
 
                 override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                    Toast.makeText(requireContext(), "Single tap detected", Toast.LENGTH_SHORT)
-                        .show()
+                    singleTapRunnable = Runnable {
+                        view.findNavController()
+                            .navigate(R.id.action_dashboardFragment_to_myTripsFragment)
+                    }
+                    tapHandler.postDelayed(singleTapRunnable!!, 250)
                     return true
                 }
 
                 override fun onDoubleTap(e: MotionEvent): Boolean {
-                    Toast.makeText(requireContext(), "Double tap detected", Toast.LENGTH_SHORT)
-                        .show()
+                    singleTapRunnable?.let { tapHandler.removeCallbacks(it) }
+
+                    Toast.makeText(requireContext(), "Double tap detected", Toast.LENGTH_SHORT).show()
                     return true
                 }
 
@@ -56,23 +68,44 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                     velocityX: Float,
                     velocityY: Float
                 ): Boolean {
-                    if (velocityX < -1000) {
-                        Toast.makeText(requireContext(), "Swipe left detected", Toast.LENGTH_SHORT)
-                            .show()
-                        return true
+                    if (e1 == null) return false
+
+                    val diffX = e2.x - e1.x
+                    val diffY = e2.y - e1.y
+
+                    if (kotlin.math.abs(diffX) > kotlin.math.abs(diffY)) {
+                        if (diffX < -150) {
+                            Toast.makeText(requireContext(), "Swipe left detected", Toast.LENGTH_SHORT).show()
+                            return true
+                        }
                     }
                     return false
                 }
             }
         )
 
+
         cardTripSiargao.setOnTouchListener { v, event ->
-            val handled = gestureDetector.onTouchEvent(event)
-            if (event.action == MotionEvent.ACTION_UP) {
-                v.performClick()
+
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    swipeRefresh.isEnabled = false
+                    v.parent.requestDisallowInterceptTouchEvent(true)
+                }
+
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_CANCEL -> {
+                    swipeRefresh.isEnabled = true
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                }
             }
-            handled
+
+            gestureDetector.onTouchEvent(event)
+            true
         }
+
+
+
 
         btnViewItinerary.setOnClickListener {
             view.findNavController()
