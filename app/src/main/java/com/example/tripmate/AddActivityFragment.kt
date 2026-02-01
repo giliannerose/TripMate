@@ -8,6 +8,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.R
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import java.util.Calendar
 
 class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
 
@@ -20,6 +23,55 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
         val etNotes = view.findViewById<EditText>(R.id.etNotes)
         val btnSave = view.findViewById<Button>(R.id.btnSave)
         val btnCancel = view.findViewById<Button>(R.id.btnCancel)
+
+
+        // DATE PICKER
+        etDate.setOnClickListener {
+            val calendar = Calendar.getInstance()
+
+            val datePickerDialog = DatePickerDialog(
+                requireContext(),
+                { _, year, month, dayOfMonth ->
+                    val formattedDate = String.format(
+                        "%04d-%02d-%02d",
+                        year,
+                        month + 1,
+                        dayOfMonth
+                    )
+                    etDate.setText(formattedDate)
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+
+            // PREVENT PAST DATES
+            datePickerDialog.datePicker.minDate = System.currentTimeMillis()
+
+            datePickerDialog.show()
+        }
+
+
+        // TIME PICKER
+                etTime.setOnClickListener {
+                    val calendar = Calendar.getInstance()
+
+                    TimePickerDialog(
+                        requireContext(),
+                        { _, hour, minute ->
+                            val formattedTime = String.format(
+                                "%02d:%02d",
+                                hour,
+                                minute
+                            )
+                            etTime.setText(formattedTime)
+                        },
+                        calendar.get(Calendar.HOUR_OF_DAY),
+                        calendar.get(Calendar.MINUTE),
+                        true // 24-hour format
+                    ).show()
+                }
+
 
         btnSave.setOnClickListener {
 
