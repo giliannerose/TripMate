@@ -12,17 +12,36 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+
 
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
         val etEmail = view.findViewById<EditText>(R.id.etEmail)
         val etPassword = view.findViewById<EditText>(R.id.etPassword)
         val btnLogin = view.findViewById<Button>(R.id.btnLogin)
         val btnRegister = view.findViewById<Button>(R.id.btnRegister)
         val tvForgotPassword = view.findViewById<TextView>(R.id.tvForgotPassword)
+
+        swipeRefresh.setOnRefreshListener {
+            // Clear inputs
+            etEmail.text.clear()
+            etPassword.text.clear()
+
+            // Clear errors
+            etEmail.error = null
+            etPassword.error = null
+
+
+            swipeRefresh.isRefreshing = false
+
+            Toast.makeText(requireContext(), "Inputs cleared", Toast.LENGTH_SHORT).show()
+        }
+
 
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
