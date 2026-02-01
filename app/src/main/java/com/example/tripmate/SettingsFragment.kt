@@ -44,61 +44,47 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         // Save settings
         btnSaveSettings.setOnClickListener {
 
-            val dialog = AlertDialog.Builder(requireContext())
-                .setTitle("Save Settings")
-                .setMessage("Are you sure you want to save these changes?")
-                .setPositiveButton("Yes", null)
-                .setNegativeButton("Cancel") { d, _ ->
-                    d.dismiss()
-                    Toast.makeText(
-                        requireContext(),
-                        "Save canceled.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+            val currentPass = etCurrentPassword.text.toString().trim()
+            val newPass = etNewPassword.text.toString().trim()
+            val confirmPass = etConfirmPassword.text.toString().trim()
+
+            var isValid = true
+
+            if (newPass.isNotEmpty() || confirmPass.isNotEmpty()) {
+
+                if (currentPass.isEmpty()) {
+                    etCurrentPassword.error = "Current password is required"
+                    isValid = false
                 }
-                .create()
 
-            dialog.setOnShowListener {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                if (newPass.length < 6) {
+                    etNewPassword.error = "Password must be at least 6 characters"
+                    isValid = false
+                }
 
-                    val currentPass = etCurrentPassword.text.toString().trim()
-                    val newPass = etNewPassword.text.toString().trim()
-                    val confirmPass = etConfirmPassword.text.toString().trim()
-
-                    var isValid = true
-
-                    if (newPass.isNotEmpty() || confirmPass.isNotEmpty()) {
-
-                        if (currentPass.isEmpty()) {
-                            etCurrentPassword.error = "Current password is required"
-                            isValid = false
-                        }
-
-                        if (newPass.length < 6) {
-                            etNewPassword.error = "Password must be at least 6 characters"
-                            isValid = false
-                        }
-
-                        if (newPass != confirmPass) {
-                            etConfirmPassword.error = "Passwords do not match"
-                            isValid = false
-                        }
-                    }
-
-                    if (isValid) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Settings saved successfully!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        dialog.dismiss()
-                        findNavController().popBackStack()
-                    }
+                if (newPass != confirmPass) {
+                    etConfirmPassword.error = "Passwords do not match"
+                    isValid = false
                 }
             }
 
-            dialog.show()
+            if (!isValid) return@setOnClickListener
+
+            // only show dialog if valid
+            AlertDialog.Builder(requireContext())
+                .setTitle("Save Settings")
+                .setMessage("Are you sure you want to save these changes?")
+                .setPositiveButton("Yes") { _, _ ->
+                    Toast.makeText(
+                        requireContext(),
+                        "Settings saved successfully!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    findNavController().popBackStack()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
+
     }
 }
