@@ -9,10 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.tripmate.data.utils.SessionManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
@@ -31,6 +33,14 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         val actionCreate = view.findViewById<LinearLayout>(R.id.actionCreate)
         val actionInvite = view.findViewById<LinearLayout>(R.id.actionInvite)
         val actionExpenses = view.findViewById<LinearLayout>(R.id.actionExpenses)
+
+        val tvGreeting = view.findViewById<TextView>(R.id.tvGreeting)
+        val sessionManager = SessionManager(requireContext())
+        val userName = sessionManager.getUserName()
+        val nameFromStorage = sessionManager.getUserName()
+        android.util.Log.d("DEBUG_NAME", "The name in storage is: $nameFromStorage")
+        tvGreeting.text = getString(R.string.welcome_greeting, userName)
+        tvGreeting.text = "Good day, $nameFromStorage 👋"
 
 
 

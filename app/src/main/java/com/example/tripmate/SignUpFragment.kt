@@ -9,6 +9,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.navigation.findNavController
+import com.example.tripmate.data.local.AppDatabase
+import com.example.tripmate.data.repository.UserRepository
+import androidx.lifecycle.lifecycleScope
+import com.example.tripmate.data.utils.SessionManager
+import kotlinx.coroutines.launch
 
 
 class SignupFragment : Fragment(R.layout.fragment_sign_up) {
@@ -25,42 +30,61 @@ class SignupFragment : Fragment(R.layout.fragment_sign_up) {
             val name = etName.text.toString().trim()
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
-
+            // Validation
             var isValid = true
-
             if (name.isEmpty()) {
-                etName.error = "Name is required"
-                isValid = false
+                etName.error = "Name is required"; isValid = false
             }
 
             if (email.isEmpty()) {
-                etEmail.error = "Email is required"
-                isValid = false
+                etEmail.error = "Email is required"; isValid = false
             } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 etEmail.error = "Enter a valid email address"
                 isValid = false
             }
 
             if (password.isEmpty()) {
-                etPassword.error = "Password is required"
-                isValid = false
+                etPassword.error = "Password is required"; isValid = false
             } else if (password.length < 6) {
                 etPassword.error = "Password must be at least 6 characters"
                 isValid = false
             }
 
-            if (isValid) {
-                Toast.makeText(requireContext(), "Account created for $name!", Toast.LENGTH_SHORT).show()
 
+
+            if (isValid) {
+                //Setup the Repository
+                val database = AppDatabase.getDatabase(requireContext())
+                val repository = UserRepository(database.userDao())
+                // Launch Coroutine to save the User
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val success = repository.register(name, email, password)
+
+                    if (success) {
+                        // save the name to session before moving on
+                        val sessionManager = SessionManager(requireContext())
+                        sessionManager.saveUserName(name)
+                        Toast.makeText(requireContext(), "Welcome, $name!", Toast.LENGTH_SHORT)
+                            .show()
+                        view.findNavController().navigate(R.id.action_signupFragment_to_profileSetupFragment)
+
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Email already registered!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+
+        }
+            btnBackLogin.setOnClickListener {
                 view.findNavController()
-                    .navigate(R.id.action_signupFragment_to_profileSetupFragment)
+                    .navigate(R.id.action_signupFragment_to_loginFragment)
             }
         }
 
-        btnBackLogin.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_signupFragment_to_loginFragment)
-        }
     }
 
-}
+

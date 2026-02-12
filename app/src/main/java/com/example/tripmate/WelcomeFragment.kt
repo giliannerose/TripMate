@@ -2,11 +2,10 @@ package com.example.tripmate
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.findNavController
+import com.example.tripmate.data.utils.SessionManager
 
 
 class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
@@ -16,6 +15,13 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
 
         val btnGetStarted = view.findViewById<Button>(R.id.btnGetStarted)
         val btnLogin = view.findViewById<Button>(R.id.btnLogin)
+        val sessionManager = SessionManager(requireContext())
+
+        // Auto-Login Check: If name is not the default user, skip to dashboard
+        if (sessionManager.getUserName() != "User") {
+            view.findNavController().navigate(R.id.action_welcomeFragment_to_dashboardFragment)
+            return
+        }
 
         btnGetStarted.setOnClickListener {
             view.findNavController()
