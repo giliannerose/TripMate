@@ -50,6 +50,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 .setTitle("Sign Out")
                 .setMessage("Are you sure you want to sign out?")
                 .setPositiveButton("Yes") { _, _ ->
+                    val sessionManager = com.example.tripmate.data.utils.SessionManager(requireContext())
+                    sessionManager.clearSession()
+
                     Toast.makeText(
                         requireContext(),
                         "Signed out successfully",
