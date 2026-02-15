@@ -18,7 +18,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/bottomNav">
 
             <!-- Header -->
             <LinearLayout
@@ -43,192 +46,16 @@
                     android:text="+ CREATE TRIP"
                     android:textColor="#FFFFFF"
                     android:backgroundTint="#2196F3"
-                    android:textSize="13sp"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="8dp"/>
+                    android:textSize="13sp"/>
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tap a trip to open"
-                android:textColor="#777"
-                android:textSize="13sp"
-                android:layout_marginBottom="12dp"/>
-
-            <!-- Trip 1: New Trip -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardNewTrip"
+            <!-- RecyclerView (Trips will load here dynamically) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tripsRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="New Trip"
-                            android:textColor="#000"
-                            android:textSize="16sp"
-                            android:textStyle="bold"/>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-
-                            <Button
-                                android:id="@+id/btnDeleteNewTrip"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:backgroundTint="#F44336"
-                                android:text="DELETE"
-                                android:textColor="#FFFFFF"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Dates - TBC | Unknown Location"
-                        android:textColor="#555"
-                        android:textSize="13sp"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Trip 2: Siargao Weekend (Clickable) -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardSiargao"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="6dp"
-                android:foreground="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Siargao Weekend"
-                            android:textColor="#000"
-                            android:textSize="16sp"
-                            android:textStyle="bold"/>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-
-                            <Button
-                                android:id="@+id/btnDeleteSiargao"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:backgroundTint="#F44336"
-                                android:text="DELETE"
-                                android:textColor="#FFFFFF"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="July 17 - 20 | Siargao PH"
-                        android:textColor="#555"
-                        android:textSize="13sp"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Trip 3: Madrid x Barcelona -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardMadrid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Madrid x Barcelona"
-                            android:textColor="#000"
-                            android:textSize="16sp"
-                            android:textStyle="bold"/>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-
-                            <Button
-                                android:id="@+id/btnDeleteMadrid"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:backgroundTint="#F44336"
-                                android:text="DELETE"
-                                android:textColor="#FFFFFF"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sept 1 - 10 | Spain"
-                        android:textColor="#555"
-                        android:textSize="13sp"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:clipToPadding="false"/>
 
             <!-- Quick Actions -->
             <TextView
@@ -238,14 +65,14 @@
                 android:textColor="#1E88E5"
                 android:textStyle="bold"
                 android:textSize="16sp"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btnInvite"
@@ -254,7 +81,6 @@
                     android:text="INVITE"
                     android:textColor="#FFFFFF"
                     android:backgroundTint="#2196F3"
-                    android:drawableStart="@drawable/ic_invite"
                     android:layout_marginEnd="8dp"/>
 
                 <Button
@@ -263,19 +89,9 @@
                     android:layout_height="wrap_content"
                     android:text="EXPENSE"
                     android:textColor="#FFFFFF"
-                    android:backgroundTint="#FFB300"
-                    android:drawableStart="@drawable/ic_expenses"
-                    android:layout_marginEnd="8dp"/>
+                    android:backgroundTint="#FFB300"/>
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Note for reviewers: Please click 'Siargao Weekend' trip to view trip details as other trip cards are non-interactive."
-                android:textColor="#666"
-                android:textSize="12sp"
-                android:gravity="center"
-                android:layout_marginBottom="16dp"/>
         </LinearLayout>
     </ScrollView>
 

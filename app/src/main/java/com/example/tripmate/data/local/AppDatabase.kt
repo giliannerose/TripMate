@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 
 
-@Database(entities = [UserEntity::class, TripEntity::class, ExpenseEntity::class, ActivityEntity::class], version = 3, exportSchema = false)
+@Database(entities = [UserEntity::class, TripEntity::class, ExpenseEntity::class, ActivityEntity::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     // Connects the Database to the Queries
     abstract fun userDao(): UserDao
@@ -48,6 +48,15 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE expense_table ADD COLUMN date TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE expense_table ADD COLUMN notes TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE expense_table ADD COLUMN category TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE expense_table ADD COLUMN paidBy TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -56,7 +65,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "app_database"
                 )
                     // Plug the migration
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
                 INSTANCE = instance
                 instance

@@ -11,19 +11,49 @@ import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.tripmate.ui.trip.TripViewModel
+import com.example.tripmate.ui.trip.TripAdapter
+import com.example.tripmate.data.model.TripEntity
 
 
 
 class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
+
+    private lateinit var viewModel: TripViewModel
+    private lateinit var adapter: TripAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val btnCreateTrip = view.findViewById<Button>(R.id.btnCreateTrip)
-        val cardSiargao = view.findViewById<CardView>(R.id.cardSiargao)
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
 
         val btnInvite = view.findViewById<Button>(R.id.btnInvite)
         val btnExpense = view.findViewById<Button>(R.id.btnExpense)
+
+
+        viewModel = ViewModelProvider(this)[TripViewModel::class.java]
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.tripsRecyclerView)
+
+        adapter = TripAdapter(
+            onClick = { trip ->
+                view.findNavController().navigate(R.id.tripDetailsFragment)
+            },
+            onDelete = { trip ->
+                showDeleteConfirmation(trip)
+            }
+        )
+
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        viewModel.allTrips.observe(viewLifecycleOwner) { trips ->
+            adapter.submitList(trips)
+        }
 
         bottomNav.selectedItemId = R.id.nav_create
 
@@ -32,10 +62,7 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
                 .navigate(R.id.createTripFragment)
         }
 
-        cardSiargao.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.tripDetailsFragment)
-        }
+
 
         btnInvite.setOnClickListener {
             view.findNavController()
@@ -47,24 +74,9 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
                 .navigate(R.id.expenseSummaryFragment)
         }
 
-        val btnDeleteNewTrip = view.findViewById<Button>(R.id.btnDeleteNewTrip)
-        val btnDeleteSiargao = view.findViewById<Button>(R.id.btnDeleteSiargao)
-        val btnDeleteMadrid = view.findViewById<Button>(R.id.btnDeleteMadrid)
 
-        val cardNewTrip = view.findViewById<CardView>(R.id.cardNewTrip)
-        val cardMadrid = view.findViewById<CardView>(R.id.cardMadrid)
 
-        btnDeleteNewTrip.setOnClickListener {
-            showDeleteConfirmation("New Trip", cardNewTrip)
-        }
 
-        btnDeleteSiargao.setOnClickListener {
-            showDeleteConfirmation("Siargao Weekend", cardSiargao)
-        }
-
-        btnDeleteMadrid.setOnClickListener {
-            showDeleteConfirmation("Madrid x Barcelona", cardMadrid)
-        }
 
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -84,20 +96,14 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
         }
     }
 
-    private fun showDeleteConfirmation(tripName: String, tripCard: CardView) {
+    private fun showDeleteConfirmation(trip: TripEntity) {
         AlertDialog.Builder(requireContext())
             .setTitle("Delete Trip?")
-            .setMessage(
-                "This will permanently delete the trip \"$tripName\" and its itineraries. This action cannot be undone."
-            )
-            .setPositiveButton("Delete") { dialog, _ ->
-                tripCard.visibility = View.GONE
-                Toast.makeText(requireContext(), "$tripName deleted", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
+            .setMessage("Delete \"${trip.name}\" permanently?")
+            .setPositiveButton("Delete") { _, _ ->
+                viewModel.delete(trip)
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton("Cancel", null)
             .show()
     }
 

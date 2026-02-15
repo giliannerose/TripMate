@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import androidx.lifecycle.LiveData
+import androidx.room.OnConflictStrategy
 
 import com.example.tripmate.data.model.TripEntity
 
@@ -14,12 +15,12 @@ import com.example.tripmate.data.model.TripEntity
 interface TripDao {
 
     //Create a new trip
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrip(trip: TripEntity)
 
 
     //Get all trips
-    @Query("SELECT * FROM trip_table ORDER BY date DESC")
+    @Query("SELECT * FROM trip_table ORDER BY id DESC")
     fun getAllTrips(): LiveData<List<TripEntity>>
 
     //Update a trip
@@ -27,6 +28,6 @@ interface TripDao {
     suspend fun updateTrip(trip: TripEntity)
 
     //Delete a trip
-    @Query("DELETE FROM trip_table WHERE id = :id")
-    suspend fun deleteTrip(id: Long)
+    @Delete
+    suspend fun deleteTrip(trip: TripEntity)
 }

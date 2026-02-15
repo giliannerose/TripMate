@@ -6,26 +6,41 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.tripmate.R
+import com.example.tripmate.ui.itinerary.ExpenseViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ExpenseSummaryFragment : Fragment(R.layout.fragment_expense_summary) {
 
+    private lateinit var viewModel: ExpenseViewModel
+    private lateinit var adapter: ExpenseAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
+
+        adapter = ExpenseAdapter { expense ->
+            viewModel.delete(expense)
+        }
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.rvExpenses)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+
+        viewModel.expenses.observe(viewLifecycleOwner) { list ->
+            adapter.submitList(list)
+        }
+
         super.onViewCreated(view, savedInstanceState)
 
         val btnAddExpense = view.findViewById<Button>(R.id.btnAddExpense)
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        val expenseCard = view.findViewById<CardView>(R.id.expenseCard)
-        val btnMarkSettled = view.findViewById<Button>(R.id.btnMarkSettled)
-        val btnDeleteExpense = view.findViewById<Button>(R.id.btnDeleteExpense)
-
-        val expenseCard2 = view.findViewById<CardView>(R.id.expenseCard2)
-        val btnMark2 = view.findViewById<Button>(R.id.btnMarkSettled2)
-        val btnDelete2 = view.findViewById<Button>(R.id.btnDeleteExpense2)
 
         // remove blue highlight in bottom nav
         bottomNav.menu.setGroupCheckable(0, true, false)
@@ -65,73 +80,7 @@ class ExpenseSummaryFragment : Fragment(R.layout.fragment_expense_summary) {
                 .navigate(R.id.action_expenseSummaryFragment_to_itineraryFragment)
         }
 
-        // Mark settled (1st)
-        btnMarkSettled.setOnClickListener {
-            btnMarkSettled.backgroundTintList =
-                requireContext().getColorStateList(android.R.color.darker_gray)
-            btnMarkSettled.text = "Settled"
-            btnMarkSettled.isEnabled = false
 
-            Toast.makeText(
-                requireContext(),
-                "Expense marked as settled",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        // Delete expense (1st)
-        btnDeleteExpense.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Delete Expense")
-                .setMessage("Are you sure you want to delete this expense?")
-                .setPositiveButton("Yes") { dialog, _ ->
-                    expenseCard.visibility = View.GONE
-                    Toast.makeText(
-                        requireContext(),
-                        "Expense deleted",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    dialog.dismiss()
-                }
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
-        }
-
-        // Mark settled (2nd)
-        btnMark2.setOnClickListener {
-            btnMark2.backgroundTintList =
-                requireContext().getColorStateList(android.R.color.darker_gray)
-            btnMark2.text = "Settled"
-            btnMark2.isEnabled = false
-
-            Toast.makeText(
-                requireContext(),
-                "Expenses settled",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        // Delete expense (2nd)
-        btnDelete2.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Delete Expense")
-                .setMessage("Are you sure you want to delete this expense?")
-                .setPositiveButton("Yes") { dialog, _ ->
-                    expenseCard2.visibility = View.GONE
-                    Toast.makeText(
-                        requireContext(),
-                        "Deleted successfully",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    dialog.dismiss()
-                }
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
-        }
 
         // Bottom navigation
         bottomNav.setOnItemSelectedListener { item ->

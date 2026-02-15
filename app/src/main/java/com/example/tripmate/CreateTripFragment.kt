@@ -12,6 +12,9 @@ import androidx.navigation.findNavController
 import java.util.Calendar
 import androidx.appcompat.app.AlertDialog
 import android.app.DatePickerDialog
+import androidx.lifecycle.ViewModelProvider
+import com.example.tripmate.data.model.TripEntity
+import com.example.tripmate.ui.trip.TripViewModel
 
 
 
@@ -19,9 +22,13 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
 
         private var startDateCalendar: Calendar? = null
         private var endDateCalendar: Calendar? = null
+        private lateinit var viewModel: TripViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel = ViewModelProvider(this)[TripViewModel::class.java]
 
         val etTripName = view.findViewById<EditText>(R.id.etTripName)
         val etDestination = view.findViewById<EditText>(R.id.etDestination)
@@ -89,9 +96,19 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
                 .setTitle("Save Trip")
                 .setMessage("Are you sure you want to save this trip?")
                 .setPositiveButton("Save") { dialog, _ ->
+                    val trip = TripEntity(
+                        name = tripName,
+                        description = destination,
+                        date = "$startDate - $endDate"
+                    )
+
+                    viewModel.insert(trip)
+
                     Toast.makeText(requireContext(), "Trip saved successfully!", Toast.LENGTH_SHORT).show()
+
                     dialog.dismiss()
-                    // navigation unchanged (as per your comment)
+
+                    view.findNavController().navigate(R.id.myTripsFragment)
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()

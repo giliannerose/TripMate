@@ -18,11 +18,19 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.*
 import android.app.DatePickerDialog
-
+import com.example.tripmate.data.model.ExpenseEntity
+import com.example.tripmate.ui.itinerary.ExpenseViewModel
+import androidx.lifecycle.ViewModelProvider
 
 
 class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
+
+    private lateinit var viewModel: ExpenseViewModel
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
+
         super.onViewCreated(view, savedInstanceState)
 
         val etTitle = view.findViewById<EditText>(R.id.etTitle)
@@ -89,6 +97,9 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
             val title = etTitle.text.toString().trim()
             val amountText = etAmount.text.toString().trim()
             val date = etDate.text.toString().trim()
+            val notes = etNotes.text.toString().trim()
+            val category = spCategory.selectedItem.toString()
+            val paidBy = spPaidBy.selectedItem.toString()
 
             etTitle.error = null
             etAmount.error = null
@@ -132,12 +143,35 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
                 .setTitle("Save Expense")
                 .setMessage("Do you want to save this expense and go to the summary?")
                 .setPositiveButton("Yes") { dialog, _ ->
-                    Toast.makeText(requireContext(), "Expense saved successfully!", Toast.LENGTH_SHORT).show()
+
+
+                    val expense = ExpenseEntity(
+                        tripId = 1L,   // temporary hardcoded
+                        title = title,
+                        amount = amount,
+                        date = date,
+                        notes = notes,
+                        category = category,
+                        paidBy = paidBy
+                    )
+
+
+                    viewModel.insert(expense)
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Expense saved successfully!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
                     view.findNavController()
                         .navigate(R.id.expenseSummaryFragment)
+
                     dialog.dismiss()
                 }
-                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
                 .show()
         }
 
