@@ -11,11 +11,22 @@ import com.example.tripmate.R
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import java.util.Calendar
+import androidx.lifecycle.ViewModelProvider
+import com.example.tripmate.ui.itinerary.ActivityViewModel
+import com.example.tripmate.data.model.ActivityEntity
 
 class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
 
+    private lateinit var activityViewModel: ActivityViewModel
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activityViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory
+                .getInstance(requireActivity().application)
+        )[ActivityViewModel::class.java]
 
         val etDate = view.findViewById<EditText>(R.id.etDate)
         val etTime = view.findViewById<EditText>(R.id.etTime)
@@ -101,6 +112,16 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
                 etTitle.requestFocus()
                 return@setOnClickListener
             }
+
+            val newActivity = ActivityEntity(
+                tripId = 1L, // temporary
+                date = date,
+                time = time,
+                title = title,
+                notes = notes
+            )
+
+            activityViewModel.insert(newActivity)
 
             Toast.makeText(
                 requireContext(),

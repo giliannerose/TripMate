@@ -68,6 +68,7 @@ dependencies {
     implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
 
     val room_version ="2.6.1"
     implementation("androidx.room:room-runtime:$room_version")

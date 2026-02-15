@@ -127,7 +127,7 @@
 
     <fragment
         android:id="@+id/itineraryFragment"
-        android:name="com.example.tripmate.ItineraryFragment"
+        android:name="com.example.tripmate.ui.itinerary.ItineraryFragment"
         android:label="Itinerary"
         tools:layout="@layout/fragment_itinerary">
 

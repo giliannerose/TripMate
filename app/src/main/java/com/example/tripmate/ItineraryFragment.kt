@@ -1,4 +1,5 @@
-package com.example.tripmate
+package com.example.tripmate.ui.itinerary
+
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,12 +15,49 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.fragment.findNavController
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.tripmate.data.model.ActivityEntity
 
+import com.example.tripmate.ui.itinerary.ActivityAdapter
+import com.example.tripmate.ui.itinerary.ActivityViewModel
+import com.example.tripmate.R
 
 
 class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
+
+    private lateinit var activityViewModel: ActivityViewModel
+    private lateinit var adapter: ActivityAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+                // Initialize ViewModel
+                activityViewModel = ViewModelProvider(
+                    this,
+                    ViewModelProvider.AndroidViewModelFactory
+                        .getInstance(requireActivity().application)
+                )[ActivityViewModel::class.java]
+
+        // Setup RecyclerView
+                val recyclerView = view.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recyclerActivities)
+
+            adapter = ActivityAdapter(
+                onEditClick = { activity ->
+                    showEditDialog(activity)
+                },
+                onDeleteClick = { activity ->
+                    activityViewModel.delete(activity.id)
+                }
+            )
+                recyclerView.adapter = adapter
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // Observe LiveData
+                activityViewModel.getActivitiesForTrip(1L)
+                    .observe(viewLifecycleOwner) { activities ->
+                        adapter.setActivities(activities)
+                    }
 
         val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
         val btnAddActivity = view.findViewById<Button>(R.id.btnAddActivity)
@@ -35,30 +73,7 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
                 .navigate(R.id.action_itineraryFragment_to_addActivityFragment)
         }
 
-        // Day 1
-        val day1Layout = view.findViewById<View>(R.id.include_day1_activity)
-        val day1Title = day1Layout.findViewById<TextView>(R.id.tvActivityTitle)
-        val day1Time = day1Layout.findViewById<TextView>(R.id.tvActivityTime)
-        val day1Edit = day1Layout.findViewById<Button>(R.id.btnEditActivity)
-        val day1Delete = day1Layout.findViewById<Button>(R.id.btnDeleteActivity)
 
-        // Day 2
-        val day2Layout = view.findViewById<View>(R.id.include_day2_activity)
-        val day2Title = day2Layout.findViewById<TextView>(R.id.tvActivityTitle)
-        val day2Time = day2Layout.findViewById<TextView>(R.id.tvActivityTime)
-        val day2Edit = day2Layout.findViewById<Button>(R.id.btnEditActivity)
-        val day2Delete = day2Layout.findViewById<Button>(R.id.btnDeleteActivity)
-
-        day1Edit.setOnClickListener { showEditDialog(day1Title, day1Time) }
-        day2Edit.setOnClickListener { showEditDialog(day2Title, day2Time) }
-
-        day1Delete.setOnClickListener {
-            showDeleteDialog(day1Layout, "Day 1 activity deleted!")
-        }
-
-        day2Delete.setOnClickListener {
-            showDeleteDialog(day2Layout, "Day 2 activity deleted!")
-        }
 
         // Top tabs
         view.findViewById<Button>(R.id.tabParticipants).setOnClickListener {
@@ -111,13 +126,14 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
         }
     }
 
-    private fun showEditDialog(titleView: TextView, timeView: TextView) {
+    private fun showEditDialog(activity: ActivityEntity) {
+
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_activity, null)
         val etTitle = dialogView.findViewById<EditText>(R.id.etTitle)
         val etTime = dialogView.findViewById<EditText>(R.id.etTime)
 
-        etTitle.setText(titleView.text.toString())
-        etTime.setText(timeView.text.toString())
+        etTitle.setText(activity.title)
+        etTime.setText(activity.time)
 
         val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Edit Activity")
@@ -128,6 +144,7 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
 
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+
                 var isValid = true
 
                 if (etTitle.text.isBlank()) {
@@ -141,9 +158,20 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
                 }
 
                 if (isValid) {
-                    titleView.text = etTitle.text.toString()
-                    timeView.text = etTime.text.toString()
-                    Toast.makeText(requireContext(), "Activity updated!", Toast.LENGTH_SHORT).show()
+
+                    val updatedActivity = activity.copy(
+                        title = etTitle.text.toString(),
+                        time = etTime.text.toString()
+                    )
+
+                    activityViewModel.update(updatedActivity)
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Activity updated!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
                     dialog.dismiss()
                 }
             }
