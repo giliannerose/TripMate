@@ -1,27 +1,77 @@
 package com.example.tripmate.ui.tripdetails
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.R
+import com.example.tripmate.data.model.UserEntity
+import com.example.tripmate.databinding.FragmentTripDetailsBinding
+import com.example.tripmate.ui.trip.ParticipantAdapter
+import com.example.tripmate.ui.trip.TripParticipantViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.tripmate.ui.user.UserViewModel
 
-class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
+class TripDetailsFragment : Fragment() {
+
+    private lateinit var viewModel: TripParticipantViewModel
+    private lateinit var adapter: ParticipantAdapter
+
+    private var _binding: FragmentTripDetailsBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var userViewModel: UserViewModel
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentTripDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tabParticipants = view.findViewById<Button>(R.id.tabParticipants)
+        val tripId = 1L
+
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        viewModel = ViewModelProvider(this)[TripParticipantViewModel::class.java]
+
+        adapter = ParticipantAdapter(
+            onDelete = { user ->
+                viewModel.remove(tripId, user.id)
+            },
+            onEdit = { user ->
+                showEditDialog(user)
+            }
+        )
+
+        binding.participantsRecyclerView.adapter = adapter
+        binding.participantsRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext())
+
+        viewModel.getParticipants(tripId)
+            .observe(viewLifecycleOwner) { list ->
+                adapter.submitList(list)
+            }
+
+
+        binding.tabParticipants
         val tabPolls = view.findViewById<Button>(R.id.tabPolls)
         val tabExpenses = view.findViewById<Button>(R.id.tabExpenses)
         val tabDocs = view.findViewById<Button>(R.id.tabDocs)
         val tabItinerary = view.findViewById<Button>(R.id.tabItinerary)
         val btnAddParticipant = view.findViewById<Button>(R.id.btnAddParticipant)
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
-        val participantsContainer = view.findViewById<LinearLayout>(R.id.participantsContainer)
+
 
         // Remove blue highlight in bottom nav
         bottomNav.menu.setGroupCheckable(0, true, false)
@@ -30,38 +80,11 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
         }
         bottomNav.menu.setGroupCheckable(0, true, true)
 
-        // Edit / Delete actions
-        for (i in 0 until participantsContainer.childCount) {
-            val card = participantsContainer.getChildAt(i)
-            val editIcon = card.findViewById<ImageView>(R.id.ic_edit)
-            val deleteIcon = card.findViewById<ImageView>(R.id.ic_delete)
-            val nameText = card.findViewById<TextView>(R.id.tvName)
-            val emailText = card.findViewById<TextView>(R.id.tvEmail)
-
-            editIcon?.setOnClickListener {
-                showEditDialog(nameText, emailText)
-            }
 
 
-            deleteIcon?.setOnClickListener {
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Remove Participant")
-                    .setMessage("Are you sure you want to delete ${nameText?.text}?")
-                    .setPositiveButton("Yes") { _, _ ->
-                        participantsContainer.removeView(card)
-                        Toast.makeText(
-                            requireContext(),
-                            "Participant deleted!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    .setNegativeButton("No", null)
-                    .show()
-            }
-        }
 
         // Top tabs
-        tabParticipants.setOnClickListener {
+        binding.tabParticipants.setOnClickListener{
             Toast.makeText(requireContext(), "You're in Participants", Toast.LENGTH_SHORT).show()
         }
 
@@ -85,9 +108,8 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
                 .navigate(R.id.action_tripDetailsFragment_to_itineraryFragment)
         }
 
-        btnAddParticipant.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_tripDetailsFragment_to_inviteMembersFragment)
+        binding.btnAddParticipant.setOnClickListener {
+            showAddParticipantDialog(tripId)
         }
 
         // Bottom navigation
@@ -109,10 +131,8 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
         }
     }
 
-    private fun showEditDialog(
-        nameText: TextView,
-        emailText: TextView
-    ) {
+    private fun showEditDialog(user: UserEntity) {
+
         val layout = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(50, 40, 50, 10)
@@ -120,13 +140,14 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
 
         val etName = EditText(requireContext()).apply {
             hint = "Name"
-            setText(nameText.text)
+            setText(user.name)
         }
 
         val etEmail = EditText(requireContext()).apply {
             hint = "Email"
-            inputType = android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-            setText(emailText.text)
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                    android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            setText(user.email)
         }
 
         layout.addView(etName)
@@ -141,17 +162,119 @@ class TripDetailsFragment : Fragment(R.layout.fragment_trip_details) {
 
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+
                 val newName = etName.text.toString().trim()
                 val newEmail = etEmail.text.toString().trim()
 
+                // Clear previous errors
+                etName.error = null
+                etEmail.error = null
+
                 when {
-                    newName.isEmpty() -> etName.error = "Name cannot be empty"
-                    newEmail.isEmpty() -> etEmail.error = "Email cannot be empty"
-                    !android.util.Patterns.EMAIL_ADDRESS.matcher(newEmail).matches() ->
+                    newName.isEmpty() -> {
+                        etName.error = "Name cannot be empty"
+                    }
+
+                    newEmail.isEmpty() -> {
+                        etEmail.error = "Email cannot be empty"
+                    }
+
+                    !android.util.Patterns.EMAIL_ADDRESS
+                        .matcher(newEmail)
+                        .matches() -> {
+
                         etEmail.error = "Invalid email format"
+                    }
+
                     else -> {
-                        nameText.text = newName
-                        emailText.text = newEmail
+                        val updatedUser = user.copy(
+                            name = newName,
+                            email = newEmail
+                        )
+
+                        userViewModel.update(updatedUser)
+                        dialog.dismiss()
+                    }
+                }
+            }
+        }
+
+        dialog.show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun showAddParticipantDialog(tripId: Long) {
+
+        val layout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(50, 40, 50, 10)
+        }
+
+        val etName = EditText(requireContext()).apply {
+            hint = "Name"
+        }
+
+        val etEmail = EditText(requireContext()).apply {
+            hint = "Email"
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                    android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+        }
+
+        layout.addView(etName)
+        layout.addView(etEmail)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Add Participant")
+            .setView(layout)
+            .setPositiveButton("Add", null)
+            .setNegativeButton("Cancel", null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+
+                val name = etName.text.toString().trim()
+                val email = etEmail.text.toString().trim()
+
+                etName.error = null
+                etEmail.error = null
+
+                when {
+                    name.isEmpty() -> {
+                        etName.error = "Name cannot be empty"
+                    }
+
+                    email.isEmpty() -> {
+                        etEmail.error = "Email cannot be empty"
+                    }
+
+                    !android.util.Patterns.EMAIL_ADDRESS
+                        .matcher(email)
+                        .matches() -> {
+
+                        etEmail.error = "Invalid email format"
+                    }
+
+                    else -> {
+
+                        // 1️⃣ Create user
+                        val newUser = UserEntity(
+                            name = name,
+                            email = email,
+                            passwordHash = "" // temporary
+                        )
+
+                        // Insert user + link to trip
+                        userViewModel.insertAndLinkToTrip(
+                            newUser,
+                            tripId,
+                            viewModel
+                        )
+
                         dialog.dismiss()
                     }
                 }

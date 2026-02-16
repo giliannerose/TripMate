@@ -13,7 +13,7 @@ class UserRepository(private val userDao: UserDao) {
         val hashedPassword = PasswordHasher.hash(rawPassword)
         val newUser = UserEntity(name = name, email = email, passwordHash = hashedPassword)
 
-        userDao.insertUser(newUser)
+        userDao.insert(newUser)
         return true
     }
 
@@ -24,6 +24,14 @@ class UserRepository(private val userDao: UserDao) {
         val isPasswordCorrect = PasswordHasher.check(inputPassword, user.passwordHash)
 
         return if (isPasswordCorrect) user else null
+    }
+
+    suspend fun update(user: UserEntity) {
+        userDao.update(user)
+    }
+
+    suspend fun insert(user: UserEntity): Long {
+        return userDao.insert(user)
     }
 
 }

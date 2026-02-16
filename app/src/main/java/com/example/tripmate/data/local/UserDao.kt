@@ -3,6 +3,7 @@ package com.example.tripmate.data.local
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.example.tripmate.data.model.UserEntity
 
 
@@ -10,13 +11,16 @@ import com.example.tripmate.data.model.UserEntity
 interface UserDao {
 
     @Insert
-    suspend fun insertUser(user: UserEntity)
+    suspend fun insert(user: UserEntity): Long
 
     @Query("SELECT * FROM user_table WHERE email = :email LIMIT 1")
     suspend fun getUserByEmail(email: String): UserEntity?
 
     @Query("SELECT * FROM user_table WHERE name = :name LIMIT 1")
     suspend fun getUserByName(name: String): UserEntity?
+
+    @Update
+    suspend fun update(user: UserEntity)
 
 
 }

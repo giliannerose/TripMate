@@ -10,16 +10,25 @@ import com.example.tripmate.data.model.UserEntity
 import com.example.tripmate.data.model.ActivityEntity
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.tripmate.data.model.TripParticipantEntity
 
 
+@Database(entities =
+    [UserEntity::class,
+        TripEntity::class,
+        ExpenseEntity::class,
+        ActivityEntity::class,
+        TripParticipantEntity::class
+    ],
+    version = 5, exportSchema = false)
 
-@Database(entities = [UserEntity::class, TripEntity::class, ExpenseEntity::class, ActivityEntity::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     // Connects the Database to the Queries
     abstract fun userDao(): UserDao
     abstract fun tripDao(): TripDao
     abstract fun expenseDao(): ExpenseDao
     abstract fun activityDao(): ActivityDao
+    abstract fun tripParticipantDao(): TripParticipantDao
 
 
     companion object {
@@ -57,6 +66,18 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+            CREATE TABLE IF NOT EXISTS trip_participant_table (
+                tripId INTEGER NOT NULL,
+                userId INTEGER NOT NULL,
+                PRIMARY KEY(tripId, userId)
+            )
+        """.trimIndent())
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -65,7 +86,11 @@ abstract class AppDatabase : RoomDatabase() {
                     "app_database"
                 )
                     // Plug the migration
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .addMigrations(MIGRATION_1_2,
+                        MIGRATION_2_3,
+                        MIGRATION_3_4,
+                        MIGRATION_4_5
+                    )
                     .build()
                 INSTANCE = instance
                 instance
