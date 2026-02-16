@@ -1,77 +1,132 @@
 package com.example.tripmate.ui.documents
 
-import android.app.Activity
-import android.app.ProgressDialog
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tripmate.R
+import com.example.tripmate.data.local.AppDatabase
+import com.example.tripmate.data.model.DocumentEntity
+import com.example.tripmate.data.repository.DocumentRepository
+import com.example.tripmate.databinding.FragmentDocumentsBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DocumentsFragment : Fragment(R.layout.fragment_documents) {
 
-    private val PICK_FILE_REQUEST = 1
+    private var _binding: FragmentDocumentsBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var viewModel: DocumentViewModel
+    private lateinit var adapter: DocumentAdapter
+
+    private val tripId = 1
+    // Modern file picker
+    private val filePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let { handleFileSelected(it) }
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentDocumentsBinding.bind(view)
 
-        val btnUpload = view.findViewById<Button>(R.id.btnUpload)
-        val tabParticipants = view.findViewById<Button>(R.id.tabParticipants)
-        val tabPolls = view.findViewById<Button>(R.id.tabPolls)
-        val tabExpenses = view.findViewById<Button>(R.id.tabExpenses)
-        val tabDocs = view.findViewById<Button>(R.id.tabDocs)
-        val tabItinerary = view.findViewById<Button>(R.id.tabItinerary)
-        val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        // remove blue highlight in bottom nav
-        bottomNav.menu.setGroupCheckable(0, true, false)
-        for (i in 0 until bottomNav.menu.size()) {
-            bottomNav.menu.getItem(i).isChecked = false
+        setupViewModel()
+        setupRecyclerView()
+        observeDocuments()
+        setupUploadButton()
+        setupNavigation()
+    }
+
+    private fun setupViewModel() {
+        val database = AppDatabase.getDatabase(requireContext())
+        val repository = DocumentRepository(database.documentDao())
+        val factory = DocumentViewModelFactory(repository)
+
+        viewModel = ViewModelProvider(this, factory)
+            .get(DocumentViewModel::class.java)
+    }
+
+    private fun setupRecyclerView() {
+        adapter = DocumentAdapter { document ->
+            viewModel.delete(document)
         }
-        bottomNav.menu.setGroupCheckable(0, true, true)
 
-        // Upload button (system intent stays)
-        btnUpload.setOnClickListener {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "*/*"
-            startActivityForResult(
-                Intent.createChooser(intent, "Select a file to upload"),
-                PICK_FILE_REQUEST
+        binding.recyclerDocuments.layoutManager =
+            LinearLayoutManager(requireContext())
+
+        binding.recyclerDocuments.adapter = adapter
+    }
+
+    private fun observeDocuments() {
+        viewModel.getDocuments(tripId)
+            .observe(viewLifecycleOwner) { documents ->
+                adapter.submitList(documents)
+
+                binding.tvEmpty.visibility =
+                    if (documents.isEmpty()) View.VISIBLE else View.GONE
+            }
+    }
+
+    private fun setupUploadButton() {
+        binding.btnUpload.setOnClickListener {
+            filePickerLauncher.launch("*/*")
+        }
+    }
+
+    private fun handleFileSelected(uri: Uri) {
+        val fileName = uri.lastPathSegment ?: "Unknown File"
+
+        val document = DocumentEntity(
+            tripId = tripId,
+            fileName = fileName,
+            fileUri = uri.toString()
+        )
+
+        viewModel.insert(document)
+
+        Toast.makeText(
+            requireContext(),
+            "File uploaded successfully!",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun setupNavigation() {
+        binding.tabParticipants.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_documentsFragment_to_tripDetailsFragment
             )
         }
 
-        // Tabs navigation
-        tabParticipants.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_documentsFragment_to_tripDetailsFragment)
+        binding.tabPolls.setOnClickListener {
+            findNavController() .navigate(R.id.action_documentsFragment_to_createPollFragment)
         }
 
-        tabPolls.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_documentsFragment_to_createPollFragment)
+
+        binding.tabExpenses.setOnClickListener {
+            findNavController() .navigate(R.id.action_documentsFragment_to_expenseSummaryFragment)
         }
 
-        tabExpenses.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_documentsFragment_to_expenseSummaryFragment)
+        binding.tabItinerary.setOnClickListener {
+            findNavController() .navigate(R.id.action_documentsFragment_to_itineraryFragment)
         }
 
-        tabDocs.setOnClickListener {
-            Toast.makeText(requireContext(), "You're already on Docs", Toast.LENGTH_SHORT).show()
+        binding.tabDocs.setOnClickListener {
+            Toast.makeText(
+                requireContext(),
+                "You're already on Docs",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
-        tabItinerary.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_documentsFragment_to_itineraryFragment)
-        }
+        val bottomNav: BottomNavigationView = binding.bottomNav
 
-        // Bottom navigation
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home ->
@@ -90,33 +145,8 @@ class DocumentsFragment : Fragment(R.layout.fragment_documents) {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == PICK_FILE_REQUEST && resultCode == Activity.RESULT_OK) {
-            val fileUri: Uri? = data?.data
-
-            if (fileUri != null) {
-                val progressDialog = ProgressDialog(requireContext())
-                progressDialog.setMessage("Uploading file...")
-                progressDialog.setCancelable(false)
-                progressDialog.show()
-
-                Handler().postDelayed({
-                    progressDialog.dismiss()
-                    Toast.makeText(
-                        requireContext(),
-                        "File uploaded successfully!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }, 2000)
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "No file selected",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
