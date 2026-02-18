@@ -16,6 +16,7 @@ import com.example.tripmate.ui.trip.ParticipantAdapter
 import com.example.tripmate.ui.trip.TripParticipantViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.tripmate.data.model.TripParticipantEntity
 import com.example.tripmate.ui.user.UserViewModel
 
 class TripDetailsFragment : Fragment() {
@@ -261,7 +262,7 @@ class TripDetailsFragment : Fragment() {
 
                     else -> {
 
-                        // 1️⃣ Create user
+                        // Create user
                         val newUser = UserEntity(
                             name = name,
                             email = email,
@@ -269,11 +270,15 @@ class TripDetailsFragment : Fragment() {
                         )
 
                         // Insert user + link to trip
-                        userViewModel.insertAndLinkToTrip(
-                            newUser,
-                            tripId,
-                            viewModel
-                        )
+                        userViewModel.insert(newUser) { userId ->
+
+                            viewModel.insert(
+                                TripParticipantEntity(
+                                    tripId = tripId,
+                                    userId = userId.toInt()
+                                )
+                            )
+                        }
 
                         dialog.dismiss()
                     }

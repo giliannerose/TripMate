@@ -8,11 +8,34 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.tripmate.ui.poll.PollViewModel
+import com.example.tripmate.ui.poll.PollResultsAdapter
 
 class PollResultsFragment : Fragment(R.layout.fragment_poll_results) {
 
+    private lateinit var viewModel: PollViewModel
+    private lateinit var adapter: PollResultsAdapter
+    private val tripId: Long = 1 // TEMP for Sprint 3
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel = ViewModelProvider(this)[PollViewModel::class.java]
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerResults)
+
+        adapter = PollResultsAdapter()
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+
+        viewModel.getPollsByTrip(tripId).observe(viewLifecycleOwner) { polls ->
+            adapter.submitList(polls)
+        }
 
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
 
@@ -62,11 +85,6 @@ class PollResultsFragment : Fragment(R.layout.fragment_poll_results) {
             true
         }
 
-        // Back to polls buttons
-        listOf(R.id.btnBackPolls, R.id.btnBackPolls1).forEach { id ->
-            view.findViewById<Button>(id).setOnClickListener {
-                findNavController().popBackStack()
-            }
-        }
+
     }
 }

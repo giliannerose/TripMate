@@ -11,53 +11,85 @@ import android.widget.Toast
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.RecyclerView
+import com.example.tripmate.ui.user.UserViewModel
+import com.example.tripmate.ui.trip.TripParticipantViewModel
+import com.example.tripmate.data.model.TripParticipantEntity
+import com.example.tripmate.ui.invite.InviteMembersAdapter
 
 class InviteMembersFragment : Fragment(R.layout.fragment_invite_members) {
+
+    private val userViewModel: UserViewModel by viewModels()
+    private val participantViewModel: TripParticipantViewModel by viewModels()
+
+    private lateinit var adapter: InviteMembersAdapter
+
+    private val tripId: Long by lazy {
+        requireArguments().getLong("tripId")
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         val btnSendInvite = view.findViewById<Button>(R.id.btnSendInvite)
-        val cbEva = view.findViewById<CheckBox>(R.id.cbEva)
-        val cbAnna = view.findViewById<CheckBox>(R.id.cbAnna)
-        val cbMonica = view.findViewById<CheckBox>(R.id.cbMonica)
-        val cbDenise = view.findViewById<CheckBox>(R.id.cbDenise)
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        btnSendInvite.setOnClickListener {
-            val selected = mutableListOf<String>()
-            if (cbEva.isChecked) selected.add("Eva")
-            if (cbAnna.isChecked) selected.add("Anna Marie")
-            if (cbMonica.isChecked) selected.add("Monica")
-            if (cbDenise.isChecked) selected.add("Denise")
+        adapter = InviteMembersAdapter()
 
-            if (selected.isEmpty()) {
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerUsers)
+        recyclerView.adapter = adapter
+
+        userViewModel.allUsers.observe(viewLifecycleOwner) { users ->
+            adapter.submitList(users)
+        }
+
+
+
+        btnSendInvite.setOnClickListener {
+
+            val selectedUsers = adapter.getSelectedUsers()
+
+            if (selectedUsers.isEmpty()) {
                 Toast.makeText(
                     requireContext(),
                     "Please select at least one member.",
                     Toast.LENGTH_SHORT
                 ).show()
-            } else {
-                val selectedMembers = selected.joinToString(", ")
-                val message = "Are you sure you want to send invites to: $selectedMembers?"
-
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Confirm Invitation")
-                    .setMessage(message)
-                    .setCancelable(false)
-                    .setPositiveButton("Yes") { dialog, _ ->
-                        Toast.makeText(
-                            requireContext(),
-                            "Invites sent to: $selectedMembers",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        dialog.dismiss()
-                    }
-                    .setNegativeButton("Cancel") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .show()
+                return@setOnClickListener
             }
+
+            val names = selectedUsers.joinToString(", ") { it.name }
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Confirm Invitation")
+                .setMessage("Are you sure you want to add: $names?")
+                .setPositiveButton("Yes") { dialog, _ ->
+
+                    selectedUsers.forEach { user ->
+                        participantViewModel.insert(
+                            TripParticipantEntity(
+                                tripId = tripId,
+                                userId = user.id
+                            )
+                        )
+                    }
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Members added successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }
+
 
         // remove blue highlight in bottom nav
         bottomNav.menu.setGroupCheckable(0, true, false)

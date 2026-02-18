@@ -15,12 +15,15 @@ class UserViewModel(application: Application)
 
     private val repository: UserRepository
 
+
     init {
         val dao = AppDatabase
             .getDatabase(application)
             .userDao()
 
         repository = UserRepository(dao)
+
+
     }
 
     fun update(user: UserEntity) =
@@ -28,19 +31,12 @@ class UserViewModel(application: Application)
             repository.update(user)
         }
 
-    fun insertAndLinkToTrip(
-        user: UserEntity,
-        tripId: Long,
-        tripParticipantViewModel: TripParticipantViewModel
-    ) = viewModelScope.launch {
-
-        val userId = repository.insert(user)
-
-        val participant = TripParticipantEntity(
-            tripId = tripId,
-            userId = userId.toInt()
-        )
-
-        tripParticipantViewModel.insert(participant)
+    fun insert(user: UserEntity, onResult: (Long) -> Unit) {
+        viewModelScope.launch {
+            val id = repository.insert(user)
+            onResult(id)
+        }
     }
+    val allUsers = repository.getAllUsers()
+
 }

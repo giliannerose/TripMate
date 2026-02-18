@@ -1,5 +1,6 @@
 package com.example.tripmate.data.local
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -21,6 +22,9 @@ interface UserDao {
 
     @Update
     suspend fun update(user: UserEntity)
+
+    @Query("SELECT * FROM user_table")
+    fun getAllUsers(): LiveData<List<UserEntity>>
 
 
 }

@@ -34,4 +34,6 @@ class UserRepository(private val userDao: UserDao) {
         return userDao.insert(user)
     }
 
+    fun getAllUsers() = userDao.getAllUsers()
+
 }
