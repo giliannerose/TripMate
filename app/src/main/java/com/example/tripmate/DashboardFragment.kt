@@ -16,156 +16,103 @@ import androidx.navigation.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.tripmate.data.utils.SessionManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.tripmate.ui.trip.DashboardTripAdapter
+import com.example.tripmate.ui.trip.TripViewModel
 
 class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
+
+    private lateinit var tripViewModel: TripViewModel
+    private lateinit var adapter: DashboardTripAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tapHandler = android.os.Handler(android.os.Looper.getMainLooper())
-        var singleTapRunnable: Runnable? = null
+        tripViewModel = ViewModelProvider(this)[TripViewModel::class.java]
 
+        val recyclerTrips = view.findViewById<RecyclerView>(R.id.recyclerTrips)
 
-        val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
-        val cardTripSiargao = view.findViewById<CardView>(R.id.cardTripSiargao)
-        val btnViewItinerary = view.findViewById<Button>(R.id.btnViewItinerary)
-        val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
+        adapter = DashboardTripAdapter { trip ->
 
-        val actionCreate = view.findViewById<LinearLayout>(R.id.actionCreate)
-        val actionInvite = view.findViewById<LinearLayout>(R.id.actionInvite)
-        val actionExpenses = view.findViewById<LinearLayout>(R.id.actionExpenses)
-
-        val tvGreeting = view.findViewById<TextView>(R.id.tvGreeting)
-        val sessionManager = SessionManager(requireContext())
-        val userName = sessionManager.getUserName()
-        val nameFromStorage = sessionManager.getUserName()
-        android.util.Log.d("DEBUG_NAME", "The name in storage is: $nameFromStorage")
-        tvGreeting.text = getString(R.string.welcome_greeting, userName)
-        tvGreeting.text = "Good day, $nameFromStorage 👋"
-
-
-
-        // Swipe refresh
-        swipeRefresh.setOnRefreshListener {
-            Toast.makeText(requireContext(), "Dashboard refreshed", Toast.LENGTH_SHORT).show()
-            swipeRefresh.isRefreshing = false
+            view.findNavController()
+                .navigate(R.id.action_dashboardFragment_to_tripDetailsFragment)
         }
 
 
+        recyclerTrips.layoutManager = LinearLayoutManager(requireContext())
+        recyclerTrips.adapter = adapter
 
-        val gestureDetector = GestureDetector(
-            requireContext(),
-            object : GestureDetector.SimpleOnGestureListener() {
+        tripViewModel.allTrips.observe(viewLifecycleOwner) { trips ->
+            adapter.submitList(trips)
 
-                override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                    singleTapRunnable = Runnable {
+            val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
+            val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
+
+            val actionCreate = view.findViewById<LinearLayout>(R.id.actionCreate)
+            val actionInvite = view.findViewById<LinearLayout>(R.id.actionInvite)
+            val actionExpenses = view.findViewById<LinearLayout>(R.id.actionExpenses)
+
+            val tvGreeting = view.findViewById<TextView>(R.id.tvGreeting)
+            val sessionManager = SessionManager(requireContext())
+            val userName = sessionManager.getUserName()
+            val nameFromStorage = sessionManager.getUserName()
+            android.util.Log.d("DEBUG_NAME", "The name in storage is: $nameFromStorage")
+            tvGreeting.text = "Good day, ${sessionManager.getUserName()} 👋"
+
+
+            // Swipe refresh
+            swipeRefresh.setOnRefreshListener {
+                swipeRefresh.isRefreshing = false
+            }
+
+
+
+            actionCreate.setOnClickListener {
+                view.findNavController()
+                    .navigate(R.id.action_dashboardFragment_to_createTripFragment)
+            }
+
+            actionInvite.setOnClickListener {
+                view.findNavController()
+                    .navigate(R.id.action_dashboardFragment_to_inviteMembersFragment)
+            }
+
+            actionExpenses.setOnClickListener {
+                view.findNavController()
+                    .navigate(R.id.action_dashboardFragment_to_addExpenseFragment)
+            }
+
+            bottomNav.setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.nav_home -> {
+                        true
+                    }
+
+                    R.id.nav_create -> {
                         view.findNavController()
                             .navigate(R.id.action_dashboardFragment_to_myTripsFragment)
+                        true
                     }
-                    tapHandler.postDelayed(singleTapRunnable!!, 250)
-                    return true
-                }
 
-                override fun onDoubleTap(e: MotionEvent): Boolean {
-                    singleTapRunnable?.let { tapHandler.removeCallbacks(it) }
-
-                    Toast.makeText(requireContext(), "Double tap detected", Toast.LENGTH_SHORT).show()
-                    return true
-                }
-
-                override fun onFling(
-                    e1: MotionEvent?,
-                    e2: MotionEvent,
-                    velocityX: Float,
-                    velocityY: Float
-                ): Boolean {
-                    if (e1 == null) return false
-
-                    val diffX = e2.x - e1.x
-                    val diffY = e2.y - e1.y
-
-                    if (kotlin.math.abs(diffX) > kotlin.math.abs(diffY)) {
-                        if (diffX < -150) {
-                            Toast.makeText(requireContext(), "Swipe left detected", Toast.LENGTH_SHORT).show()
-                            return true
-                        }
+                    R.id.nav_notifications -> {
+                        view.findNavController()
+                            .navigate(R.id.action_dashboardFragment_to_notificationsFragment)
+                        true
                     }
-                    return false
+
+                    R.id.nav_profile -> {
+                        view.findNavController()
+                            .navigate(R.id.action_dashboardFragment_to_profileFragment)
+                        true
+                    }
+
+                    else -> false
                 }
             }
-        )
-
-
-        cardTripSiargao.setOnTouchListener { v, event ->
-
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    swipeRefresh.isEnabled = false
-                    v.parent.requestDisallowInterceptTouchEvent(true)
-                }
-
-                MotionEvent.ACTION_UP,
-                MotionEvent.ACTION_CANCEL -> {
-                    swipeRefresh.isEnabled = true
-                    v.parent.requestDisallowInterceptTouchEvent(false)
-                }
-            }
-
-            gestureDetector.onTouchEvent(event)
-            true
         }
 
 
-
-
-        btnViewItinerary.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_dashboardFragment_to_itineraryFragment)
-        }
-
-        actionCreate.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_dashboardFragment_to_createTripFragment)
-        }
-
-        actionInvite.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_dashboardFragment_to_inviteMembersFragment)
-        }
-
-        actionExpenses.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_dashboardFragment_to_addExpenseFragment)
-        }
-
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    true
-                }
-
-                R.id.nav_create -> {
-                    view.findNavController()
-                        .navigate(R.id.action_dashboardFragment_to_myTripsFragment)
-                    true
-                }
-
-                R.id.nav_notifications -> {
-                    view.findNavController()
-                        .navigate(R.id.action_dashboardFragment_to_notificationsFragment)
-                    true
-                }
-
-                R.id.nav_profile -> {
-                    view.findNavController()
-                        .navigate(R.id.action_dashboardFragment_to_profileFragment)
-                    true
-                }
-
-                else -> false
-            }
-        }
     }
-
-
-
 }
