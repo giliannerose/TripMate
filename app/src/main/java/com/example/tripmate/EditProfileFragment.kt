@@ -1,7 +1,6 @@
 package com.example.tripmate.ui.profile
 
-import android.app.Activity
-import android.content.Intent
+
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -10,89 +9,89 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.R
+import androidx.lifecycle.ViewModelProvider
+import androidx.activity.result.contract.ActivityResultContracts
+import com.example.tripmate.databinding.FragmentEditProfileBinding
+import com.example.tripmate.ui.user.UserViewModel
+import com.example.tripmate.data.model.UserEntity
 
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
-    private lateinit var imgProfile: ImageView
-    private val PICK_IMAGE_REQUEST = 1
+    private lateinit var binding: FragmentEditProfileBinding
+    private lateinit var userViewModel: UserViewModel
+    private var currentUser: UserEntity? = null
+    private var selectedImageUri: Uri? = null
+
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                selectedImageUri = it
+                binding.imgProfile.setImageURI(it)
+            }
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tvBack = view.findViewById<TextView>(R.id.tvBack)
-        val tvUploadPhoto = view.findViewById<TextView>(R.id.tvUploadPhoto)
-        val etName = view.findViewById<EditText>(R.id.etName)
-        val etBio = view.findViewById<EditText>(R.id.etBio)
-        val btnSaveProfile = view.findViewById<Button>(R.id.btnSaveProfile)
-        imgProfile = view.findViewById(R.id.imgProfile)
+        binding = FragmentEditProfileBinding.bind(view)
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
-        // Back
-        tvBack.setOnClickListener {
+        val userId = 1 // TODO: replace with real logged-in user
+
+        userViewModel.getUserById(userId)
+            .observe(viewLifecycleOwner) { user ->
+
+                user?.let {
+                    currentUser = it
+                    binding.etName.setText(it.name)
+                    binding.etBio.setText(it.bio)
+
+                    it.profileImageUri?.let { uri ->
+                        binding.imgProfile.setImageURI(Uri.parse(uri))
+                    }
+                }
+            }
+
+        binding.tvBack.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        // Profile photo picker (system intent stays)
-        imgProfile.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, PICK_IMAGE_REQUEST)
+        binding.imgProfile.setOnClickListener {
+            pickImageLauncher.launch("image/*")
         }
 
-        // Save profile
-        btnSaveProfile.setOnClickListener {
-            val name = etName.text.toString().trim()
-            val bio = etBio.text.toString().trim()
-
-            if (name.isEmpty()) {
-                etName.error = "Name is required"
-                etName.requestFocus()
-                return@setOnClickListener
-            }
-
-            if (bio.isEmpty()) {
-                etBio.error = "Bio is required"
-                etBio.requestFocus()
-                return@setOnClickListener
-            }
-
-            AlertDialog.Builder(requireContext())
-                .setTitle("Save Changes")
-                .setMessage("Are you sure you want to save your profile changes?")
-                .setPositiveButton("Yes") { dialog, _ ->
-                    Toast.makeText(
-                        requireContext(),
-                        "Profile saved!\nName: $name\nBio: $bio",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    dialog.dismiss()
-                    findNavController().popBackStack()
-                }
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                    Toast.makeText(
-                        requireContext(),
-                        "Save canceled.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                .show()
+        binding.btnSaveProfile.setOnClickListener {
+            saveProfile(userId)
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    private fun saveProfile(userId: Int) {
 
-        if (requestCode == PICK_IMAGE_REQUEST &&
-            resultCode == Activity.RESULT_OK &&
-            data != null
-        ) {
-            val imageUri: Uri? = data.data
-            imgProfile.setImageURI(imageUri)
-            Toast.makeText(
-                requireContext(),
-                "Profile photo updated!",
-                Toast.LENGTH_SHORT
-            ).show()
+        val name = binding.etName.text.toString().trim()
+        val bio = binding.etBio.text.toString().trim()
+
+        if (name.isEmpty()) {
+            binding.etName.error = "Name required"
+            return
+        }
+
+        if (bio.isEmpty()) {
+            binding.etBio.error = "Bio required"
+            return
+        }
+
+        val updatedUser = currentUser?.copy(
+            name = name,
+            bio = bio,
+            profileImageUri = selectedImageUri?.toString()
+                ?: currentUser?.profileImageUri
+        )
+
+        updatedUser?.let {
+            userViewModel.update(it)
+            Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
         }
     }
+
 }

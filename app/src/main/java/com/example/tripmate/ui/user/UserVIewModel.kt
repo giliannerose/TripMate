@@ -37,6 +37,10 @@ class UserViewModel(application: Application)
             onResult(id)
         }
     }
+
+    fun getUserById(userId: Int) =
+        repository.getUserById(userId)
     val allUsers = repository.getAllUsers()
+
 
 }

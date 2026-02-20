@@ -26,5 +26,8 @@ interface UserDao {
     @Query("SELECT * FROM user_table")
     fun getAllUsers(): LiveData<List<UserEntity>>
 
+    @Query("SELECT * FROM user_table WHERE id = :userId LIMIT 1")
+    fun getUserById(userId: Int): LiveData<UserEntity?>
+
 
 }

@@ -36,4 +36,6 @@ class UserRepository(private val userDao: UserDao) {
 
     fun getAllUsers() = userDao.getAllUsers()
 
+    fun getUserById(userId: Int) = userDao.getUserById(userId)
+
 }
