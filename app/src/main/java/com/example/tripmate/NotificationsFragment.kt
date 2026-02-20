@@ -2,102 +2,69 @@ package com.example.tripmate.ui.notifications
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.R
+import com.example.tripmate.databinding.FragmentNotificationsBinding
+import com.example.tripmate.ui.notification.NotificationViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
+
+    private var _binding: FragmentNotificationsBinding? = null
+    private val binding get() = _binding!!
+
+    private val viewModel: NotificationViewModel by viewModels()
+    private lateinit var adapter: NotificationAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val btnAccept = view.findViewById<Button>(R.id.btnAccept)
-        val btnDecline = view.findViewById<Button>(R.id.btnDecline)
-        val btnViewPoll = view.findViewById<Button>(R.id.btnViewPoll)
-        val btnViewExpenses = view.findViewById<Button>(R.id.btnViewExpenses)
-        val btnAcknowledge = view.findViewById<Button>(R.id.btnAcknowledge)
-        val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
+        _binding = FragmentNotificationsBinding.bind(view)
 
-        bottomNav.selectedItemId = R.id.nav_notifications
+        adapter = NotificationAdapter { notification, action ->
 
-        // Accept invitation
-        btnAccept.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Accept Invitation")
-                .setMessage("Are you sure you want to accept this invitation?")
-                .setPositiveButton("Yes") { _, _ ->
-                    Toast.makeText(requireContext(), "Invitation accepted!", Toast.LENGTH_SHORT).show()
+            when (action) {
 
-                    disableInvitationActions(
-                        btnAccept,
-                        btnDecline,
-                    )
+                "ACCEPT" -> {
+                    viewModel.update(notification.copy(status = "ACCEPTED"))
                 }
-                .setNegativeButton("No") { dialog, _ ->
-                    dialog.dismiss()
+
+                "DECLINE" -> {
+                    viewModel.update(notification.copy(status = "DECLINED"))
                 }
-                .setCancelable(true)
-                .show()
-        }
 
-        // Decline invitation
-        btnDecline.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Decline Invitation")
-                .setMessage("Are you sure you want to decline this invitation?")
-                .setPositiveButton("Yes") { _, _ ->
-                    Toast.makeText(requireContext(), "Invitation declined.", Toast.LENGTH_SHORT).show()
-
-                    btnAccept.isEnabled = false
-                    btnDecline.isEnabled = false
-
-                    btnAccept.setBackgroundColor(
-                        requireContext().resources.getColor(android.R.color.darker_gray)
-                    )
-                    btnDecline.setBackgroundColor(
-                        requireContext().resources.getColor(android.R.color.darker_gray)
-                    )
-
-                    btnAccept.setTextColor(
-                        requireContext().resources.getColor(android.R.color.white)
-                    )
-                    btnDecline.setTextColor(
-                        requireContext().resources.getColor(android.R.color.white)
-                    )
+                "ACKNOWLEDGE" -> {
+                    viewModel.update(notification.copy(status = "ACKNOWLEDGED"))
                 }
-                .setNegativeButton("No") { dialog, _ ->
-                    dialog.dismiss()
+
+                "VIEW_POLL" -> {
+                    findNavController()
+                        .navigate(R.id.action_notificationsFragment_to_voteFragment)
                 }
-                .setCancelable(true)
-                .show()
+
+                "VIEW_EXPENSE" -> {
+                    findNavController()
+                        .navigate(R.id.action_notificationsFragment_to_expenseSummaryFragment)
+                }
+            }
         }
 
-        btnViewPoll.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_notificationsFragment_to_voteFragment)
-        }
+        binding.recyclerNotifications.adapter = adapter
 
-        btnViewExpenses.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_notificationsFragment_to_expenseSummaryFragment)
-        }
+        val tripId = 1L
 
-        btnAcknowledge.setOnClickListener {
-            Toast.makeText(requireContext(), "Acknowledged.", Toast.LENGTH_SHORT).show()
-            btnAcknowledge.isEnabled = false
-            btnAcknowledge.setBackgroundColor(
-                requireContext().resources.getColor(android.R.color.darker_gray)
-            )
-            btnAcknowledge.setTextColor(
-                requireContext().resources.getColor(android.R.color.white)
-            )
-        }
+        viewModel.getNotifications(tripId)
+            .observe(viewLifecycleOwner) { list ->
+                adapter.submitList(list)
+            }
 
         // Bottom Navigation
+        val bottomNav = binding.bottomNav
+        bottomNav.selectedItemId = R.id.nav_notifications
+
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
@@ -121,19 +88,9 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
         }
     }
 
-    private fun disableInvitationActions(
-        btnAccept: Button,
-        btnDecline: Button
-    ) {
-        listOf(btnAccept, btnDecline).forEach { button ->
-            button.isEnabled = false
-            button.setBackgroundColor(
-                requireContext().resources.getColor(android.R.color.darker_gray)
-            )
-            button.setTextColor(
-                requireContext().resources.getColor(android.R.color.white)
-            )
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

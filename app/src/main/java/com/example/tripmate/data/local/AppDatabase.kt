@@ -11,6 +11,7 @@ import com.example.tripmate.data.model.ActivityEntity
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.tripmate.data.model.DocumentEntity
+import com.example.tripmate.data.model.NotificationEntity
 import com.example.tripmate.data.model.PollEntity
 import com.example.tripmate.data.model.TripParticipantEntity
 
@@ -22,9 +23,10 @@ import com.example.tripmate.data.model.TripParticipantEntity
         ActivityEntity::class,
         TripParticipantEntity::class,
         DocumentEntity::class,
-        PollEntity::class
+        PollEntity::class,
+        NotificationEntity::class
     ],
-    version = 7, exportSchema = false)
+    version = 8, exportSchema = false)
 
 abstract class AppDatabase : RoomDatabase() {
     // Connects the Database to the Queries
@@ -35,6 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun tripParticipantDao(): TripParticipantDao
     abstract fun documentDao(): DocumentDao
     abstract fun pollDao(): PollDao
+    abstract fun notificationDao(): NotificationDao
 
 
     companion object {
@@ -128,6 +131,28 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+                database.execSQL("""
+            CREATE TABLE IF NOT EXISTS notification_table (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                tripId INTEGER NOT NULL,
+                message TEXT NOT NULL,
+                type TEXT NOT NULL,
+                status TEXT NOT NULL,
+                createdAt INTEGER NOT NULL,
+                FOREIGN KEY(tripId) REFERENCES trip_table(id) ON DELETE CASCADE
+            )
+        """.trimIndent())
+
+                database.execSQL("""
+            CREATE INDEX index_notification_table_tripId
+            ON notification_table(tripId)
+        """.trimIndent())
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -141,7 +166,8 @@ abstract class AppDatabase : RoomDatabase() {
                         MIGRATION_3_4,
                         MIGRATION_4_5,
                         MIGRATION_5_6,
-                        MIGRATION_6_7
+                        MIGRATION_6_7,
+                        MIGRATION_7_8
                     )
                     .build()
                 INSTANCE = instance
