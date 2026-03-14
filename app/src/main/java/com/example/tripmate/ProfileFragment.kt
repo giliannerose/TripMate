@@ -18,6 +18,9 @@
     import com.google.android.material.bottomnavigation.BottomNavigationView
     import com.example.tripmate.data.model.UserEntity
     import com.example.tripmate.ui.trip.TripParticipantViewModel
+    import java.text.SimpleDateFormat
+    import java.util.Date
+    import java.util.Locale
 
     class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
@@ -69,6 +72,11 @@
             } else {
                 binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
             }
+
+            val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
+            val memberSince = formatter.format(Date(user.createdAt))
+
+            binding.tvMemberSince.text = memberSince
         }
 
 

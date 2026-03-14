@@ -15,5 +15,7 @@ data class UserEntity (
         val bio: String = "",
         val profileImageUri: String? = null,
 
-    )
+    val createdAt: Long = System.currentTimeMillis()
+
+)
 
