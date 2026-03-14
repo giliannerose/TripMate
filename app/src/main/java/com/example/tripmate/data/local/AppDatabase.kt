@@ -26,7 +26,7 @@ import com.example.tripmate.data.model.TripParticipantEntity
         PollEntity::class,
         NotificationEntity::class
     ],
-    version = 11, exportSchema = false)
+    version = 12, exportSchema = false)
 
 abstract class AppDatabase : RoomDatabase() {
     // Connects the Database to the Queries
@@ -190,6 +190,28 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+                database.execSQL("""
+            ALTER TABLE user_table 
+            ADD COLUMN gender TEXT NOT NULL DEFAULT ''
+        """.trimIndent())
+
+                database.execSQL("""
+            ALTER TABLE user_table 
+            ADD COLUMN age INTEGER NOT NULL DEFAULT 0
+        """.trimIndent())
+
+                database.execSQL("""
+            ALTER TABLE user_table 
+            ADD COLUMN region TEXT NOT NULL DEFAULT ''
+        """.trimIndent())
+            }
+        }
+
+
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -207,7 +229,8 @@ abstract class AppDatabase : RoomDatabase() {
                         MIGRATION_7_8,
                         MIGRATION_8_9,
                         MIGRATION_9_10,
-                        MIGRATION_10_11
+                        MIGRATION_10_11,
+                        MIGRATION_11_12
                     )
                     .build()
                 INSTANCE = instance

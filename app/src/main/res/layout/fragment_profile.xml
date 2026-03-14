@@ -231,9 +231,10 @@
                         android:gravity="center_vertical">
 
                         <TextView
+                            android:id="@+id/tvRegion"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Asia based"
+                            android:text="-"
                             android:textColor="#444"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -250,9 +251,10 @@
                         android:gravity="center_vertical">
 
                         <TextView
+                            android:id="@+id/tvGender"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Female"
+                            android:text="-"
                             android:textColor="#444"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -269,9 +271,10 @@
                         android:gravity="center_vertical">
 
                         <TextView
+                            android:id="@+id/tvAge"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="20 years old"
+                            android:text="-"
                             android:textColor="#444"
                             android:textSize="14sp" />
                     </LinearLayout>

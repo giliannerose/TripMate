@@ -73,6 +73,16 @@
                 binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
             }
 
+            binding.tvGender.text =
+                if (user.gender.isEmpty()) "-" else user.gender
+
+            binding.tvRegion.text =
+                if (user.region.isEmpty()) "-" else "${user.region} based"
+
+            binding.tvAge.text =
+                if (user.age == 0) "-" else "${user.age} years old"
+
+
             val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
             val memberSince = formatter.format(Date(user.createdAt))
 

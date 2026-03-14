@@ -45,6 +45,14 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     currentUser = it
                     binding.etName.setText(it.name)
                     binding.etBio.setText(it.bio)
+                    if (it.age != 0) {
+                        binding.etAge.setText(it.age.toString())
+                    } else {
+                        binding.etAge.setText("")
+                    }
+
+                    setSpinnerSelection(binding.spGender, it.gender)
+                    setSpinnerSelection(binding.spRegion, it.region)
 
                     it.profileImageUri?.let { uri ->
                         binding.imgProfile.setImageURI(Uri.parse(uri))
@@ -69,6 +77,9 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         val name = binding.etName.text.toString().trim()
         val bio = binding.etBio.text.toString().trim()
+        val age = binding.etAge.text.toString().toIntOrNull() ?: 0
+        val gender = binding.spGender.selectedItem.toString()
+        val region = binding.spRegion.selectedItem.toString()
 
         if (name.isEmpty()) {
             binding.etName.error = "Name required"
@@ -83,6 +94,9 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val updatedUser = currentUser?.copy(
             name = name,
             bio = bio,
+            age = age,
+            gender = if (gender == "Select Gender") "" else gender,
+            region = if (region == "Select Region") "" else region,
             profileImageUri = selectedImageUri?.toString()
                 ?: currentUser?.profileImageUri
         )
@@ -91,6 +105,18 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             userViewModel.update(it)
             Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
+        }
+    }
+
+    private fun setSpinnerSelection(spinner: Spinner, value: String) {
+
+        val adapter = spinner.adapter
+
+        for (i in 0 until adapter.count) {
+            if (adapter.getItem(i).toString() == value) {
+                spinner.setSelection(i)
+                break
+            }
         }
     }
 
