@@ -9,6 +9,7 @@ data class TripEntity (
     val id: Long = 0,
     val name: String = "",
     val description: String = "",
-    val date: String = ""
+    val date: String = "",
+    val country: String = ""
 
 )

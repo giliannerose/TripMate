@@ -77,8 +77,9 @@
                         android:text="🏝️ Trips\n0"/>
 
                     <TextView
+                        android:id="@+id/tvCountriesVisited"
                         style="@style/ProfileStatStyle"
-                        android:text="🌍 Countries\n5"/>
+                        android:text="🌍 Countries\n0"/>
 
                     <TextView
                         android:id="@+id/tvBuddyCount"
@@ -179,9 +180,10 @@
                             android:textSize="14sp" />
 
                         <TextView
+                            android:id="@+id/tvCountriesVisitedDetails"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="5"
+                            android:text="0"
                             android:textStyle="bold"
                             android:textColor="#1E88E5"
                             android:textSize="14sp" />

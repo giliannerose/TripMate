@@ -12,6 +12,8 @@ import androidx.navigation.findNavController
 import java.util.Calendar
 import androidx.appcompat.app.AlertDialog
 import android.app.DatePickerDialog
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.lifecycle.ViewModelProvider
 import com.example.tripmate.data.model.TripEntity
 import com.example.tripmate.ui.trip.TripViewModel
@@ -40,6 +42,17 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
         val btnInviteMembers = view.findViewById<Button>(R.id.btnInviteMembers)
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
 
+        val spCountry = view.findViewById<Spinner>(R.id.spCountry)
+
+        val adapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.countries_array,
+            android.R.layout.simple_spinner_item
+        )
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spCountry.adapter = adapter
+
         btnStartDate.setOnClickListener {
             showDatePicker(etStartDate, true)
         }
@@ -54,6 +67,7 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
             val destination = etDestination.text.toString().trim()
             val startDate = etStartDate.text.toString().trim()
             val endDate = etEndDate.text.toString().trim()
+            val country = spCountry.selectedItem.toString()
 
             etTripName.error = null
             etDestination.error = null
@@ -99,7 +113,8 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
                     val trip = TripEntity(
                         name = tripName,
                         description = destination,
-                        date = "$startDate - $endDate"
+                        date = "$startDate - $endDate" ,
+                        country = country
                     )
 
                     viewModel.insert(trip)

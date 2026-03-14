@@ -42,6 +42,7 @@
 
             observeUser()
             observeTripCount()
+            observeCountriesVisited()
             setupClickListeners()
             setupBottomNav()
             observeBuddyCount()
@@ -121,6 +122,13 @@
                 .observe(viewLifecycleOwner) { count ->
                     binding.tvTripsJoined.text = count.toString()
                 }
+        }
+
+        private fun observeCountriesVisited() {
+            tripViewModel.countriesVisited.observe(viewLifecycleOwner) { count ->
+                binding.tvCountriesVisited.text = "🌍 Countries\n$count"
+                binding.tvCountriesVisitedDetails.text = count.toString()
+            }
         }
 
         private fun setupBottomNav() {

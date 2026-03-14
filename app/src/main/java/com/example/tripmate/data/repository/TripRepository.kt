@@ -23,5 +23,8 @@ class TripRepository(private val tripDao: TripDao) {
         return tripDao.getTripCount()
     }
 
+    fun getCountriesVisited(): LiveData<Int> {
+        return tripDao.getCountriesVisited()
+    }
 
 }
