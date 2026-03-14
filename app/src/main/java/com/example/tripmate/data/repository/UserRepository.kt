@@ -6,15 +6,23 @@ import com.example.tripmate.data.utils.PasswordHasher
 
 
 class UserRepository(private val userDao: UserDao) {
-    suspend fun register(name: String, email:String,rawPassword: String): Boolean{
-       // checks if email already exist
-        if (userDao.getUserByEmail(email) != null) return false
+    suspend fun register(
+        name: String,
+        email: String,
+        rawPassword: String
+    ): Long? {
+
+        if (userDao.getUserByEmail(email) != null) return null
 
         val hashedPassword = PasswordHasher.hash(rawPassword)
-        val newUser = UserEntity(name = name, email = email, passwordHash = hashedPassword)
 
-        userDao.insert(newUser)
-        return true
+        val newUser = UserEntity(
+            name = name,
+            email = email,
+            passwordHash = hashedPassword
+        )
+
+        return userDao.insert(newUser)
     }
 
     //Get the user and compare the hashes

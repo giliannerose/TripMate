@@ -72,16 +72,18 @@
                     android:layout_marginTop="10dp">
 
                     <TextView
+                        android:id="@+id/tvTripsCount"
                         style="@style/ProfileStatStyle"
-                        android:text="🏝️ Trips\n8"/>
+                        android:text="🏝️ Trips\n0"/>
 
                     <TextView
                         style="@style/ProfileStatStyle"
                         android:text="🌍 Countries\n5"/>
 
                     <TextView
+                        android:id="@+id/tvBuddyCount"
                         style="@style/ProfileStatStyle"
-                        android:text="👥 Buddies\n12"/>
+                        android:text="👥 Buddies\n0"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -148,9 +150,10 @@
                             android:textSize="14sp" />
 
                         <TextView
+                            android:id="@+id/tvTripsJoined"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="8"
+                            android:text="0"
                             android:textStyle="bold"
                             android:textColor="#1E88E5"
                             android:textSize="14sp" />
@@ -204,9 +207,10 @@
                             android:textSize="14sp" />
 
                         <TextView
+                            android:id="@+id/tvBuddyCountDetails"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="12"
+                            android:text="0"
                             android:textStyle="bold"
                             android:textColor="#1E88E5"
                             android:textSize="14sp" />

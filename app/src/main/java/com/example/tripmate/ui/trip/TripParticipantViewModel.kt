@@ -2,6 +2,7 @@ package com.example.tripmate.ui.trip
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.tripmate.data.local.AppDatabase
 import com.example.tripmate.data.model.TripParticipantEntity
@@ -35,5 +36,12 @@ class TripParticipantViewModel(application: Application)
             repository.remove(tripId, userId)
         }
 
+    fun getBuddyCount(userId: Int): LiveData<Int> {
+        return repository.getBuddyCount(userId)
+    }
+
+    fun getTripsJoinedCount(userId: Int): LiveData<Int> {
+        return repository.getTripsJoinedCount(userId)
+    }
 
 }

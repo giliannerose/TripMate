@@ -4,10 +4,18 @@ import android.content.Context
 
 class SessionManager(context: Context) {
 
-    private val prefs = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+    private val prefs =
+        context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
 
-    fun saveUserName(name: String) {
-        prefs.edit().putString("user_name", name).apply()
+    fun saveUserSession(userId: Int, name: String) {
+        prefs.edit()
+            .putInt("USER_ID", userId)
+            .putString("user_name", name)
+            .apply()
+    }
+
+    fun getUserId(): Int {
+        return prefs.getInt("USER_ID", -1)
     }
 
     fun getUserName(): String {

@@ -58,15 +58,21 @@ class SignupFragment : Fragment(R.layout.fragment_sign_up) {
                 val repository = UserRepository(database.userDao())
                 // Launch Coroutine to save the User
                 viewLifecycleOwner.lifecycleScope.launch {
-                    val success = repository.register(name, email, password)
+                    val userId = repository.register(name, email, password)
 
-                    if (success) {
-                        // save the name to session before moving on
+                    if (userId != null) {
+
                         val sessionManager = SessionManager(requireContext())
-                        sessionManager.saveUserName(name)
-                        Toast.makeText(requireContext(), "Welcome, $name!", Toast.LENGTH_SHORT)
-                            .show()
-                        view.findNavController().navigate(R.id.action_signupFragment_to_profileSetupFragment)
+                        sessionManager.saveUserSession(userId.toInt(), name)
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Welcome, $name!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        view.findNavController()
+                            .navigate(R.id.action_signupFragment_to_profileSetupFragment)
 
                     } else {
                         Toast.makeText(

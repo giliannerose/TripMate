@@ -1,56 +1,82 @@
-package com.example.tripmate.ui.profile
+    package com.example.tripmate.ui.profile
 
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
-import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import com.example.tripmate.R
-import com.google.android.material.bottomnavigation.BottomNavigationView
+    import androidx.lifecycle.ViewModelProvider
+    import com.example.tripmate.databinding.FragmentProfileBinding
+    import com.example.tripmate.ui.user.UserViewModel
+    import com.example.tripmate.data.utils.SessionManager
+    import android.net.Uri
+    import android.os.Bundle
+    import android.view.View
+    import android.widget.Button
+    import android.widget.ImageView
+    import android.widget.Toast
+    import androidx.appcompat.app.AlertDialog
+    import androidx.fragment.app.Fragment
+    import androidx.navigation.fragment.findNavController
+    import com.example.tripmate.R
+    import com.example.tripmate.ui.trip.TripViewModel
+    import com.google.android.material.bottomnavigation.BottomNavigationView
+    import com.example.tripmate.data.model.UserEntity
+    import com.example.tripmate.ui.trip.TripParticipantViewModel
 
-class ProfileFragment : Fragment(R.layout.fragment_profile) {
+    class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
-    private lateinit var imgProfile: ImageView
-    private val PICK_IMAGE_REQUEST = 1
+        private lateinit var tripParticipantViewModel: TripParticipantViewModel
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        private lateinit var binding: FragmentProfileBinding
+        private lateinit var userViewModel: UserViewModel
+        private lateinit var sessionManager: SessionManager
 
-        val btnEditProfile = view.findViewById<Button>(R.id.btnEditProfile)
-        val btnSettings = view.findViewById<Button>(R.id.btnSettings)
-        val btnSignOut = view.findViewById<Button>(R.id.btnSignOut)
-        val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
+        private lateinit var tripViewModel: TripViewModel
 
-        imgProfile = view.findViewById(R.id.imgProfile)
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
 
-        imgProfile.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, PICK_IMAGE_REQUEST)
+            binding = FragmentProfileBinding.bind(view)
+            userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+            sessionManager = SessionManager(requireContext())
+            tripViewModel = ViewModelProvider(this)[TripViewModel::class.java]
+            tripParticipantViewModel = ViewModelProvider(this)[TripParticipantViewModel::class.java]
+
+            val userId = sessionManager.getUserId()
+
+            observeUser()
+            observeTripCount()
+            setupClickListeners()
+            setupBottomNav()
+            observeBuddyCount()
+            observeTripsJoined()
         }
 
-        btnEditProfile.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_profileFragment_to_editProfileFragment)
+        private fun observeUser() {
+            val userId = sessionManager.getUserId()
+            if (userId == -1) return
+
+            userViewModel.getUserById(userId)
+                .observe(viewLifecycleOwner) { user ->
+                    user?.let { bindUser(it) }
+                }
         }
 
-        btnSettings.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_profileFragment_to_settingsFragment)
+        private fun bindUser(user: UserEntity) {
+
+            binding.tvUserName.text = user.name
+            binding.tvUserBio.text = user.bio
+
+            if (!user.profileImageUri.isNullOrEmpty()) {
+                binding.imgProfile.setImageURI(Uri.parse(user.profileImageUri))
+            } else {
+                binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
+            }
         }
 
-        btnSignOut.setOnClickListener {
+
+        private fun showSignOutDialog() {
             AlertDialog.Builder(requireContext())
                 .setTitle("Sign Out")
                 .setMessage("Are you sure you want to sign out?")
                 .setPositiveButton("Yes") { _, _ ->
-                    val sessionManager = com.example.tripmate.data.utils.SessionManager(requireContext())
+
                     sessionManager.clearSession()
 
                     Toast.makeText(
@@ -62,52 +88,81 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     findNavController()
                         .navigate(R.id.action_profileFragment_to_welcomeFragment)
                 }
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    dialog.dismiss()
-                }
+                .setNegativeButton("Cancel", null)
                 .show()
         }
 
-        bottomNav.selectedItemId = R.id.nav_profile
-
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home ->
-                    findNavController().navigate(R.id.dashboardFragment)
-
-                R.id.nav_create ->
-                    findNavController().navigate(R.id.myTripsFragment)
-
-                R.id.nav_notifications ->
-                    findNavController().navigate(R.id.notificationsFragment)
-
-                R.id.nav_profile ->
-                    Toast.makeText(requireContext(), "Profile", Toast.LENGTH_SHORT).show()
-            }
-            true
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
-            val imageUri: Uri? = data?.data
-
-            if (imageUri != null) {
-                imgProfile.setImageURI(imageUri)
-                Toast.makeText(
-                    requireContext(),
-                    "Profile photo updated!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "No image selected",
-                    Toast.LENGTH_SHORT
-                ).show()
+        private fun observeTripCount() {
+            tripViewModel.tripCount.observe(viewLifecycleOwner) { count ->
+                binding.tvTripsCount.text = "🏝️ Trips\n$count"
             }
         }
+
+        private fun observeBuddyCount() {
+            val userId = sessionManager.getUserId()
+            if (userId == -1) return
+
+            tripParticipantViewModel.getBuddyCount(userId)
+                .observe(viewLifecycleOwner) { count ->
+
+                    // Header
+                    binding.tvBuddyCount.text = "👥 Buddies\n$count"
+
+                    // Details Card
+                    binding.tvBuddyCountDetails.text = count.toString()
+                }
+        }
+
+        private fun observeTripsJoined() {
+            val userId = sessionManager.getUserId()
+            if (userId == -1) return
+
+            tripParticipantViewModel.getTripsJoinedCount(userId)
+                .observe(viewLifecycleOwner) { count ->
+                    binding.tvTripsJoined.text = count.toString()
+                }
+        }
+
+        private fun setupBottomNav() {
+
+            binding.bottomNav.selectedItemId = R.id.nav_profile
+
+            binding.bottomNav.setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.nav_home ->
+                        findNavController()
+                            .navigate(R.id.dashboardFragment)
+
+                    R.id.nav_create ->
+                        findNavController()
+                            .navigate(R.id.myTripsFragment)
+
+                    R.id.nav_notifications ->
+                        findNavController()
+                            .navigate(R.id.notificationsFragment)
+
+                    R.id.nav_profile -> true
+                    else -> false
+                }
+                true
+            }
+        }
+
+        private fun setupClickListeners() {
+
+            binding.btnEditProfile.setOnClickListener {
+                findNavController()
+                    .navigate(R.id.action_profileFragment_to_editProfileFragment)
+            }
+
+            binding.btnSettings.setOnClickListener {
+                findNavController()
+                    .navigate(R.id.action_profileFragment_to_settingsFragment)
+            }
+
+            binding.btnSignOut.setOnClickListener {
+                showSignOutDialog()
+            }
+        }
+
     }
-}

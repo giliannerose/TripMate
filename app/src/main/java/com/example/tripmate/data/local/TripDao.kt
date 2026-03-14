@@ -30,4 +30,7 @@ interface TripDao {
     //Delete a trip
     @Delete
     suspend fun deleteTrip(trip: TripEntity)
+
+    @Query("SELECT COUNT(*) FROM trip_table")
+    fun getTripCount(): LiveData<Int>
 }

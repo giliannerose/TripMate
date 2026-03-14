@@ -13,7 +13,7 @@ data class UserEntity (
         val passwordHash: String,
 
         val bio: String = "",
-        val profileImageUri: String? = null
+        val profileImageUri: String? = null,
 
     )
 

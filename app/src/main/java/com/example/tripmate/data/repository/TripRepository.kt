@@ -18,4 +18,10 @@ class TripRepository(private val tripDao: TripDao) {
     suspend fun delete(trip: TripEntity) {
         tripDao.deleteTrip(trip)
     }
+
+    fun getTripCount(): LiveData<Int> {
+        return tripDao.getTripCount()
+    }
+
+
 }

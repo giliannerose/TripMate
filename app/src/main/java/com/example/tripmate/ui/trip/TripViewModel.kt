@@ -31,4 +31,6 @@ class TripViewModel(application: Application) : AndroidViewModel(application) {
     fun update(trip: TripEntity) = viewModelScope.launch {
         repository.update(trip)
     }
+
+    val tripCount: LiveData<Int> = repository.getTripCount()
 }

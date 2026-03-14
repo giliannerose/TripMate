@@ -90,7 +90,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
                 if (user != null) {
                     // SUCCESS: Save name and move to Dashboard
-                    sessionManager.saveUserName(user.name)
+                    sessionManager.saveUserSession(user.id, user.name)
                     Toast.makeText(
                         requireContext(),
                         "Welcome back, ${user.name}!",
