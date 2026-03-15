@@ -46,4 +46,8 @@ class UserRepository(private val userDao: UserDao) {
 
     fun getUserById(userId: Int) = userDao.getUserById(userId)
 
+    suspend fun getUserByEmail(email: String): UserEntity? {
+        return userDao.getUserByEmail(email)
+    }
+
 }

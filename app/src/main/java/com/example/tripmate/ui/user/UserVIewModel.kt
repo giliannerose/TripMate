@@ -63,4 +63,10 @@ class UserViewModel(application: Application)
         }
     }
 
+    fun checkEmailExists(email: String, callback: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val user = repository.getUserByEmail(email)
+            callback(user != null)
+        }
+    }
 }
