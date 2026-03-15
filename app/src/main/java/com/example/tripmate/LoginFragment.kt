@@ -11,17 +11,17 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.tripmate.data.utils.SessionManager
-import com.example.tripmate.data.local.AppDatabase
-import com.example.tripmate.data.repository.UserRepository
-import kotlinx.coroutines.launch
-
+import com.example.tripmate.ui.user.UserViewModel
 
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
+
+    private val userViewModel: UserViewModel by viewModels()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -31,8 +31,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val btnLogin = view.findViewById<Button>(R.id.btnLogin)
         val btnRegister = view.findViewById<Button>(R.id.btnRegister)
         val tvForgotPassword = view.findViewById<TextView>(R.id.tvForgotPassword)
-        val database = AppDatabase.getDatabase(requireContext())
-        val repository = UserRepository(database.userDao())
         val sessionManager = SessionManager(requireContext())
 
 
@@ -84,31 +82,34 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 return@setOnClickListener
             }
 
-            // Launch Coroutine to check database
-            viewLifecycleOwner.lifecycleScope.launch {
-                val user = repository.login(email, password)
+            userViewModel.login(email, password)
+        }
 
-                if (user != null) {
-                    // SUCCESS: Save name and move to Dashboard
-                    sessionManager.saveUserSession(user.id, user.name)
-                    Toast.makeText(
-                        requireContext(),
-                        "Welcome back, ${user.name}!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    view.findNavController()
-                        .navigate(R.id.action_loginFragment_to_loginSuccessFragment)
-                } else {
-                    // FAILURE
-                    Toast.makeText(
-                        requireContext(),
-                        "Invalid email or password",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        userViewModel.loginResult.observe(viewLifecycleOwner) { user ->
 
-                }
+            if (user != null) {
+
+                sessionManager.saveUserSession(user.id, user.name)
+
+                Toast.makeText(
+                    requireContext(),
+                    "Welcome back, ${user.name}!",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                view.findNavController()
+                    .navigate(R.id.action_loginFragment_to_loginSuccessFragment)
+
+            } else {
+
+                Toast.makeText(
+                    requireContext(),
+                    "Invalid email or password",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
+
                 btnRegister.setOnClickListener {
                     view.findNavController()
                         .navigate(R.id.action_loginFragment_to_signupFragment)
@@ -118,6 +119,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     view.findNavController()
                         .navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
                 }
+
+
             }
 
         }

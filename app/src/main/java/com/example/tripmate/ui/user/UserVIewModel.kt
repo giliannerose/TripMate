@@ -19,6 +19,9 @@ class UserViewModel(application: Application)
     private val _registerResult = MutableLiveData<Long?>()
     val registerResult: LiveData<Long?> = _registerResult
 
+    private val _loginResult = MutableLiveData<UserEntity?>()
+    val loginResult: LiveData<UserEntity?> = _loginResult
+
 
     init {
         val dao = AppDatabase
@@ -53,5 +56,11 @@ class UserViewModel(application: Application)
         }
     }
 
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            val user = repository.login(email, password)
+            _loginResult.postValue(user)
+        }
+    }
 
 }
