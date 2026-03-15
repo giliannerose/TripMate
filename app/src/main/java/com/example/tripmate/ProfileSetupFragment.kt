@@ -24,10 +24,25 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
     private lateinit var userViewModel: UserViewModel
     private var selectedImageUri: Uri? = null
 
+    private val imagePicker = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageUri: Uri? = result.data?.data
+            if (imageUri != null) {
+                selectedImageUri = imageUri
+                imgProfile.setImageURI(imageUri)
+                Toast.makeText(requireContext(), "Profile photo added", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
         imgProfile = view.findViewById(R.id.imgProfile)
         val etName = view.findViewById<EditText>(R.id.etName)
@@ -35,21 +50,6 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         val etLocation = view.findViewById<EditText>(R.id.etLocation)
         val btnSaveChanges = view.findViewById<Button>(R.id.btnSaveChanges)
         val btnSkip = view.findViewById<Button>(R.id.btnSkip)
-
-        val imagePicker = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result: androidx.activity.result.ActivityResult ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val imageUri: Uri? = result.data?.data
-                if (imageUri != null) {
-                    selectedImageUri = imageUri
-                    imgProfile.setImageURI(imageUri)
-                    Toast.makeText(requireContext(), "Profile photo added", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
 
         imgProfile.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
@@ -83,8 +83,8 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
 
                 val user = UserEntity(
                     name = name,
-                    email = "",
-                    passwordHash = "",
+                    email = "", //TODO: replace with authenticated user email after Firebase Auth
+                    passwordHash = "", // TODO: remove when Firebase Auth manages passwords
                     bio = bio,
                     region = location,
                     profileImageUri = selectedImageUri?.toString(),
@@ -94,6 +94,8 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
                 )
 
                 userViewModel.insert(user) { id ->
+
+                    if (!isAdded) return@insert
 
                     Toast.makeText(requireContext(), "Profile saved successfully!", Toast.LENGTH_SHORT).show()
 
