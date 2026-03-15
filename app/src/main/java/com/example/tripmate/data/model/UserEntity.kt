@@ -19,6 +19,9 @@ data class UserEntity (
     val age: Int = 0,
     val region: String = "",
 
+    val notificationsEnabled: Boolean = true,
+    val privacyStatus: String = "Public",
+
     val createdAt: Long = System.currentTimeMillis()
 
 )

@@ -8,11 +8,24 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.R
+import androidx.lifecycle.ViewModelProvider
+import com.example.tripmate.ui.user.UserViewModel
+import com.example.tripmate.data.model.UserEntity
+import com.example.tripmate.data.utils.PasswordHasher
+
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
+    private lateinit var viewModel: UserViewModel
+    private var currentUser: UserEntity? = null
+
+    // temporary
+    private val userId = 1
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
         val tvBack = view.findViewById<TextView>(R.id.tvBack)
         val switchNotifications = view.findViewById<Switch>(R.id.switchNotifications)
@@ -21,6 +34,16 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val etNewPassword = view.findViewById<EditText>(R.id.etNewPassword)
         val etConfirmPassword = view.findViewById<EditText>(R.id.etConfirmPassword)
         val btnSaveSettings = view.findViewById<Button>(R.id.btnSaveSettings)
+
+        viewModel.getUserById(userId).observe(viewLifecycleOwner) { user ->
+
+            if (user != null) {
+                currentUser = user
+
+                switchNotifications.isChecked = user.notificationsEnabled
+                tvPrivacyStatus.text = user.privacyStatus
+            }
+        }
 
         // Back
         tvBack.setOnClickListener {
@@ -45,6 +68,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         // Notifications toggle
         switchNotifications.setOnCheckedChangeListener { _, isChecked ->
+
+            updateSwitchColor(isChecked)
+
             val message =
                 if (isChecked) "Notifications enabled"
                 else "Notifications disabled"
@@ -104,11 +130,26 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 .setTitle("Save Settings")
                 .setMessage("Are you sure you want to save these changes?")
                 .setPositiveButton("Yes") { _, _ ->
+                    val user = currentUser ?: return@setPositiveButton
+
+                    val updatedUser = user.copy(
+                        notificationsEnabled = switchNotifications.isChecked,
+                        privacyStatus = tvPrivacyStatus.text.toString(),
+                        passwordHash =
+                            if (newPass.isNotEmpty())
+                                PasswordHasher.hash(newPass)
+                            else
+                                user.passwordHash
+                    )
+
+                    viewModel.update(updatedUser)
+
                     Toast.makeText(
                         requireContext(),
                         "Settings saved successfully!",
                         Toast.LENGTH_SHORT
                     ).show()
+
                     findNavController().popBackStack()
                 }
                 .setNegativeButton("Cancel", null)
