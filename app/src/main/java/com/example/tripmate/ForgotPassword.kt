@@ -7,8 +7,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.example.tripmate.data.local.AppDatabase
-import com.example.tripmate.data.repository.UserRepository
 import com.example.tripmate.databinding.FragmentForgotPasswordBinding
 import com.example.tripmate.ui.user.UserViewModel
 
@@ -46,11 +44,11 @@ class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
 
                     Toast.makeText(
                         requireContext(),
-                        "Password reset link sent to $email",
+                        "Reset instructions sent if the email exists",
                         Toast.LENGTH_LONG
                     ).show()
 
-                    view.findNavController()
+                    requireView().findNavController()
                         .navigate(R.id.action_forgotPasswordFragment_to_loginFragment)
 
                 } else {
@@ -66,7 +64,7 @@ class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
         }
 
         binding.tvBackLogin.setOnClickListener {
-            view.findNavController()
+            requireView().findNavController()
                 .navigate(R.id.action_forgotPasswordFragment_to_loginFragment)
         }
     }
