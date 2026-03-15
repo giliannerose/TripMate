@@ -2,20 +2,17 @@ package com.example.tripmate
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.content.Intent
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.tripmate.data.utils.SessionManager
 import com.example.tripmate.ui.user.UserViewModel
+import androidx.navigation.fragment.findNavController
 
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -52,6 +49,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
 
         btnLogin.setOnClickListener {
+
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
@@ -82,23 +80,27 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 return@setOnClickListener
             }
 
+            btnLogin.isEnabled = false
             userViewModel.login(email, password)
         }
 
         userViewModel.loginResult.observe(viewLifecycleOwner) { user ->
 
+            btnLogin.isEnabled = true
+
             if (user != null) {
 
-                sessionManager.saveUserSession(user.id, user.name)
+                sessionManager.saveUserSession(user.id, user.name ?: "")
 
                 Toast.makeText(
                     requireContext(),
-                    "Welcome back, ${user.name}!",
+                    "Welcome back!",
                     Toast.LENGTH_SHORT
                 ).show()
 
-                view.findNavController()
-                    .navigate(R.id.action_loginFragment_to_loginSuccessFragment)
+                findNavController().navigate(
+                    R.id.action_loginFragment_to_loginSuccessFragment
+                )
 
             } else {
 
@@ -111,13 +113,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
 
                 btnRegister.setOnClickListener {
-                    view.findNavController()
-                        .navigate(R.id.action_loginFragment_to_signupFragment)
+                    findNavController().navigate(R.id.action_loginFragment_to_signupFragment)
                 }
 
                 tvForgotPassword.setOnClickListener {
-                    view.findNavController()
-                        .navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
+                    findNavController().navigate (R.id.action_loginFragment_to_forgotPasswordFragment)
                 }
 
 

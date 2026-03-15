@@ -45,8 +45,7 @@ class UserViewModel(application: Application)
         }
     }
 
-    fun getUserById(userId: Int) =
-        repository.getUserById(userId)
+    fun getUserById(userId: Int) = repository.getUserById(userId)
     val allUsers = repository.getAllUsers()
 
     fun register(name: String, email: String, password: String) {
