@@ -393,6 +393,17 @@
         <argument
             android:name="tripId"
             app:argType="long" />
+
+
+        <argument
+            android:name="tripTitle"
+            app:argType="string"/>
+
+
+        <argument
+            android:name="tripDate"
+            app:argType="string"/>
+
     </fragment>
 
     <fragment

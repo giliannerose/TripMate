@@ -15,6 +15,7 @@ import com.example.tripmate.data.model.DocumentEntity
 import com.example.tripmate.data.repository.DocumentRepository
 import com.example.tripmate.databinding.FragmentDocumentsBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.navigation.fragment.navArgs
 
 class DocumentsFragment : Fragment(R.layout.fragment_documents) {
 
@@ -24,22 +25,31 @@ class DocumentsFragment : Fragment(R.layout.fragment_documents) {
     private lateinit var viewModel: DocumentViewModel
     private lateinit var adapter: DocumentAdapter
 
-    private val tripId = 1
+    private val args: DocumentsFragmentArgs by navArgs()
+    private var tripId: Int = -1
+    private var tripTitle: String = ""
+    private var tripDate: String = ""
+
     // Modern file picker
+
+
     private val filePickerLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let { handleFileSelected(it) }
+            uri?.let { handleFileSelected(it, tripId) }
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentDocumentsBinding.bind(view)
 
+       tripId = args.tripId.toInt()
+        tripTitle = args.tripTitle
+        tripDate = args.tripDate
 
         setupViewModel()
         setupRecyclerView()
-        observeDocuments()
-        setupUploadButton()
+        observeDocuments(tripId)
+        setupUploadButton(tripId)
         setupNavigation()
     }
 
@@ -63,7 +73,7 @@ class DocumentsFragment : Fragment(R.layout.fragment_documents) {
         binding.recyclerDocuments.adapter = adapter
     }
 
-    private fun observeDocuments() {
+    private fun observeDocuments(tripId: Int) {
         viewModel.getDocuments(tripId)
             .observe(viewLifecycleOwner) { documents ->
                 adapter.submitList(documents)
@@ -73,13 +83,14 @@ class DocumentsFragment : Fragment(R.layout.fragment_documents) {
             }
     }
 
-    private fun setupUploadButton() {
+    private fun setupUploadButton(tripId: Int) {
         binding.btnUpload.setOnClickListener {
             filePickerLauncher.launch("*/*")
         }
     }
 
-    private fun handleFileSelected(uri: Uri) {
+    private fun handleFileSelected(uri: Uri, tripId: Int) {
+
         val fileName = uri.lastPathSegment ?: "Unknown File"
 
         val document = DocumentEntity(
@@ -99,22 +110,54 @@ class DocumentsFragment : Fragment(R.layout.fragment_documents) {
 
     private fun setupNavigation() {
         binding.tabParticipants.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_documentsFragment_to_tripDetailsFragment
-            )
+
+            val action =
+                DocumentsFragmentDirections
+                    .actionDocumentsFragmentToTripDetailsFragment(
+                        tripId.toLong(),
+                        tripTitle,
+                        tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         binding.tabPolls.setOnClickListener {
-            findNavController() .navigate(R.id.action_documentsFragment_to_createPollFragment)
+
+            val action =
+                DocumentsFragmentDirections
+                    .actionDocumentsFragmentToCreatePollFragment(
+                        tripId.toLong(),
+                        tripTitle,
+                        tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
 
         binding.tabExpenses.setOnClickListener {
-            findNavController() .navigate(R.id.action_documentsFragment_to_expenseSummaryFragment)
+
+            val action =
+                DocumentsFragmentDirections
+                    .actionDocumentsFragmentToExpenseSummaryFragment(
+                        tripId.toLong(),
+                        tripTitle,
+                        tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         binding.tabItinerary.setOnClickListener {
-            findNavController() .navigate(R.id.action_documentsFragment_to_itineraryFragment)
+
+            val action =
+                DocumentsFragmentDirections
+                    .actionDocumentsFragmentToItineraryFragment(
+                        tripId.toLong(),
+                    )
+
+            findNavController().navigate(action)
         }
 
         binding.tabDocs.setOnClickListener {

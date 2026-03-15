@@ -97,7 +97,10 @@ class ExpenseSummaryFragment : Fragment(R.layout.fragment_expense_summary) {
         view.findViewById<Button>(R.id.tabDocs).setOnClickListener {
             val action =
                 ExpenseSummaryFragmentDirections
-                    .actionExpenseSummaryFragmentToDocumentsFragment(tripId)
+                    .actionExpenseSummaryFragmentToDocumentsFragment( tripId,
+                        tripTitle,
+                        tripDate)
+
 
             findNavController().navigate(action)
         }
