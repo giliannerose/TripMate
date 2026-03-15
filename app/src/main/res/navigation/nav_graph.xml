@@ -182,7 +182,13 @@
         android:id="@+id/addExpenseFragment"
         android:name="com.example.tripmate.AddExpenseFragment"
         android:label="Add Expense"
-        tools:layout="@layout/fragment_add_expense"/>
+        tools:layout="@layout/fragment_add_expense">
+
+         <argument
+            android:name="tripId"
+            app:argType="long"/>
+
+    </fragment>
 
     <fragment
         android:id="@+id/myTripsFragment"
@@ -350,6 +356,16 @@
         <argument
             android:name="tripId"
             app:argType="long" />
+
+        <argument
+            android:name="tripTitle"
+            app:argType="string"/>
+
+        <argument
+            android:name="tripDate"
+            app:argType="string"/>
+
+
     </fragment>
 
     <fragment

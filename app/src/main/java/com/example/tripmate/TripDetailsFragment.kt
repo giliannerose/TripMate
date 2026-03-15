@@ -111,7 +111,9 @@ class TripDetailsFragment : Fragment() {
         tabExpenses.setOnClickListener {
             val action =
                 TripDetailsFragmentDirections
-                    .actionTripDetailsFragmentToExpenseSummaryFragment(tripId)
+                    .actionTripDetailsFragmentToExpenseSummaryFragment( tripId,
+                        tripTitle,
+                        tripDate)
 
             findNavController().navigate(action)
         }

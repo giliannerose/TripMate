@@ -14,15 +14,24 @@ import com.example.tripmate.R
 import com.example.tripmate.ui.itinerary.ExpenseViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.navigation.fragment.navArgs
 
 class ExpenseSummaryFragment : Fragment(R.layout.fragment_expense_summary) {
 
     private lateinit var viewModel: ExpenseViewModel
     private lateinit var adapter: ExpenseAdapter
 
+    private val args: ExpenseSummaryFragmentArgs by navArgs()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        super.onViewCreated(view, savedInstanceState)
+
         viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
+
+        val tripId = args.tripId
+        val tripTitle = args.tripTitle
+        val tripDate = args.tripDate
 
         adapter = ExpenseAdapter { expense ->
             viewModel.delete(expense)
@@ -35,8 +44,6 @@ class ExpenseSummaryFragment : Fragment(R.layout.fragment_expense_summary) {
         viewModel.expenses.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
         }
-
-        super.onViewCreated(view, savedInstanceState)
 
         val btnAddExpense = view.findViewById<Button>(R.id.btnAddExpense)
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
@@ -51,19 +58,36 @@ class ExpenseSummaryFragment : Fragment(R.layout.fragment_expense_summary) {
 
         // Add expense
         btnAddExpense.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_expenseSummaryFragment_to_addExpenseFragment)
+            val action =
+                ExpenseSummaryFragmentDirections
+                    .actionExpenseSummaryFragmentToAddExpenseFragment(tripId)
+
+            findNavController().navigate(action)
         }
 
         // Top tabs
         view.findViewById<Button>(R.id.tabParticipants).setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_expenseSummaryFragment_to_tripDetailsFragment)
+
+            val action =
+                ExpenseSummaryFragmentDirections
+                    .actionExpenseSummaryFragmentToTripDetailsFragment(
+                        tripId,
+                        tripTitle,
+                        tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
+
         view.findViewById<Button>(R.id.tabPolls).setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_expenseSummaryFragment_to_createPollFragment)
+            val action =
+                ExpenseSummaryFragmentDirections
+                    .actionExpenseSummaryFragmentToCreatePollFragment( tripId,
+                        tripTitle,
+                        tripDate)
+
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.tabExpenses).setOnClickListener {
@@ -71,13 +95,19 @@ class ExpenseSummaryFragment : Fragment(R.layout.fragment_expense_summary) {
         }
 
         view.findViewById<Button>(R.id.tabDocs).setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_expenseSummaryFragment_to_documentsFragment)
+            val action =
+                ExpenseSummaryFragmentDirections
+                    .actionExpenseSummaryFragmentToDocumentsFragment(tripId)
+
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.tabItinerary).setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_expenseSummaryFragment_to_itineraryFragment)
+            val action =
+                ExpenseSummaryFragmentDirections
+                    .actionExpenseSummaryFragmentToItineraryFragment(tripId)
+
+            findNavController().navigate(action)
         }
 
 

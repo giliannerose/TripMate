@@ -118,7 +118,9 @@ class CreatePollFragment : Fragment(R.layout.fragment_create_poll) {
 
             val action =
                 CreatePollFragmentDirections
-                    .actionCreatePollFragmentToExpenseSummaryFragment(tripId)
+                    .actionCreatePollFragmentToExpenseSummaryFragment( tripId,
+                        tripTitle,
+                        tripDate)
 
             findNavController().navigate(action)
         }
