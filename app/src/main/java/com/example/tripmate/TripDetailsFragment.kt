@@ -18,6 +18,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tripmate.data.model.TripParticipantEntity
 import com.example.tripmate.ui.user.UserViewModel
+import androidx.navigation.fragment.navArgs
+
 
 class TripDetailsFragment : Fragment() {
 
@@ -28,6 +30,8 @@ class TripDetailsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var userViewModel: UserViewModel
+
+    private val args: TripDetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,7 +45,7 @@ class TripDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tripId = 1L
+        val tripId = args.tripId
 
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
         viewModel = ViewModelProvider(this)[TripParticipantViewModel::class.java]

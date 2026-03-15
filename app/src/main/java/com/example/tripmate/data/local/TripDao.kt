@@ -36,4 +36,7 @@ interface TripDao {
 
     @Query("SELECT COUNT(DISTINCT country) FROM trip_table WHERE country != ''")
     fun getCountriesVisited(): LiveData<Int>
+
+    @Query("SELECT * FROM trip_table WHERE id = :tripId")
+    fun getTripById(tripId: Long): LiveData<TripEntity>
 }

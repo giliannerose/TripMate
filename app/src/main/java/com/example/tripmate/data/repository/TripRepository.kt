@@ -27,4 +27,8 @@ class TripRepository(private val tripDao: TripDao) {
         return tripDao.getCountriesVisited()
     }
 
+    fun getTripById(tripId: Long): LiveData<TripEntity> {
+        return tripDao.getTripById(tripId)
+    }
+
 }

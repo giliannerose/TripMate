@@ -34,4 +34,8 @@ class TripViewModel(application: Application) : AndroidViewModel(application) {
 
     val tripCount: LiveData<Int> = repository.getTripCount()
     val countriesVisited: LiveData<Int> = repository.getCountriesVisited()
+
+    fun getTripById(tripId: Long): LiveData<TripEntity> {
+        return repository.getTripById(tripId)
+    }
 }

@@ -260,6 +260,11 @@
         <action
             android:id="@+id/action_tripDetailsFragment_to_inviteMembersFragment"
             app:destination="@id/inviteMembersFragment" />
+
+        <argument
+            android:name="tripId"
+            app:argType="long" />
+
     </fragment>
 
     <fragment
