@@ -38,7 +38,11 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
             val action =
                 DashboardFragmentDirections
-                    .actionDashboardFragmentToTripDetailsFragment(trip.id)
+                    .actionDashboardFragmentToTripDetailsFragment(
+                        trip.id,
+                        trip.name,
+                        trip.date
+                    )
 
             view.findNavController().navigate(action)
         }

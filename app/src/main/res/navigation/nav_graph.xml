@@ -154,6 +154,10 @@
         <action
             android:id="@+id/action_itineraryFragment_to_documentsFragment"
             app:destination="@id/documentsFragment" />
+
+        <argument
+            android:name="tripId"
+            app:argType="long" />
     </fragment>
 
     <fragment
@@ -265,6 +269,15 @@
             android:name="tripId"
             app:argType="long" />
 
+        <argument
+            android:name="tripTitle"
+            app:argType="string"/>
+
+        <argument
+            android:name="tripDate"
+            app:argType="string"/>
+
+
     </fragment>
 
     <fragment
@@ -292,6 +305,10 @@
         <action
             android:id="@+id/action_createPollFragment_to_itineraryFragment"
             app:destination="@id/itineraryFragment" />
+
+        <argument
+            android:name="tripId"
+            app:argType="long" />
     </fragment>
 
 
@@ -320,6 +337,10 @@
         <action
             android:id="@+id/action_expenseSummaryFragment_to_itineraryFragment"
             app:destination="@id/itineraryFragment" />
+
+        <argument
+            android:name="tripId"
+            app:argType="long" />
     </fragment>
 
     <fragment
@@ -343,6 +364,10 @@
         <action
             android:id="@+id/action_documentsFragment_to_itineraryFragment"
             app:destination="@id/itineraryFragment" />
+
+        <argument
+            android:name="tripId"
+            app:argType="long" />
     </fragment>
 
     <fragment

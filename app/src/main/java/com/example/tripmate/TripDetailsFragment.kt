@@ -46,6 +46,11 @@ class TripDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val tripId = args.tripId
+        val tripTitle = args.tripTitle
+        val tripDate = args.tripDate
+
+        binding.tvTripTitle.text = tripTitle
+        binding.tvTripDate.text = tripDate
 
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
         viewModel = ViewModelProvider(this)[TripParticipantViewModel::class.java]
@@ -94,23 +99,35 @@ class TripDetailsFragment : Fragment() {
         }
 
         tabPolls.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_tripDetailsFragment_to_createPollFragment)
+            val action =
+                TripDetailsFragmentDirections
+                    .actionTripDetailsFragmentToCreatePollFragment(tripId)
+
+            findNavController().navigate(action)
         }
 
         tabExpenses.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_tripDetailsFragment_to_expenseSummaryFragment)
+            val action =
+                TripDetailsFragmentDirections
+                    .actionTripDetailsFragmentToExpenseSummaryFragment(tripId)
+
+            findNavController().navigate(action)
         }
 
         tabDocs.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_tripDetailsFragment_to_documentsFragment)
+            val action =
+                TripDetailsFragmentDirections
+                    .actionTripDetailsFragmentToDocumentsFragment(tripId)
+
+            findNavController().navigate(action)
         }
 
         tabItinerary.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_tripDetailsFragment_to_itineraryFragment)
+            val action =
+                TripDetailsFragmentDirections
+                    .actionTripDetailsFragmentToItineraryFragment(tripId)
+
+            findNavController().navigate(action)
         }
 
         binding.btnAddParticipant.setOnClickListener {
@@ -279,7 +296,7 @@ class TripDetailsFragment : Fragment() {
                             viewModel.insert(
                                 TripParticipantEntity(
                                     tripId = tripId,
-                                    userId = userId.toInt()
+                                    userId = userId?.toInt() ?: return@insert
                                 )
                             )
                         }

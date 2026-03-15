@@ -21,7 +21,7 @@
             android:id="@+id/tvTripTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Siargao Weekend 🌴"
+            tools:text="Siargao Weekend 🌴"
             android:textColor="#2196F3"
             android:textStyle="bold"
             android:textSize="20sp"/>
@@ -30,7 +30,7 @@
             android:id="@+id/tvTripDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Jul 17 - Jul 20 | Siargao PH"
+            tools:text="Jul 17 - Jul 20 | Siargao PH"
             android:textColor="#444444"
             android:textSize="14sp"/>
     </LinearLayout>
