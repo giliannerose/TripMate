@@ -14,13 +14,20 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.findNavController
+import androidx.lifecycle.ViewModelProvider
+import com.example.tripmate.data.model.UserEntity
+import com.example.tripmate.ui.user.UserViewModel
 
 class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
 
     private lateinit var imgProfile: ImageView
+    private lateinit var userViewModel: UserViewModel
+    private var selectedImageUri: Uri? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
         imgProfile = view.findViewById(R.id.imgProfile)
         val etName = view.findViewById<EditText>(R.id.etName)
@@ -31,10 +38,11 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
 
         val imagePicker = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
-        ) { result ->
+        ) { result: androidx.activity.result.ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val imageUri: Uri? = result.data?.data
                 if (imageUri != null) {
+                    selectedImageUri = imageUri
                     imgProfile.setImageURI(imageUri)
                     Toast.makeText(requireContext(), "Profile photo added", Toast.LENGTH_SHORT).show()
                 } else {
@@ -72,10 +80,27 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
             }
 
             if (isValid) {
-                Toast.makeText(requireContext(), "Profile saved successfully!", Toast.LENGTH_SHORT).show()
 
-                view.findNavController()
-                    .navigate(R.id.action_profileSetupFragment_to_loginSuccessFragment)
+                val user = UserEntity(
+                    name = name,
+                    email = "",
+                    passwordHash = "",
+                    bio = bio,
+                    region = location,
+                    profileImageUri = selectedImageUri?.toString(),
+                    createdAt = System.currentTimeMillis(),
+                    gender = "",
+                    age = 0
+                )
+
+                userViewModel.insert(user) { id ->
+
+                    Toast.makeText(requireContext(), "Profile saved successfully!", Toast.LENGTH_SHORT).show()
+
+                    view.findNavController()
+                        .navigate(R.id.action_profileSetupFragment_to_loginSuccessFragment)
+
+                }
             }
         }
 
