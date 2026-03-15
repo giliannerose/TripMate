@@ -101,7 +101,9 @@ class TripDetailsFragment : Fragment() {
         tabPolls.setOnClickListener {
             val action =
                 TripDetailsFragmentDirections
-                    .actionTripDetailsFragmentToCreatePollFragment(tripId)
+                    .actionTripDetailsFragmentToCreatePollFragment( tripId,
+                        tripTitle,
+                        tripDate)
 
             findNavController().navigate(action)
         }

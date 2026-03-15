@@ -12,16 +12,21 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.lifecycle.ViewModelProvider
 import com.example.tripmate.ui.poll.PollViewModel
 import com.example.tripmate.data.model.PollEntity
+import androidx.navigation.fragment.navArgs
 
 class CreatePollFragment : Fragment(R.layout.fragment_create_poll) {
 
     private lateinit var viewModel: PollViewModel
-    private val tripId: Long = 1
+    private val args: CreatePollFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[PollViewModel::class.java]
+
+        val tripId = args.tripId
+        val tripTitle = args.tripTitle
+        val tripDate = args.tripDate
 
         val etPollQuestion = view.findViewById<EditText>(R.id.etPollQuestion)
         val etOption1 = view.findViewById<EditText>(R.id.etOption1)
@@ -87,52 +92,71 @@ class CreatePollFragment : Fragment(R.layout.fragment_create_poll) {
                 Toast.LENGTH_SHORT
             ).show()
 
-            findNavController()
-                .navigate(R.id.action_createPollFragment_to_voteFragment)
+            val action =
+                CreatePollFragmentDirections
+                    .actionCreatePollFragmentToVoteFragment(tripId)
 
-            // Top tabs navigation
-            view.findViewById<Button>(R.id.tabParticipants).setOnClickListener {
-                findNavController()
-                    .navigate(R.id.action_createPollFragment_to_tripDetailsFragment)
+            findNavController().navigate(action)
+
+        }
+
+        // Top tabs navigation
+        view.findViewById<Button>(R.id.tabParticipants).setOnClickListener {
+
+            val action =
+                CreatePollFragmentDirections
+                    .actionCreatePollFragmentToTripDetailsFragment(
+                        tripId,
+                        tripTitle,
+                        tripDate
+                    )
+
+            findNavController().navigate(action)
+        }
+
+        view.findViewById<Button>(R.id.tabExpenses).setOnClickListener {
+
+            val action =
+                CreatePollFragmentDirections
+                    .actionCreatePollFragmentToExpenseSummaryFragment(tripId)
+
+            findNavController().navigate(action)
+        }
+
+        view.findViewById<Button>(R.id.tabDocs).setOnClickListener {
+
+            val action =
+                CreatePollFragmentDirections
+                    .actionCreatePollFragmentToDocumentsFragment(tripId)
+
+            findNavController().navigate(action)
+        }
+
+        view.findViewById<Button>(R.id.tabItinerary).setOnClickListener {
+
+            val action =
+                CreatePollFragmentDirections
+                    .actionCreatePollFragmentToItineraryFragment(tripId)
+
+            findNavController().navigate(action)
+        }
+
+        // Bottom navigation
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home ->
+                    findNavController().navigate(R.id.dashboardFragment)
+
+                R.id.nav_create ->
+                    findNavController().navigate(R.id.myTripsFragment)
+
+                R.id.nav_notifications ->
+                    findNavController().navigate(R.id.notificationsFragment)
+
+                R.id.nav_profile ->
+                    findNavController().navigate(R.id.profileFragment)
             }
-
-            view.findViewById<Button>(R.id.tabPolls).setOnClickListener {
-                Toast.makeText(requireContext(), "You're already on Polls", Toast.LENGTH_SHORT)
-                    .show()
-            }
-
-            view.findViewById<Button>(R.id.tabExpenses).setOnClickListener {
-                findNavController()
-                    .navigate(R.id.action_createPollFragment_to_expenseSummaryFragment)
-            }
-
-            view.findViewById<Button>(R.id.tabDocs).setOnClickListener {
-                findNavController()
-                    .navigate(R.id.action_createPollFragment_to_documentsFragment)
-            }
-
-            view.findViewById<Button>(R.id.tabItinerary).setOnClickListener {
-                findNavController()
-                    .navigate(R.id.action_createPollFragment_to_itineraryFragment)
-            }
-
-            // Bottom navigation
-            bottomNav.setOnItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.nav_home ->
-                        findNavController().navigate(R.id.dashboardFragment)
-
-                    R.id.nav_create ->
-                        findNavController().navigate(R.id.myTripsFragment)
-
-                    R.id.nav_notifications ->
-                        findNavController().navigate(R.id.notificationsFragment)
-
-                    R.id.nav_profile ->
-                        findNavController().navigate(R.id.profileFragment)
-                }
-                true
-            }
+            true
         }
     }
 }

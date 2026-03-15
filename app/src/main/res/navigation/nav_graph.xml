@@ -309,6 +309,15 @@
         <argument
             android:name="tripId"
             app:argType="long" />
+
+        <argument
+            android:name="tripTitle"
+            app:argType="string"/>
+
+        <argument
+            android:name="tripDate"
+            app:argType="string"/>
+
     </fragment>
 
 
@@ -395,6 +404,10 @@
         <action
             android:id="@+id/action_voteFragment_to_pollResultsFragment"
             app:destination="@id/pollResultsFragment" />
+
+        <argument
+            android:name="tripId"
+            app:argType="long" />
     </fragment>
 
     <fragment
