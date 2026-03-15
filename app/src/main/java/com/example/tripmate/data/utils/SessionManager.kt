@@ -15,7 +15,7 @@ class SessionManager(context: Context) {
     }
 
     fun getUserId(): Int {
-        return prefs.getInt("USER_ID", -1)
+        return prefs.getInt("USER_ID", NO_USER)
     }
 
     fun getUserName(): String {
@@ -24,5 +24,9 @@ class SessionManager(context: Context) {
 
     fun clearSession() {
         prefs.edit().clear().apply()
+    }
+
+    companion object {
+        const val NO_USER = -1
     }
 }

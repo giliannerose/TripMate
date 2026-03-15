@@ -19,7 +19,7 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
         val sessionManager = SessionManager(requireContext())
 
         // Auto-login if user session exists
-        if (sessionManager.getUserId() != -1) {
+        if (sessionManager.getUserId() != SessionManager.NO_USER) {
             view.findNavController().navigate(
                 R.id.action_welcomeFragment_to_dashboardFragment,
                 null,
