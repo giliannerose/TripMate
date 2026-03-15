@@ -41,8 +41,18 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
 
         adapter = TripAdapter(
             onClick = { trip ->
-                view.findNavController().navigate(R.id.tripDetailsFragment)
+
+                val action =
+                    MyTripsFragmentDirections
+                        .actionMyTripsFragmentToTripDetailsFragment(
+                            trip.id,
+                            trip.name,
+                            trip.date
+                        )
+
+                view.findNavController().navigate(action)
             },
+
             onDelete = { trip ->
                 showDeleteConfirmation(trip)
             }

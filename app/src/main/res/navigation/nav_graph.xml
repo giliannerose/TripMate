@@ -204,7 +204,26 @@
         android:id="@+id/myTripsFragment"
         android:name="com.example.tripmate.MyTripsFragment"
         android:label="My Trips"
-        tools:layout="@layout/fragment_my_trips"/>
+        tools:layout="@layout/fragment_my_trips">
+
+         <action
+            android:id="@+id/action_myTripsFragment_to_tripDetailsFragment"
+            app:destination="@id/tripDetailsFragment">
+
+             <argument
+                 android:name="tripId"
+                 app:argType="long" />
+
+             <argument
+                 android:name="tripTitle"
+                 app:argType="string" />
+
+             <argument
+                 android:name="tripDate"
+                 app:argType="string" />
+
+         </action>
+    </fragment>
 
     <fragment
         android:id="@+id/notificationsFragment"
