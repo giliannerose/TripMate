@@ -158,6 +158,16 @@
         <argument
             android:name="tripId"
             app:argType="long" />
+
+
+        <argument
+            android:name="tripTitle"
+            app:argType="string"/>
+
+
+        <argument
+            android:name="tripDate"
+            app:argType="string"/>
     </fragment>
 
     <fragment
@@ -242,6 +252,10 @@
         <action
             android:id="@+id/action_addActivityFragment_to_itineraryFragment"
             app:destination="@id/itineraryFragment" />
+
+        <argument
+            android:name="tripId"
+            app:argType="long" />
     </fragment>
 
 

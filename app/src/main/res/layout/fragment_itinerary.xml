@@ -120,17 +120,19 @@
             android:padding="16dp">
 
             <TextView
+                android:id="@+id/tvTripTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Siargao Weekend 🌴"
+                android:text="Trip Title"
                 android:textColor="#000000"
                 android:textStyle="bold"
                 android:textSize="16sp"/>
 
             <TextView
+                android:id="@+id/tvTripDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Jul 17 - Jul 20 | Siargao PH | 20 members"
+                android:text="Trip Date"
                 android:textColor="#555555"
                 android:textSize="13sp"/>
         </LinearLayout>

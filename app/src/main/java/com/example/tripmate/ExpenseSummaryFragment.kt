@@ -108,7 +108,10 @@ class ExpenseSummaryFragment : Fragment(R.layout.fragment_expense_summary) {
         view.findViewById<Button>(R.id.tabItinerary).setOnClickListener {
             val action =
                 ExpenseSummaryFragmentDirections
-                    .actionExpenseSummaryFragmentToItineraryFragment(tripId)
+                    .actionExpenseSummaryFragmentToItineraryFragment( tripId,
+                        tripTitle,
+                        tripDate)
+
 
             findNavController().navigate(action)
         }

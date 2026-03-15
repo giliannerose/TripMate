@@ -155,7 +155,9 @@ class DocumentsFragment : Fragment(R.layout.fragment_documents) {
                 DocumentsFragmentDirections
                     .actionDocumentsFragmentToItineraryFragment(
                         tripId.toLong(),
-                    )
+                        tripTitle,
+                        tripDate
+            )
 
             findNavController().navigate(action)
         }

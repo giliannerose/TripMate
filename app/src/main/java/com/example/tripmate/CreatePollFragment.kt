@@ -141,7 +141,10 @@ class CreatePollFragment : Fragment(R.layout.fragment_create_poll) {
 
             val action =
                 CreatePollFragmentDirections
-                    .actionCreatePollFragmentToItineraryFragment(tripId)
+                    .actionCreatePollFragmentToItineraryFragment( tripId,
+                        tripTitle,
+                        tripDate)
+
 
             findNavController().navigate(action)
         }

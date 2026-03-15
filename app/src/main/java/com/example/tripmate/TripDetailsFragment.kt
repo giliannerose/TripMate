@@ -132,7 +132,10 @@ class TripDetailsFragment : Fragment() {
         tabItinerary.setOnClickListener {
             val action =
                 TripDetailsFragmentDirections
-                    .actionTripDetailsFragmentToItineraryFragment(tripId)
+                    .actionTripDetailsFragmentToItineraryFragment( tripId,
+                        tripTitle,
+                        tripDate)
+
 
             findNavController().navigate(action)
         }

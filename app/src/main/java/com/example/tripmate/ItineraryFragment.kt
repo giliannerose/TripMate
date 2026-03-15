@@ -22,12 +22,14 @@ import com.example.tripmate.data.model.ActivityEntity
 import com.example.tripmate.ui.itinerary.ActivityAdapter
 import com.example.tripmate.ui.itinerary.ActivityViewModel
 import com.example.tripmate.R
+import androidx.navigation.fragment.navArgs
 
 
 class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
 
     private lateinit var activityViewModel: ActivityViewModel
     private lateinit var adapter: ActivityAdapter
+    private val args: ItineraryFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,11 +55,21 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
                 recyclerView.adapter = adapter
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Observe LiveData
-                activityViewModel.getActivitiesForTrip(1L)
-                    .observe(viewLifecycleOwner) { activities ->
-                        adapter.setActivities(activities)
-                    }
+
+        val tripId = args.tripId
+        val tripTitle = args.tripTitle
+        val tripDate = args.tripDate
+
+        val tripTitleView = view.findViewById<TextView>(R.id.tvTripTitle)
+        val tripDateView = view.findViewById<TextView>(R.id.tvTripDate)
+
+        tripTitleView.text = args.tripTitle
+        tripDateView.text = args.tripDate
+
+        activityViewModel.getActivitiesForTrip(tripId)
+            .observe(viewLifecycleOwner) { activities ->
+                adapter.setActivities(activities)
+            }
 
         val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
         val btnAddActivity = view.findViewById<Button>(R.id.btnAddActivity)
@@ -69,33 +81,66 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
         }
 
         btnAddActivity.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_itineraryFragment_to_addActivityFragment)
+            val action =
+                ItineraryFragmentDirections
+                    .actionItineraryFragmentToAddActivityFragment(args.tripId)
+
+            findNavController().navigate(action)
         }
 
 
 
         // Top tabs
         view.findViewById<Button>(R.id.tabParticipants).setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_itineraryFragment_to_tripDetailsFragment)
+            val action =
+                ItineraryFragmentDirections
+                    .actionItineraryFragmentToTripDetailsFragment(
+                        tripId,
+                        args.tripTitle,
+                        args.tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.tabPolls).setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_itineraryFragment_to_createPollFragment)
+
+            val action =
+                ItineraryFragmentDirections
+                    .actionItineraryFragmentToCreatePollFragment(
+                        args.tripId,
+                        args.tripTitle,
+                        args.tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.tabExpenses).setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_itineraryFragment_to_expenseSummaryFragment)
+
+            val action =
+                ItineraryFragmentDirections
+                    .actionItineraryFragmentToExpenseSummaryFragment(
+                        args.tripId,
+                        args.tripTitle,
+                        args.tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.tabDocs).setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_itineraryFragment_to_documentsFragment)
-        }
 
+            val action =
+                ItineraryFragmentDirections
+                    .actionItineraryFragmentToDocumentsFragment(
+                        args.tripId,
+                        args.tripTitle,
+                        args.tripDate
+                    )
+
+            findNavController().navigate(action)
+        }
         view.findViewById<Button>(R.id.tabItinerary).setOnClickListener {
             Toast.makeText(requireContext(), "You're already on Itinerary", Toast.LENGTH_SHORT).show()
         }
