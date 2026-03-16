@@ -71,7 +71,11 @@
             binding.tvUserBio.text = user.bio
 
             if (!user.profileImageUri.isNullOrEmpty()) {
-                binding.imgProfile.setImageURI(Uri.parse(user.profileImageUri))
+                try {
+                    binding.imgProfile.setImageURI(Uri.parse(user.profileImageUri))
+                } catch (e: SecurityException) {
+                    binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
+                }
             } else {
                 binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
             }
