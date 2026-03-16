@@ -117,9 +117,16 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             }
         }
 
-        tripViewModel.allTrips.observe(viewLifecycleOwner) { trips ->
-            adapter.submitList(trips)
 
+        val userId = sessionManager.getUserId()
+
+        if (userId == SessionManager.NO_USER) {
+            Toast.makeText(requireContext(), "User session not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        tripViewModel.getTripsByUser(userId).observe(viewLifecycleOwner) { trips ->
+            adapter.submitList(trips)
         }
 
 

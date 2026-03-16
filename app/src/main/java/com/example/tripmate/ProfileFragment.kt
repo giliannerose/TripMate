@@ -115,7 +115,14 @@
         }
 
         private fun observeTripCount() {
-            tripViewModel.tripCount.observe(viewLifecycleOwner) { count ->
+            val userId = sessionManager.getUserId()
+
+            if (userId == SessionManager.NO_USER) {
+                findNavController().navigate(R.id.welcomeFragment)
+                return
+            }
+
+            tripViewModel.getTripCount(userId).observe(viewLifecycleOwner) { count ->
                 binding.tvTripsCount.text = "🏝️ Trips\n$count"
             }
         }
@@ -154,7 +161,15 @@
         }
 
         private fun observeCountriesVisited() {
-            tripViewModel.countriesVisited.observe(viewLifecycleOwner) { count ->
+            val userId = sessionManager.getUserId()
+
+            if (userId == SessionManager.NO_USER) {
+                findNavController().navigate(R.id.welcomeFragment)
+                return
+            }
+
+            tripViewModel.getCountriesVisited(userId)
+                .observe(viewLifecycleOwner) { count ->
                 binding.tvCountriesVisited.text = "🌍 Countries\n$count"
                 binding.tvCountriesVisitedDetails.text = count.toString()
             }

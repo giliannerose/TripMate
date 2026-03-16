@@ -17,6 +17,7 @@ import android.widget.Spinner
 import androidx.lifecycle.ViewModelProvider
 import com.example.tripmate.data.model.TripEntity
 import com.example.tripmate.ui.trip.TripViewModel
+import com.example.tripmate.data.utils.SessionManager
 
 
 
@@ -38,6 +39,8 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
         val etEndDate = view.findViewById<EditText>(R.id.etEndDate)
         val btnStartDate = view.findViewById<ImageView>(R.id.btnStartDate)
         val btnEndDate = view.findViewById<ImageView>(R.id.btnEndDate)
+        val etNotes = view.findViewById<EditText>(R.id.etNotes)
+
         val btnSaveTrip = view.findViewById<Button>(R.id.btnSaveTrip)
         val btnInviteMembers = view.findViewById<Button>(R.id.btnInviteMembers)
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
@@ -68,6 +71,7 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
             val startDate = etStartDate.text.toString().trim()
             val endDate = etEndDate.text.toString().trim()
             val country = spCountry.selectedItem.toString()
+            val notes = etNotes.text.toString().trim()
 
             etTripName.error = null
             etDestination.error = null
@@ -110,10 +114,15 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
                 .setTitle("Save Trip")
                 .setMessage("Are you sure you want to save this trip?")
                 .setPositiveButton("Save") { dialog, _ ->
+
+                    val sessionManager = SessionManager(requireContext())
+                    val userId = sessionManager.getUserId()
+
                     val trip = TripEntity(
+                        userId = userId,
                         name = tripName,
                         description = destination,
-                        date = "$startDate - $endDate" ,
+                        date = "$startDate - $endDate",
                         country = country
                     )
 
@@ -123,7 +132,7 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
 
                     dialog.dismiss()
 
-                    view.findNavController().navigate(R.id.myTripsFragment)
+                    view.findNavController().popBackStack(R.id.myTripsFragment, false)
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()

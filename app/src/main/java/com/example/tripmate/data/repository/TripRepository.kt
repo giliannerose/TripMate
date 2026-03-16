@@ -5,7 +5,9 @@ import androidx.lifecycle.LiveData
 
 class TripRepository(private val tripDao: TripDao) {
 
-    val allTrips: LiveData<List<TripEntity>> = tripDao.getAllTrips()
+    fun getTripsByUser(userId: Int): LiveData<List<TripEntity>> {
+        return tripDao.getTripsByUser(userId)
+    }
 
     suspend fun insert(trip: TripEntity) {
         tripDao.insertTrip(trip)
@@ -19,12 +21,12 @@ class TripRepository(private val tripDao: TripDao) {
         tripDao.deleteTrip(trip)
     }
 
-    fun getTripCount(): LiveData<Int> {
-        return tripDao.getTripCount()
+    fun getTripCount(userId: Int): LiveData<Int> {
+        return tripDao.getTripCount(userId)
     }
 
-    fun getCountriesVisited(): LiveData<Int> {
-        return tripDao.getCountriesVisited()
+    fun getCountriesVisited(userId: Int): LiveData<Int> {
+        return tripDao.getCountriesVisited(userId)
     }
 
     fun getTripById(tripId: Long): LiveData<TripEntity> {

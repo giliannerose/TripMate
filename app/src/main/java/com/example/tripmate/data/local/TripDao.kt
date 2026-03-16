@@ -20,8 +20,8 @@ interface TripDao {
 
 
     //Get all trips
-    @Query("SELECT * FROM trip_table ORDER BY id DESC")
-    fun getAllTrips(): LiveData<List<TripEntity>>
+    @Query("SELECT * FROM trip_table WHERE userId = :userId ORDER BY id DESC")
+    fun getTripsByUser(userId: Int): LiveData<List<TripEntity>>
 
     //Update a trip
     @Update
@@ -31,11 +31,15 @@ interface TripDao {
     @Delete
     suspend fun deleteTrip(trip: TripEntity)
 
-    @Query("SELECT COUNT(*) FROM trip_table")
-    fun getTripCount(): LiveData<Int>
+    @Query("SELECT COUNT(*) FROM trip_table WHERE userId = :userId")
+    fun getTripCount(userId: Int): LiveData<Int>
 
-    @Query("SELECT COUNT(DISTINCT country) FROM trip_table WHERE country != ''")
-    fun getCountriesVisited(): LiveData<Int>
+    @Query("""
+SELECT COUNT(DISTINCT country)
+FROM trip_table
+WHERE country != '' AND userId = :userId
+""")
+    fun getCountriesVisited(userId: Int): LiveData<Int>
 
     @Query("SELECT * FROM trip_table WHERE id = :tripId")
     fun getTripById(tripId: Long): LiveData<TripEntity>

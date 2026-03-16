@@ -12,12 +12,14 @@ import kotlinx.coroutines.launch
 class TripViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: TripRepository
-    val allTrips: LiveData<List<TripEntity>>
+
+    fun getTripsByUser(userId: Int): LiveData<List<TripEntity>> {
+        return repository.getTripsByUser(userId)
+    }
 
     init {
         val tripDao = AppDatabase.getDatabase(application).tripDao()
         repository = TripRepository(tripDao)
-        allTrips = repository.allTrips
     }
 
     fun insert(trip: TripEntity) = viewModelScope.launch {
@@ -32,8 +34,14 @@ class TripViewModel(application: Application) : AndroidViewModel(application) {
         repository.update(trip)
     }
 
-    val tripCount: LiveData<Int> = repository.getTripCount()
-    val countriesVisited: LiveData<Int> = repository.getCountriesVisited()
+    fun getTripCount(userId: Int): LiveData<Int> {
+        return repository.getTripCount(userId)
+    }
+
+    fun getCountriesVisited(userId: Int): LiveData<Int> {
+        return repository.getCountriesVisited(userId)
+    }
+
 
     fun getTripById(tripId: Long): LiveData<TripEntity> {
         return repository.getTripById(tripId)

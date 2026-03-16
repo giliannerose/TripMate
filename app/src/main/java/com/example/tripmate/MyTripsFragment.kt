@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tripmate.ui.trip.TripViewModel
 import com.example.tripmate.ui.trip.TripAdapter
 import com.example.tripmate.data.model.TripEntity
+import com.example.tripmate.data.utils.SessionManager
 
 
 
@@ -33,6 +34,9 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
 
         val btnInvite = view.findViewById<Button>(R.id.btnInvite)
         val btnExpense = view.findViewById<Button>(R.id.btnExpense)
+
+        val session = SessionManager(requireContext())
+        val userId = session.getUserId()
 
 
         viewModel = ViewModelProvider(this)[TripViewModel::class.java]
@@ -61,7 +65,7 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        viewModel.allTrips.observe(viewLifecycleOwner) { trips ->
+        viewModel.getTripsByUser(userId).observe(viewLifecycleOwner) { trips ->
             adapter.submitList(trips)
         }
 

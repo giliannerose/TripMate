@@ -36,7 +36,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         binding = FragmentEditProfileBinding.bind(view)
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
-        val userId = 1 // TODO: replace with real logged-in user
+        val userId = arguments?.getInt("userId") ?: 1
 
         userViewModel.getUserById(userId)
             .observe(viewLifecycleOwner) { user ->
