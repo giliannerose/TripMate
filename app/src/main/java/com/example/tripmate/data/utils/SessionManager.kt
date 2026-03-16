@@ -8,6 +8,10 @@ class SessionManager(context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences("TripMatePrefs", Context.MODE_PRIVATE)
 
+    companion object {
+        const val NO_USER = ""
+    }
+
     fun saveUserSession(userId: String, userName: String, userEmail: String) {
         prefs.edit {
             putString("userId", userId)
@@ -16,8 +20,8 @@ class SessionManager(context: Context) {
         }
     }
 
-    fun getUserId(): String? {
-        return prefs.getString("userId", null)
+    fun getUserId(): String {
+        return prefs.getString("userId", NO_USER) ?: NO_USER
     }
 
     fun getUserName(): String {

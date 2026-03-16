@@ -3,18 +3,22 @@ package com.example.tripmate.data.repository
 import androidx.lifecycle.LiveData
 import com.example.tripmate.data.local.UserDao
 import com.example.tripmate.data.model.UserEntity
+import com.example.tripmate.data.remote.FirebaseAuthManager
 import com.example.tripmate.data.utils.PasswordHasher
 
-
 class UserRepository(private val userDao: UserDao) {
+    
+    private val authManager = FirebaseAuthManager()
+
     suspend fun register(
         name: String,
         email: String,
         rawPassword: String
     ): Long? {
-
+        // 1. Check if user exists locally
         if (userDao.getUserByEmail(email) != null) return null
 
+        // 2. Hash password for local storage
         val hashedPassword = PasswordHasher.hash(rawPassword)
 
         val newUser = UserEntity(
@@ -23,13 +27,22 @@ class UserRepository(private val userDao: UserDao) {
             passwordHash = hashedPassword
         )
 
+        // 3. Register in Firebase (Cloud)
+        authManager.signUp(email, rawPassword) { success, message ->
+            // You can handle cloud sync result here if needed
+        }
+
         return userDao.insert(newUser)
     }
 
-    //Get the user and compare the hashes
     suspend fun login(email: String, inputPassword: String): UserEntity? {
+        // 1. Authenticate with Firebase (Cloud)
+        authManager.login(email, inputPassword) { success, message ->
+             // Cloud auth success/fail
+        }
+
+        // 2. Fallback/Primary check against Local DB
         val user = userDao.getUserByEmail(email) ?: return null
-        // Use check function from the helper
         val isPasswordCorrect = PasswordHasher.check(inputPassword, user.passwordHash)
 
         return if (isPasswordCorrect) user else null
@@ -54,5 +67,4 @@ class UserRepository(private val userDao: UserDao) {
     fun getUserByEmailLiveData(email: String): LiveData<UserEntity?> {
         return userDao.getUserByEmailLiveData(email)
     }
-
 }

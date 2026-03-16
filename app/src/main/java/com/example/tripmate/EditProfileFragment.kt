@@ -1,24 +1,24 @@
 package com.example.tripmate.ui.profile
 
-
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.R
-import androidx.lifecycle.ViewModelProvider
-import androidx.activity.result.contract.ActivityResultContracts
+import com.example.tripmate.data.model.UserEntity
+import com.example.tripmate.data.remote.FirebaseStorageManager
 import com.example.tripmate.databinding.FragmentEditProfileBinding
 import com.example.tripmate.ui.user.UserViewModel
-import com.example.tripmate.data.model.UserEntity
 
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     private lateinit var binding: FragmentEditProfileBinding
     private lateinit var userViewModel: UserViewModel
+    private val storageManager = FirebaseStorageManager()
     private var currentUser: UserEntity? = null
     private var selectedImageUri: Uri? = null
 
@@ -40,7 +40,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         userViewModel.getUserById(userId)
             .observe(viewLifecycleOwner) { user ->
-
                 user?.let {
                     currentUser = it
                     binding.etName.setText(it.name)
@@ -55,7 +54,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                     setSpinnerSelection(binding.spRegion, it.region)
 
                     it.profileImageUri?.let { uri ->
-                        binding.imgProfile.setImageURI(Uri.parse(uri))
+                        try {
+                            binding.imgProfile.setImageURI(Uri.parse(uri))
+                        } catch (e: Exception) {
+                            binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
+                        }
                     }
                 }
             }
@@ -69,12 +72,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
 
         binding.btnSaveProfile.setOnClickListener {
-            saveProfile(userId)
+            saveProfile()
         }
     }
 
-    private fun saveProfile(userId: Int) {
-
+    private fun saveProfile() {
         val name = binding.etName.text.toString().trim()
         val bio = binding.etBio.text.toString().trim()
         val age = binding.etAge.text.toString().toIntOrNull() ?: 0
@@ -86,19 +88,39 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             return
         }
 
-        if (bio.isEmpty()) {
-            binding.etBio.error = "Bio required"
-            return
-        }
+        binding.btnSaveProfile.isEnabled = false
 
+        // If a new image is selected, upload it to Firebase Storage first
+        selectedImageUri?.let { uri ->
+            storageManager.uploadImage(uri, "profile_images") { success, downloadUrl ->
+                if (success && downloadUrl != null) {
+                    updateUserInDatabase(name, bio, age, gender, region, downloadUrl)
+                } else {
+                    Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
+                    binding.btnSaveProfile.isEnabled = true
+                }
+            }
+        } ?: run {
+            // No new image, just update other details
+            updateUserInDatabase(name, bio, age, gender, region, currentUser?.profileImageUri)
+        }
+    }
+
+    private fun updateUserInDatabase(
+        name: String,
+        bio: String,
+        age: Int,
+        gender: String,
+        region: String,
+        imageUri: String?
+    ) {
         val updatedUser = currentUser?.copy(
             name = name,
             bio = bio,
             age = age,
             gender = if (gender == "Select Gender") "" else gender,
             region = if (region == "Select Region") "" else region,
-            profileImageUri = selectedImageUri?.toString()
-                ?: currentUser?.profileImageUri
+            profileImageUri = imageUri
         )
 
         updatedUser?.let {
@@ -109,9 +131,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     }
 
     private fun setSpinnerSelection(spinner: Spinner, value: String) {
-
         val adapter = spinner.adapter
-
         for (i in 0 until adapter.count) {
             if (adapter.getItem(i).toString() == value) {
                 spinner.setSelection(i)
@@ -119,5 +139,4 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             }
         }
     }
-
 }
