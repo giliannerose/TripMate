@@ -24,7 +24,7 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
                 R.id.action_welcomeFragment_to_dashboardFragment,
                 null,
                 NavOptions.Builder()
-                    .setPopUpTo(R.id.WelcomeFragment, true)
+                    .setPopUpTo(R.id.welcomeFragment, true)
                     .build()
             )
             return
@@ -37,7 +37,7 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
 
         btnLogin.setOnClickListener {
             view.findNavController()
-                .navigate(R.id.action_WelcomeFragment_to_loginFragment)
+                .navigate(R.id.action_welcomeFragment_to_loginFragment)
         }
     }
 }

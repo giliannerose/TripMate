@@ -2,10 +2,10 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/WelcomeFragment">
+    app:startDestination="@id/welcomeFragment">
 
     <fragment
-        android:id="@+id/WelcomeFragment"
+        android:id="@+id/welcomeFragment"
         android:name="com.example.tripmate.WelcomeFragment"
         android:label="Welcome"
         tools:layout="@layout/fragment_welcome">
@@ -15,8 +15,8 @@
             app:destination="@id/signupFragment" />
 
         <action
-            android:id="@+id/action_WelcomeFragment_to_loginFragment"
-            app:destination="@id/LoginFragment" />
+            android:id="@+id/action_welcomeFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
 
         <action
             android:id="@+id/action_welcomeFragment_to_dashboardFragment"
@@ -31,7 +31,7 @@
 
         <action
             android:id="@+id/action_signupFragment_to_loginFragment"
-            app:destination="@id/LoginFragment" />
+            app:destination="@id/loginFragment" />
 
         <action
             android:id="@+id/action_signupFragment_to_profileSetupFragment"
@@ -39,7 +39,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/LoginFragment"
+        android:id="@+id/loginFragment"
         android:name="com.example.tripmate.LoginFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login">
@@ -87,7 +87,7 @@
 
         <action
             android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
-            app:destination="@id/LoginFragment" />
+            app:destination="@id/loginFragment" />
     </fragment>
 
     <fragment
@@ -228,7 +228,7 @@
                 <argument
                     android:name="tripId"
                     app:argType="long"
-                    android:defaultValue="-1" />
+                    android:defaultValue="-1L" />
 
                 <argument
                     android:name="tripTitle"
@@ -258,7 +258,7 @@
 
         <action
             android:id="@+id/action_profileFragment_to_welcomeFragment"
-            app:destination="@id/WelcomeFragment"
+            app:destination="@id/welcomeFragment"
             app:popUpTo="@id/dashboardFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -369,7 +369,7 @@
         android:id="@+id/expenseSummaryFragment"
         android:name="com.example.tripmate.ui.expense.ExpenseSummaryFragment"
         android:label="Expense Summary"
-        tools:layout="@layout/fragment_add_expense">
+        tools:layout="@layout/fragment_expense_summary">
 
         <action
             android:id="@+id/action_expenseSummaryFragment_to_addExpenseFragment"

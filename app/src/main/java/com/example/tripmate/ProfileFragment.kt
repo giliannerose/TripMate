@@ -41,7 +41,6 @@
             tripViewModel = ViewModelProvider(this)[TripViewModel::class.java]
             tripParticipantViewModel = ViewModelProvider(this)[TripParticipantViewModel::class.java]
 
-            val userId = sessionManager.getUserId()
 
             observeUser()
             observeTripCount()
@@ -54,7 +53,11 @@
 
         private fun observeUser() {
             val userId = sessionManager.getUserId()
-            if (userId == -1) return
+
+            if (userId == -1) {
+                findNavController().navigate(R.id.welcomeFragment)
+                return
+            }
 
             userViewModel.getUserById(userId)
                 .observe(viewLifecycleOwner) { user ->
@@ -119,7 +122,11 @@
 
         private fun observeBuddyCount() {
             val userId = sessionManager.getUserId()
-            if (userId == -1) return
+
+            if (userId == -1) {
+                findNavController().navigate(R.id.welcomeFragment)
+                return
+            }
 
             tripParticipantViewModel.getBuddyCount(userId)
                 .observe(viewLifecycleOwner) { count ->
@@ -134,7 +141,11 @@
 
         private fun observeTripsJoined() {
             val userId = sessionManager.getUserId()
-            if (userId == -1) return
+
+            if (userId == -1) {
+                findNavController().navigate(R.id.welcomeFragment)
+                return
+            }
 
             tripParticipantViewModel.getTripsJoinedCount(userId)
                 .observe(viewLifecycleOwner) { count ->
@@ -155,22 +166,24 @@
 
             binding.bottomNav.setOnItemSelectedListener { item ->
                 when (item.itemId) {
-                    R.id.nav_home ->
-                        findNavController()
-                            .navigate(R.id.dashboardFragment)
+                    R.id.nav_home -> {
+                        findNavController().navigate(R.id.dashboardFragment)
+                        true
+                    }
 
-                    R.id.nav_create ->
-                        findNavController()
-                            .navigate(R.id.myTripsFragment)
+                    R.id.nav_create -> {
+                        findNavController().navigate(R.id.myTripsFragment)
+                        true
+                    }
 
-                    R.id.nav_notifications ->
-                        findNavController()
-                            .navigate(R.id.notificationsFragment)
+                    R.id.nav_notifications -> {
+                        findNavController().navigate(R.id.notificationsFragment)
+                        true
+                    }
 
                     R.id.nav_profile -> true
                     else -> false
                 }
-                true
             }
         }
 
