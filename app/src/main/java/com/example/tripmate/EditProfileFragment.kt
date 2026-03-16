@@ -14,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.tripmate.databinding.FragmentEditProfileBinding
 import com.example.tripmate.ui.user.UserViewModel
 import com.example.tripmate.data.model.UserEntity
+import com.example.tripmate.data.utils.SessionManager
+
 
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
@@ -36,7 +38,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         binding = FragmentEditProfileBinding.bind(view)
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
-        val userId = arguments?.getInt("userId") ?: 1
+        val session = SessionManager(requireContext())
+        val userId = session.getUserId()
 
         userViewModel.getUserById(userId)
             .observe(viewLifecycleOwner) { user ->
