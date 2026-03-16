@@ -10,6 +10,7 @@ import com.example.tripmate.R
 import com.example.tripmate.databinding.FragmentNotificationsBinding
 import com.example.tripmate.ui.notification.NotificationViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.navigation.fragment.navArgs
 
 class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
 
@@ -17,12 +18,24 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
     private val binding get() = _binding!!
 
     private val viewModel: NotificationViewModel by viewModels()
+
+    private val args: NotificationsFragmentArgs by navArgs()
     private lateinit var adapter: NotificationAdapter
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentNotificationsBinding.bind(view)
+
+        val tripId = args.tripId
+        val tripTitle = args.tripTitle
+        val tripDate = args.tripDate
+
+        if (tripId == -1L) {
+            // Opened from bottom navigation without trip
+            Toast.makeText(requireContext(), "Showing general notifications", Toast.LENGTH_SHORT).show()
+        }
 
         adapter = NotificationAdapter { notification, action ->
 
@@ -41,20 +54,33 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
                 }
 
                 "VIEW_POLL" -> {
-                    findNavController()
-                        .navigate(R.id.action_notificationsFragment_to_voteFragment)
+                    val action =
+                        NotificationsFragmentDirections
+                            .actionNotificationsFragmentToVoteFragment(
+                                tripId
+                            )
+
+                    findNavController().navigate(action)
                 }
 
                 "VIEW_EXPENSE" -> {
                     findNavController()
-                        .navigate(R.id.action_notificationsFragment_to_expenseSummaryFragment)
+                    val action =
+                        NotificationsFragmentDirections
+                            .actionNotificationsFragmentToExpenseSummaryFragment(
+                                tripId,
+                                tripTitle,
+                                tripDate
+                            )
+
+                    findNavController().navigate(action)
                 }
             }
         }
 
         binding.recyclerNotifications.adapter = adapter
 
-        val tripId = 1L
+
 
         viewModel.getNotifications(tripId)
             .observe(viewLifecycleOwner) { list ->

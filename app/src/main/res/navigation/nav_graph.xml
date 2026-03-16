@@ -208,21 +208,7 @@
 
          <action
             android:id="@+id/action_myTripsFragment_to_tripDetailsFragment"
-            app:destination="@id/tripDetailsFragment">
-
-             <argument
-                 android:name="tripId"
-                 app:argType="long" />
-
-             <argument
-                 android:name="tripTitle"
-                 app:argType="string" />
-
-             <argument
-                 android:name="tripDate"
-                 app:argType="string" />
-
-         </action>
+            app:destination="@id/tripDetailsFragment"/>
     </fragment>
 
     <fragment
@@ -238,6 +224,21 @@
             <action
                 android:id="@+id/action_notificationsFragment_to_expenseSummaryFragment"
                 app:destination="@id/expenseSummaryFragment" />
+
+                <argument
+                    android:name="tripId"
+                    app:argType="long"
+                    android:defaultValue="-1" />
+
+                <argument
+                    android:name="tripTitle"
+                    app:argType="string"
+                    android:defaultValue=""/>
+
+                <argument
+                    android:name="tripDate"
+                    app:argType="string"
+                    android:defaultValue=""/>
 
     </fragment>
 
@@ -284,6 +285,18 @@
         android:label="Trip Details"
         tools:layout="@layout/fragment_trip_details">
 
+        <argument
+            android:name="tripId"
+            app:argType="long" />
+
+        <argument
+            android:name="tripTitle"
+            app:argType="string"/>
+
+        <argument
+            android:name="tripDate"
+            app:argType="string"/>
+
         <action
             android:id="@+id/action_tripDetailsFragment_to_createPollFragment"
             app:destination="@id/createPollFragment" />
@@ -304,17 +317,9 @@
             android:id="@+id/action_tripDetailsFragment_to_inviteMembersFragment"
             app:destination="@id/inviteMembersFragment" />
 
-        <argument
-            android:name="tripId"
-            app:argType="long" />
-
-        <argument
-            android:name="tripTitle"
-            app:argType="string"/>
-
-        <argument
-            android:name="tripDate"
-            app:argType="string"/>
+        <action
+            android:id="@+id/action_tripDetailsFragment_to_notificationsFragment"
+            app:destination="@id/notificationsFragment" />
 
 
     </fragment>

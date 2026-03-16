@@ -153,8 +153,17 @@ class TripDetailsFragment : Fragment() {
                 R.id.nav_create ->
                     findNavController().navigate(R.id.myTripsFragment)
 
-                R.id.nav_notifications ->
-                    findNavController().navigate(R.id.notificationsFragment)
+                R.id.nav_notifications -> {
+                    val action =
+                        TripDetailsFragmentDirections
+                            .actionTripDetailsFragmentToNotificationsFragment(
+                                tripId,
+                                tripTitle,
+                                tripDate
+                            )
+
+                    findNavController().navigate(action)
+                }
 
                 R.id.nav_profile ->
                     findNavController().navigate(R.id.profileFragment)
