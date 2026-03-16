@@ -17,6 +17,9 @@ interface UserDao {
     @Query("SELECT * FROM user_table WHERE email = :email LIMIT 1")
     suspend fun getUserByEmail(email: String): UserEntity?
 
+    @Query("SELECT * FROM user_table WHERE email = :email LIMIT 1")
+    fun getUserByEmailLiveData(email: String): LiveData<UserEntity?>
+
     @Query("SELECT * FROM user_table WHERE name = :name LIMIT 1")
     suspend fun getUserByName(name: String): UserEntity?
 
@@ -28,7 +31,4 @@ interface UserDao {
 
     @Query("SELECT * FROM user_table WHERE id = :userId LIMIT 1")
     fun getUserById(userId: Int): LiveData<UserEntity?>
-
-
-
 }

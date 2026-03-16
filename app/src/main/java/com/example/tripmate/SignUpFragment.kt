@@ -61,9 +61,9 @@ class SignupFragment : Fragment(R.layout.fragment_sign_up) {
         userViewModel.registerResult.observe(viewLifecycleOwner) { userId ->
 
             if (userId != null) {
-
+                val email = etEmail.text.toString().trim()
                 val sessionManager = SessionManager(requireContext())
-                sessionManager.saveUserSession(userId.toInt(), etName.text.toString())
+                sessionManager.saveUserSession(userId.toString(), etName.text.toString(), email)
 
                 Toast.makeText(
                     requireContext(),

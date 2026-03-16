@@ -1,32 +1,34 @@
 package com.example.tripmate.data.utils
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
 
 class SessionManager(context: Context) {
 
-    private val prefs =
-        context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+    private val prefs: SharedPreferences = context.getSharedPreferences("TripMatePrefs", Context.MODE_PRIVATE)
 
-    fun saveUserSession(userId: Int, name: String) {
-        prefs.edit()
-            .putInt("USER_ID", userId)
-            .putString("user_name", name)
-            .apply()
+    fun saveUserSession(userId: String, userName: String, userEmail: String) {
+        prefs.edit {
+            putString("userId", userId)
+            putString("user_name", userName)
+            putString("user_email", userEmail)
+        }
     }
 
-    fun getUserId(): Int {
-        return prefs.getInt("USER_ID", NO_USER)
+    fun getUserId(): String? {
+        return prefs.getString("userId", null)
     }
 
     fun getUserName(): String {
         return prefs.getString("user_name", "User") ?: "User"
     }
 
-    fun clearSession() {
-        prefs.edit().clear().apply()
+    fun getUserEmail(): String? {
+        return prefs.getString("user_email", null)
     }
 
-    companion object {
-        const val NO_USER = -1
+    fun clearSession() {
+        prefs.edit { clear() }
     }
 }

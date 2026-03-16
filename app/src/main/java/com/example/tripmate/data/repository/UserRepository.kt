@@ -1,5 +1,6 @@
 package com.example.tripmate.data.repository
 
+import androidx.lifecycle.LiveData
 import com.example.tripmate.data.local.UserDao
 import com.example.tripmate.data.model.UserEntity
 import com.example.tripmate.data.utils.PasswordHasher
@@ -48,6 +49,10 @@ class UserRepository(private val userDao: UserDao) {
 
     suspend fun getUserByEmail(email: String): UserEntity? {
         return userDao.getUserByEmail(email)
+    }
+
+    fun getUserByEmailLiveData(email: String): LiveData<UserEntity?> {
+        return userDao.getUserByEmailLiveData(email)
     }
 
 }
