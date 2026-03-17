@@ -47,9 +47,11 @@ class FirebaseStoreManager {
                 val tripList = documents.map { doc ->
                     TripEntity(
                         id = 0,
+                        userId = userId,
                         name = doc.getString("name") ?: "",
                         description = doc.getString("description") ?: "",
-                        date = doc.getString("date") ?: ""
+                        date = doc.getString("date") ?: "",
+                        country = doc.getString("country") ?: ""
                     )
                 }
                 onResult(tripList)

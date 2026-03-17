@@ -65,7 +65,7 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        viewModel.getTripsByUser(userId).observe(viewLifecycleOwner) { trips ->
+        viewModel.getTripsByUser(userId.toString()).observe(viewLifecycleOwner) { trips ->
             adapter.submitList(trips)
         }
 

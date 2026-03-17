@@ -125,7 +125,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             return
         }
 
-        tripViewModel.getTripsByUser(userId).observe(viewLifecycleOwner) { trips ->
+        tripViewModel.getTripsByUser(userId.toString()).observe(viewLifecycleOwner) { trips ->
             adapter.submitList(trips)
         }
 

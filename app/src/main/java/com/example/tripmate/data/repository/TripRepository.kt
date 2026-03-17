@@ -20,7 +20,10 @@ class TripRepository(private val tripDao: TripDao) {
 
         // 2. Sync to Firebase Cloud if userId is available
         userId?.let {
-            firebaseStoreManager.saveTrip(trip, it) { success ->
+            firebaseStoreManager.saveTrip(
+                trip = trip,
+                userId = it
+            ) { success ->
             }
         }
     }

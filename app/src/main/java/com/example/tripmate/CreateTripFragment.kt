@@ -136,13 +136,17 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
                         date = "$startDate - $endDate",
                         country = country
                     )
-                    val currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
+
 
                     // Save to Local DB (Room/ViewModel)
                     viewModel.insert(trip)
 
                     // Save to Firebase
-                    firebaseStoreManager.saveTrip(trip, currentUserId) { success ->
+                    firebaseStoreManager.saveTrip(
+                        trip = trip,
+                        userId = userId
+                    ) { success ->
                         if (success) {
                             Log.d("TRIPMATE_DEBUG", "Firebase Sync Successful")
                         } else {

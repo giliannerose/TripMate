@@ -89,8 +89,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
             if (user != null) {
 
-                // Fix: convert Int to String and provide all required arguments
-                sessionManager.saveUserSession(user.id.toString(), user.name, user.email)
+
+                sessionManager.saveUserSession(user.id, user.name, user.email)
 
                 Toast.makeText(
                     requireContext(),
