@@ -9,7 +9,10 @@ class TripRepository(private val tripDao: TripDao) {
 
     private val firebaseStoreManager = FirebaseStoreManager()
 
-    val allTrips: LiveData<List<TripEntity>> = tripDao.getAllTrips()
+    //val allTrips: LiveData<List<TripEntity>> = tripDao.getAllTrips()
+    fun getTripsByUser(userId: String): LiveData<List<TripEntity>> {
+        return tripDao.getTripsByUser(userId)
+    }
 
     suspend fun insert(trip: TripEntity, userId: String? = null) {
         // 1. Insert into local Room database
@@ -18,7 +21,6 @@ class TripRepository(private val tripDao: TripDao) {
         // 2. Sync to Firebase Cloud if userId is available
         userId?.let {
             firebaseStoreManager.saveTrip(trip, it) { success ->
-                // Handle success/failure of cloud sync if needed
             }
         }
     }
@@ -33,22 +35,20 @@ class TripRepository(private val tripDao: TripDao) {
         // Optionally sync delete to Firebase
     }
 
-    fun getTripCount(): LiveData<Int> {
-        return tripDao.getTripCount()
+    fun getTripCount(userId: String): LiveData<Int> {
+        return tripDao.getTripCount(userId)
     }
-
-    fun getCountriesVisited(): LiveData<Int> {
-        return tripDao.getCountriesVisited()
+    fun getCountriesVisited(userId: String): LiveData<Int> {
+        return tripDao.getCountriesVisited(userId)
     }
 
     fun getTripById(tripId: Long): LiveData<TripEntity> {
         return tripDao.getTripById(tripId)
     }
 
-    // Sync from Cloud to Local
+    // Sync from Firebase → Room
     fun syncFromCloud(userId: String) {
         firebaseStoreManager.getTrips(userId) { trips ->
-            // You can implement logic to update local DB with cloud data
         }
     }
 }

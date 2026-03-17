@@ -7,36 +7,40 @@ import androidx.room.Query
 import androidx.room.Update
 import androidx.lifecycle.LiveData
 import androidx.room.OnConflictStrategy
-
 import com.example.tripmate.data.model.TripEntity
-
 
 @Dao
 interface TripDao {
 
-    //Create a new trip
+    // Create a new trip
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrip(trip: TripEntity)
 
+    // Get all trips for a user
+    @Query("SELECT * FROM trip_table WHERE userId = :userId ORDER BY id DESC")
+    fun getTripsByUser(userId: String): LiveData<List<TripEntity>>
 
-    //Get all trips
-    @Query("SELECT * FROM trip_table ORDER BY id DESC")
-    fun getAllTrips(): LiveData<List<TripEntity>>
-
-    //Update a trip
+    // Update a trip
     @Update
     suspend fun updateTrip(trip: TripEntity)
 
-    //Delete a trip
+    // Delete a trip
     @Delete
     suspend fun deleteTrip(trip: TripEntity)
 
-    @Query("SELECT COUNT(*) FROM trip_table")
-    fun getTripCount(): LiveData<Int>
+    // Count trips
+    @Query("SELECT COUNT(*) FROM trip_table WHERE userId = :userId")
+    fun getTripCount(userId: String): LiveData<Int>
 
-    @Query("SELECT COUNT(DISTINCT country) FROM trip_table WHERE country != ''")
-    fun getCountriesVisited(): LiveData<Int>
+    // Count countries visited
+    @Query("""
+        SELECT COUNT(DISTINCT country)
+        FROM trip_table
+        WHERE country != '' AND userId = :userId
+    """)
+    fun getCountriesVisited(userId: String): LiveData<Int>
 
+    // Get trip by ID
     @Query("SELECT * FROM trip_table WHERE id = :tripId")
     fun getTripById(tripId: Long): LiveData<TripEntity>
 }

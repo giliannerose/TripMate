@@ -44,10 +44,12 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
         sessionManager = SessionManager(requireContext())
 
+
         binding.imgProfile.setOnClickListener {
             Log.d("TRIPMATE_DEBUG", "Image clicked!")
             pickImageLauncher.launch("image/*")
         }
+
 
         binding.tvUploadPhoto.setOnClickListener {
             Log.d("TRIPMATE_DEBUG", "Text clicked!")
@@ -58,8 +60,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val userId = sessionManager.getUserId()
 
 
-        if (!userId.isNullOrEmpty()) {
-             userViewModel.getUserById(userId.toIntOrNull() ?: 0).observe(viewLifecycleOwner) { user ->
+        if (userId != SessionManager.NO_USER) {
+            userViewModel.getUserById(userId).observe(viewLifecycleOwner) { user ->
                 user?.let {
                     currentUser = it
                     populateFields(it)

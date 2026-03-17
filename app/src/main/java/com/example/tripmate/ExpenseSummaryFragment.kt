@@ -60,7 +60,11 @@ class ExpenseSummaryFragment : Fragment(R.layout.fragment_expense_summary) {
         btnAddExpense.setOnClickListener {
             val action =
                 ExpenseSummaryFragmentDirections
-                    .actionExpenseSummaryFragmentToAddExpenseFragment(tripId)
+                    .actionExpenseSummaryFragmentToAddExpenseFragment(
+                        tripId,
+                        tripTitle,
+                        tripDate
+                    )
 
             findNavController().navigate(action)
         }

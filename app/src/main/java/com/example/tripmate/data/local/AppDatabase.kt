@@ -26,7 +26,7 @@ import com.example.tripmate.data.model.TripParticipantEntity
         PollEntity::class,
         NotificationEntity::class
     ],
-    version = 13, exportSchema = false)
+    version = 15, exportSchema = false)
 
 abstract class AppDatabase : RoomDatabase() {
     // Connects the Database to the Queries
@@ -225,6 +225,43 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_13_14 = object : Migration(13, 14) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+                database.execSQL("""
+            ALTER TABLE trip_table
+            ADD COLUMN userId INTEGER NOT NULL DEFAULT 0
+        """.trimIndent())
+            }
+        }
+
+        val MIGRATION_14_15 = object : Migration(14, 15) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+                // 1. Create new table with correct schema
+                database.execSQL("""
+            CREATE TABLE IF NOT EXISTS trip_table_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                userId TEXT NOT NULL,
+                name TEXT NOT NULL,
+                description TEXT NOT NULL,
+                date TEXT NOT NULL,
+                country TEXT NOT NULL
+            )
+        """.trimIndent())
+
+                database.execSQL("""
+            INSERT INTO trip_table_new (id, userId, name, description, date, country)
+            SELECT id, userId, name, description, date, country
+            FROM trip_table
+        """.trimIndent())
+
+                database.execSQL("DROP TABLE trip_table")
+
+                database.execSQL("ALTER TABLE trip_table_new RENAME TO trip_table")
+            }
+        }
+
 
 
         fun getDatabase(context: Context): AppDatabase {
@@ -246,7 +283,9 @@ abstract class AppDatabase : RoomDatabase() {
                         MIGRATION_9_10,
                         MIGRATION_10_11,
                         MIGRATION_11_12,
-                        MIGRATION_12_13
+                        MIGRATION_12_13,
+                        MIGRATION_13_14,
+                        MIGRATION_14_15
                     )
                     .build()
                 INSTANCE = instance

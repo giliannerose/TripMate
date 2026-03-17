@@ -21,6 +21,7 @@ import com.example.tripmate.ui.user.UserViewModel
 import androidx.navigation.fragment.navArgs
 
 
+
 class TripDetailsFragment : Fragment() {
 
     private lateinit var viewModel: TripParticipantViewModel

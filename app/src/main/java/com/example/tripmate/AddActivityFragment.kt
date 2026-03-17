@@ -14,13 +14,19 @@ import java.util.Calendar
 import androidx.lifecycle.ViewModelProvider
 import com.example.tripmate.ui.itinerary.ActivityViewModel
 import com.example.tripmate.data.model.ActivityEntity
+import androidx.navigation.fragment.navArgs
 
 class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
 
     private lateinit var activityViewModel: ActivityViewModel
 
+    private val args: AddActivityFragmentArgs by navArgs()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val tripId = args.tripId
+
 
         activityViewModel = ViewModelProvider(
             this,
@@ -114,7 +120,7 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
             }
 
             val newActivity = ActivityEntity(
-                tripId = 1L, // temporary
+                tripId = tripId,
                 date = date,
                 time = time,
                 title = title,
@@ -129,8 +135,7 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
                 Toast.LENGTH_SHORT
             ).show()
 
-            findNavController()
-                .navigate(R.id.action_addActivityFragment_to_itineraryFragment)
+            findNavController().popBackStack()
         }
 
         btnCancel.setOnClickListener {

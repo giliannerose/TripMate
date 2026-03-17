@@ -198,6 +198,18 @@
             android:name="tripId"
             app:argType="long"/>
 
+        <argument
+            android:name="tripTitle"
+            app:argType="string" />
+
+        <argument
+            android:name="tripDate"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_addExpenseFragment_to_expenseSummaryFragment"
+            app:destination="@id/expenseSummaryFragment" />
+
     </fragment>
 
     <fragment
@@ -209,6 +221,22 @@
          <action
             android:id="@+id/action_myTripsFragment_to_tripDetailsFragment"
             app:destination="@id/tripDetailsFragment"/>
+
+        <action
+            android:id="@+id/action_myTripsFragment_to_expenseSummaryFragment"
+            app:destination="@id/expenseSummaryFragment"/>
+
+            <argument
+                android:name="tripId"
+                app:argType="long" />
+
+            <argument
+                android:name="tripTitle"
+                app:argType="string" />
+
+            <argument
+                android:name="tripDate"
+                app:argType="string" />
     </fragment>
 
     <fragment
@@ -491,8 +519,37 @@
         android:id="@+id/pollResultsFragment"
         android:name="com.example.tripmate.ui.polls.PollResultsFragment"
         android:label="Poll Results"
-        tools:layout="@layout/fragment_poll_results"/>
+        tools:layout="@layout/fragment_poll_results">
 
+        <argument
+            android:name="tripId"
+            app:argType="long" />
+
+        <argument
+            android:name="tripTitle"
+            app:argType="string" />
+
+        <argument
+            android:name="tripDate"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_pollResultsFragment_to_tripDetailsFragment"
+            app:destination="@id/tripDetailsFragment" />
+
+        <action
+            android:id="@+id/action_pollResultsFragment_to_expenseSummaryFragment"
+            app:destination="@id/expenseSummaryFragment" />
+
+        <action
+            android:id="@+id/action_pollResultsFragment_to_documentsFragment"
+            app:destination="@id/documentsFragment" />
+
+        <action
+            android:id="@+id/action_pollResultsFragment_to_itineraryFragment"
+            app:destination="@id/itineraryFragment" />
+
+    </fragment>
 
 
 

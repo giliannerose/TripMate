@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.tripmate.ui.user.UserViewModel
 import com.example.tripmate.data.model.UserEntity
 import com.example.tripmate.data.utils.PasswordHasher
+import com.example.tripmate.data.utils.SessionManager
 
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
@@ -19,13 +20,21 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private lateinit var viewModel: UserViewModel
     private var currentUser: UserEntity? = null
 
-    // temporary
-    private val userId = 1
+    private var userId: Int = -1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[UserViewModel::class.java]
+
+        val sessionManager = SessionManager(requireContext())
+        userId = sessionManager.getUserId()
+
+        if (userId == -1) {
+            Toast.makeText(requireContext(), "User session not found", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
+            return
+        }
 
         val tvBack = view.findViewById<TextView>(R.id.tvBack)
         val switchNotifications = view.findViewById<Switch>(R.id.switchNotifications)
@@ -44,6 +53,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 tvPrivacyStatus.text = user.privacyStatus
             }
         }
+
 
         // Back
         tvBack.setOnClickListener {
@@ -81,7 +91,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         // Privacy toggle
         tvPrivacyStatus.setOnClickListener {
             tvPrivacyStatus.text =
-                if (tvPrivacyStatus.text == "Public") "Private" else "Public"
+                if (tvPrivacyStatus.text.toString() == "Public") "Private" else "Public"
         }
 
         // Save settings
@@ -131,6 +141,21 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 .setMessage("Are you sure you want to save these changes?")
                 .setPositiveButton("Yes") { _, _ ->
                     val user = currentUser ?: return@setPositiveButton
+
+                    // Validate current password if user is trying to change password
+                    if (newPass.isNotEmpty()) {
+
+                        val currentPassHash = PasswordHasher.hash(currentPass)
+
+                        if (currentPassHash != user.passwordHash) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Current password is incorrect",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@setPositiveButton
+                        }
+                    }
 
                     val updatedUser = user.copy(
                         notificationsEnabled = switchNotifications.isChecked,
