@@ -13,18 +13,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tripmate.ui.poll.PollViewModel
 import com.example.tripmate.ui.poll.PollResultsAdapter
+import androidx.navigation.fragment.navArgs
 
 class PollResultsFragment : Fragment(R.layout.fragment_poll_results) {
 
     private lateinit var viewModel: PollViewModel
     private lateinit var adapter: PollResultsAdapter
-    private val tripId: Long = 1 // TEMP for Sprint 3
+
+    private val args: PollResultsFragmentArgs by navArgs()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[PollViewModel::class.java]
+
+        val tripId = args.tripId
+        val tripTitle = args.tripTitle
+        val tripDate = args.tripDate
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerResults)
 
@@ -48,7 +54,15 @@ class PollResultsFragment : Fragment(R.layout.fragment_poll_results) {
 
         // Top Tabs
         view.findViewById<Button>(R.id.tabParticipants).setOnClickListener {
-            findNavController().navigate(R.id.tripDetailsFragment)
+            val action =
+                PollResultsFragmentDirections
+                    .actionPollResultsFragmentToTripDetailsFragment(
+                        tripId,
+                        tripTitle,
+                        tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.tabPolls).setOnClickListener {
@@ -56,15 +70,39 @@ class PollResultsFragment : Fragment(R.layout.fragment_poll_results) {
         }
 
         view.findViewById<Button>(R.id.tabExpenses).setOnClickListener {
-            findNavController().navigate(R.id.expenseSummaryFragment)
+            val action =
+           PollResultsFragmentDirections
+                    .actionPollResultsFragmentToExpenseSummaryFragment(
+                        tripId,
+                        tripTitle,
+                        tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.tabDocs).setOnClickListener {
-            findNavController().navigate(R.id.documentsFragment)
+            val action =
+                PollResultsFragmentDirections
+                    .actionPollResultsFragmentToDocumentsFragment(
+                        tripId,
+                        tripTitle,
+                        tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.tabItinerary).setOnClickListener {
-            findNavController().navigate(R.id.itineraryFragment)
+            val action =
+                PollResultsFragmentDirections
+                    .actionPollResultsFragmentToItineraryFragment(
+                        tripId,
+                        tripTitle,
+                        tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         // Bottom Navigation

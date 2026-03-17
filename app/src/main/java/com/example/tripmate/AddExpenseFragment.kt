@@ -21,17 +21,23 @@ import android.app.DatePickerDialog
 import com.example.tripmate.data.model.ExpenseEntity
 import com.example.tripmate.ui.itinerary.ExpenseViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 
 
 class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
     private lateinit var viewModel: ExpenseViewModel
 
+    private val args: AddExpenseFragmentArgs by navArgs()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
 
-        super.onViewCreated(view, savedInstanceState)
+        val tripId = args.tripId
+        val tripTitle = args.tripTitle
+        val tripDate = args.tripDate
 
         val etTitle = view.findViewById<EditText>(R.id.etTitle)
         val etAmount = view.findViewById<EditText>(R.id.etAmount)
@@ -146,7 +152,7 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
 
                     val expense = ExpenseEntity(
-                        tripId = 1L,   // temporary hardcoded
+                        tripId = tripId,
                         title = title,
                         amount = amount,
                         date = date,
@@ -164,8 +170,15 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    view.findNavController()
-                        .navigate(R.id.expenseSummaryFragment)
+                    val action =
+                        AddExpenseFragmentDirections
+                            .actionAddExpenseFragmentToExpenseSummaryFragment(
+                                tripId,
+                                tripTitle,
+                                tripDate
+                            )
+
+                    view.findNavController().navigate(action)
 
                     dialog.dismiss()
                 }
@@ -176,8 +189,15 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
         }
 
         btnViewSummary.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.expenseSummaryFragment)
+            val action =
+                AddExpenseFragmentDirections
+                    .actionAddExpenseFragmentToExpenseSummaryFragment(
+                        tripId,
+                        tripTitle,
+                        tripDate
+                    )
+
+            view.findNavController().navigate(action)
         }
 
         // Top Tabs

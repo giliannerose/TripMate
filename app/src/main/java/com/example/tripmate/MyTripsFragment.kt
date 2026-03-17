@@ -32,8 +32,8 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
         val btnCreateTrip = view.findViewById<Button>(R.id.btnCreateTrip)
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        val btnInvite = view.findViewById<Button>(R.id.btnInvite)
-        val btnExpense = view.findViewById<Button>(R.id.btnExpense)
+
+
 
         val session = SessionManager(requireContext())
         val userId = session.getUserId()
@@ -75,21 +75,6 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
             view.findNavController()
                 .navigate(R.id.createTripFragment)
         }
-
-
-
-        btnInvite.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.inviteMembersFragment)
-        }
-
-        btnExpense.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.expenseSummaryFragment)
-        }
-
-
-
 
 
         bottomNav.setOnItemSelectedListener { item ->
