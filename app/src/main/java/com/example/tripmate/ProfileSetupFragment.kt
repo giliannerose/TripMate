@@ -17,6 +17,7 @@ import com.example.tripmate.data.remote.FirebaseStorageManager
 import com.example.tripmate.data.utils.SessionManager
 import com.example.tripmate.ui.user.UserViewModel
 import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuth
 
 class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
 
@@ -53,7 +54,7 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         val btnSaveChanges = view.findViewById<Button>(R.id.btnSaveChanges)
         val btnSkip = view.findViewById<Button>(R.id.btnSkip)
 
-        etName.setText(sessionManager.getUserName())
+        etName.setText(FirebaseAuth.getInstance().currentUser?.email ?: "")
 
         // Use GET_CONTENT to allow picking from Gallery, File Manager, or Downloads
         imgProfile.setOnClickListener {
@@ -74,7 +75,7 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
                 return@setOnClickListener
             }
 
-            val email = sessionManager.getUserEmail() ?: return@setOnClickListener
+            val email = FirebaseAuth.getInstance().currentUser?.email ?: return@setOnClickListener
 
             lifecycleScope.launch {
                 val user = userViewModel.getUserByEmail(email)

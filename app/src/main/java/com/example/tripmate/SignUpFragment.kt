@@ -10,19 +10,21 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.example.tripmate.data.utils.SessionManager
 import com.example.tripmate.ui.user.UserViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 class SignupFragment : Fragment(R.layout.fragment_sign_up) {
 
-    private val userViewModel: UserViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val auth = FirebaseAuth.getInstance()
         val etName = view.findViewById<EditText>(R.id.etName)
         val etEmail = view.findViewById<EditText>(R.id.etEmail)
         val etPassword = view.findViewById<EditText>(R.id.etPassword)
         val btnCreateAccount = view.findViewById<Button>(R.id.btnCreateAccount)
         val btnBackLogin = view.findViewById<Button>(R.id.btnBackLogin)
+
 
         btnCreateAccount.setOnClickListener {
 
@@ -54,35 +56,32 @@ class SignupFragment : Fragment(R.layout.fragment_sign_up) {
             }
 
             if (isValid) {
-                userViewModel.register(name, email, password)
+
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnSuccessListener {
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Welcome, $name",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        view.findNavController()
+                            .navigate(R.id.action_signupFragment_to_profileSetupFragment)
+                    }
+                    .addOnFailureListener {
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Signup failed (email may already exist)",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
             }
         }
 
-        userViewModel.registerResult.observe(viewLifecycleOwner) { userId ->
 
-            if (userId != null) {
-                val email = etEmail.text.toString().trim()
-                val sessionManager = SessionManager(requireContext())
-                sessionManager.saveUserSession(userId.toInt(), etName.text.toString(), email)
 
-                Toast.makeText(
-                    requireContext(),
-                    "Welcome, ${etName.text}",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                view.findNavController()
-                    .navigate(R.id.action_signupFragment_to_profileSetupFragment)
-
-            } else {
-
-                Toast.makeText(
-                    requireContext(),
-                    "Email already registered!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
 
         btnBackLogin.setOnClickListener {
             view.findNavController()

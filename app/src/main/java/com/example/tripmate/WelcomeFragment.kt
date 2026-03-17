@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.tripmate.data.utils.SessionManager
 import androidx.navigation.NavOptions
+import com.google.firebase.auth.FirebaseAuth
 
 class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
 
@@ -16,10 +17,9 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
         val btnGetStarted = view.findViewById<Button>(R.id.btnGetStarted)
         val btnLogin = view.findViewById<Button>(R.id.btnLogin)
 
-        val sessionManager = SessionManager(requireContext())
+        val currentUser = FirebaseAuth.getInstance().currentUser
 
-        // Auto-login if user session exists
-        if (sessionManager.getUserId() != SessionManager.NO_USER) {
+        if (currentUser != null) {
             view.findNavController().navigate(
                 R.id.action_welcomeFragment_to_dashboardFragment,
                 null,

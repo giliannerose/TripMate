@@ -272,7 +272,7 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.tripmate.ui.profile.ProfileFragment"
+        android:name="com.example.tripmate.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile">
 

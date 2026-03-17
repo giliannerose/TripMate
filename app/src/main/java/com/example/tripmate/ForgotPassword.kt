@@ -9,23 +9,22 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.tripmate.databinding.FragmentForgotPasswordBinding
 import com.example.tripmate.ui.user.UserViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
 
     private var _binding: FragmentForgotPasswordBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var userViewModel: UserViewModel
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         _binding = FragmentForgotPasswordBinding.bind(view)
 
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        val auth = FirebaseAuth.getInstance()
 
         binding.btnSendResetLink.setOnClickListener {
-
             val email = binding.etEmail.text.toString().trim()
 
             if (email.isEmpty()) {
@@ -38,29 +37,27 @@ class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
                 return@setOnClickListener
             }
 
-            userViewModel.checkEmailExists(email) { exists ->
-
-                if (exists) {
+            auth.sendPasswordResetEmail(email)
+                .addOnSuccessListener {
 
                     Toast.makeText(
                         requireContext(),
-                        "Reset instructions sent if the email exists",
+                        "Reset email sent!",
                         Toast.LENGTH_LONG
                     ).show()
 
                     requireView().findNavController()
                         .navigate(R.id.action_forgotPasswordFragment_to_loginFragment)
-
-                } else {
+                }
+                .addOnFailureListener {
 
                     Toast.makeText(
                         requireContext(),
-                        "Email not found",
+                        "Failed to send reset email",
                         Toast.LENGTH_SHORT
                     ).show()
-
                 }
-            }
+
         }
 
         binding.tvBackLogin.setOnClickListener {

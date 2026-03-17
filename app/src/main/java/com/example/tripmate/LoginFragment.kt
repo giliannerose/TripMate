@@ -12,11 +12,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.tripmate.data.utils.SessionManager
 import com.example.tripmate.ui.user.UserViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
-
-    private val userViewModel: UserViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,7 +26,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val btnLogin = view.findViewById<Button>(R.id.btnLogin)
         val btnRegister = view.findViewById<Button>(R.id.btnRegister)
         val tvForgotPassword = view.findViewById<TextView>(R.id.tvForgotPassword)
-        val sessionManager = SessionManager(requireContext())
+        val auth = FirebaseAuth.getInstance()
 
 
         swipeRefresh.setOnRefreshListener {
@@ -80,37 +79,36 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
 
             btnLogin.isEnabled = false
-            userViewModel.login(email, password)
+
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+
+                    btnLogin.isEnabled = true
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Welcome back!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    findNavController().navigate(
+                        R.id.action_loginFragment_to_loginSuccessFragment
+                    )
+                }
+                .addOnFailureListener {
+
+                    btnLogin.isEnabled = true
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Invalid email or password",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
         }
 
-        userViewModel.loginResult.observe(viewLifecycleOwner) { user ->
 
-            btnLogin.isEnabled = true
-
-            if (user != null) {
-
-
-                sessionManager.saveUserSession(user.id, user.name, user.email)
-
-                Toast.makeText(
-                    requireContext(),
-                    "Welcome back!",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                findNavController().navigate(
-                    R.id.action_loginFragment_to_loginSuccessFragment
-                )
-
-            } else {
-
-                Toast.makeText(
-                    requireContext(),
-                    "Invalid email or password",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
 
         btnRegister.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_signupFragment)

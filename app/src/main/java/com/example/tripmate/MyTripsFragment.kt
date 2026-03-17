@@ -35,11 +35,12 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
 
 
 
-        val session = SessionManager(requireContext())
-        val userId = session.getUserId()
+        val userId = com.google.firebase.auth.FirebaseAuth
+            .getInstance()
+            .currentUser?.uid
 
 
-        viewModel = ViewModelProvider(this)[TripViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[TripViewModel::class.java]
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.tripsRecyclerView)
 
@@ -65,8 +66,10 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        viewModel.getTripsByUser(userId.toString()).observe(viewLifecycleOwner) { trips ->
-            adapter.submitList(trips)
+        if (userId != null) {
+            viewModel.getTripsByUser(userId).observe(viewLifecycleOwner) { trips ->
+                adapter.submitList(trips)
+            }
         }
 
         bottomNav.selectedItemId = R.id.nav_create

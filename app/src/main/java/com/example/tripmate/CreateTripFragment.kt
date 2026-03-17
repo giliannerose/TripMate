@@ -39,7 +39,7 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
 
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[TripViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[TripViewModel::class.java]
 
         val etTripName = view.findViewById<EditText>(R.id.etTripName)
         val etDestination = view.findViewById<EditText>(R.id.etDestination)
@@ -127,7 +127,11 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
                     // Create the Trip object
 
 
-                    val userId = currentUserId ?: ""
+                    val userId = currentUserId
+                    if (userId == null) {
+                        Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
 
                     val trip = TripEntity(
                         userId = userId,
@@ -155,6 +159,10 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
                     }
 
                     Toast.makeText(requireContext(), "Trip saved successfully!", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+
+                    view.findNavController().navigate(R.id.myTripsFragment)
+
                     dialog.dismiss()
 
                 }
