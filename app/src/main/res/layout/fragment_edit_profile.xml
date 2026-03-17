@@ -62,7 +62,10 @@
                 android:src="@drawable/sample_avatar"
                 android:scaleType="centerCrop"
                 android:background="@drawable/circle_bg"
-                android:clipToOutline="true" />
+                android:clipToOutline="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground" />
 
             <TextView
                 android:id="@+id/tvUploadPhoto"
@@ -72,7 +75,9 @@
                 android:textColor="#2196F3"
                 android:textStyle="bold"
                 android:textSize="14sp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:focusable="true" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

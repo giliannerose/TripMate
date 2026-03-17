@@ -12,11 +12,15 @@ import androidx.navigation.findNavController
 import java.util.Calendar
 import androidx.appcompat.app.AlertDialog
 import android.app.DatePickerDialog
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.lifecycle.ViewModelProvider
 import com.example.tripmate.data.model.TripEntity
 import com.example.tripmate.ui.trip.TripViewModel
+import com.example.tripmate.data.remote.FirebaseStoreManager
+import com.google.firebase.auth.FirebaseAuth
+
 
 
 
@@ -25,6 +29,10 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
         private var startDateCalendar: Calendar? = null
         private var endDateCalendar: Calendar? = null
         private lateinit var viewModel: TripViewModel
+        private val firebaseStoreManager = FirebaseStoreManager()
+    private val currentUserId: String?
+        get() = FirebaseAuth.getInstance().currentUser?.uid
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -106,23 +114,34 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
                 }
             }
 
+
             AlertDialog.Builder(requireContext())
                 .setTitle("Save Trip")
                 .setMessage("Are you sure you want to save this trip?")
                 .setPositiveButton("Save") { dialog, _ ->
+                    // Create the Trip object
                     val trip = TripEntity(
                         name = tripName,
                         description = destination,
-                        date = "$startDate - $endDate" ,
+                        date = "$startDate - $endDate",
                         country = country
                     )
+                    val currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
+                    // Save to Local DB (Room/ViewModel)
                     viewModel.insert(trip)
 
+                    // Save to Firebase
+                    firebaseStoreManager.saveTrip(trip, currentUserId) { success ->
+                        if (success) {
+                            Log.d("TRIPMATE_DEBUG", "Firebase Sync Successful")
+                        } else {
+                            Log.e("TRIPMATE_DEBUG", "Firebase Sync Failed")
+                        }
+                    }
+
                     Toast.makeText(requireContext(), "Trip saved successfully!", Toast.LENGTH_SHORT).show()
-
                     dialog.dismiss()
-
                     view.findNavController().navigate(R.id.myTripsFragment)
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->

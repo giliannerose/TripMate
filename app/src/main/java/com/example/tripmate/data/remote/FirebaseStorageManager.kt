@@ -1,6 +1,8 @@
 package com.example.tripmate.data.remote
 
+import android.content.Context
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 
@@ -8,30 +10,20 @@ class FirebaseStorageManager {
     private val storage = FirebaseStorage.getInstance()
     private val storageRef = storage.reference
 
-    // Upload an image (like a profile picture)
-    fun uploadImage(imageUri: Uri, folder: String, onResult: (Boolean, String?) -> Unit) {
-        val fileName = "${UUID.randomUUID()}.jpg"
-        val imageRef = storageRef.child("$folder/$fileName")
+    /**
+     * Uploads any file type (Image or Doc) and returns the Download URL.
+     */
+    fun uploadFile(fileUri: Uri, folder: String, context: Context, onResult: (Boolean, String?) -> Unit) {
+        // Automatically detect file extension (e.g., .jpg, .pdf, .docx)
+        val extension = MimeTypeMap.getSingleton()
+            .getExtensionFromMimeType(context.contentResolver.getType(fileUri)) ?: "file"
 
-        imageRef.putFile(imageUri)
+        val fileName = "${UUID.randomUUID()}.$extension"
+        val fileRef = storageRef.child("$folder/$fileName")
+
+        fileRef.putFile(fileUri)
             .addOnSuccessListener {
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    onResult(true, uri.toString())
-                }
-            }
-            .addOnFailureListener {
-                onResult(false, it.message)
-            }
-    }
-
-    // Upload a document
-    fun uploadDocument(fileUri: Uri, folder: String, onResult: (Boolean, String?) -> Unit) {
-        val fileName = UUID.randomUUID().toString()
-        val docRef = storageRef.child("$folder/$fileName")
-
-        docRef.putFile(fileUri)
-            .addOnSuccessListener {
-                docRef.downloadUrl.addOnSuccessListener { uri ->
+                fileRef.downloadUrl.addOnSuccessListener { uri ->
                     onResult(true, uri.toString())
                 }
             }

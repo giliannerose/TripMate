@@ -4,17 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.data.model.UserEntity
+import com.example.tripmate.data.remote.FirebaseStorageManager
 import com.example.tripmate.data.utils.SessionManager
 import com.example.tripmate.ui.user.UserViewModel
 import kotlinx.coroutines.launch
@@ -24,17 +23,19 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
     private lateinit var imgProfile: ImageView
     private lateinit var userViewModel: UserViewModel
     private lateinit var sessionManager: SessionManager
-    private var selectedImageUri: Uri? = null
+    private val storageManager = FirebaseStorageManager()
+    private var selectedFileUri: Uri? = null
 
-    private val imagePicker = registerForActivityResult(
+    // Universal File Picker Callback
+    private val filePicker = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val imageUri: Uri? = result.data?.data
-            if (imageUri != null) {
-                selectedImageUri = imageUri
-                imgProfile.setImageURI(imageUri)
-                Toast.makeText(requireContext(), "Profile photo added", Toast.LENGTH_SHORT).show()
+            result.data?.data?.let { uri ->
+                selectedFileUri = uri
+                // Preview the image
+                imgProfile.setImageURI(uri)
+                Toast.makeText(requireContext(), "File attached!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -52,13 +53,15 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         val btnSaveChanges = view.findViewById<Button>(R.id.btnSaveChanges)
         val btnSkip = view.findViewById<Button>(R.id.btnSkip)
 
-        // Pre-fill name from session
         etName.setText(sessionManager.getUserName())
 
+        // Use GET_CONTENT to allow picking from Gallery, File Manager, or Downloads
         imgProfile.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            imagePicker.launch(intent)
+            val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                type = "*/*" // Allow images and documents
+                addCategory(Intent.CATEGORY_OPENABLE)
+            }
+            filePicker.launch(intent)
         }
 
         btnSaveChanges.setOnClickListener {
@@ -71,22 +74,25 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
                 return@setOnClickListener
             }
 
-            val email = sessionManager.getUserEmail()
-            if (email != null) {
-                lifecycleScope.launch {
-                    val existingUser = userViewModel.getUserByEmail(email)
-                    if (existingUser != null) {
-                        val updatedUser = existingUser.copy(
-                            name = name,
-                            bio = bio,
-                            region = location,
-                            profileImageUri = selectedImageUri?.toString() ?: existingUser.profileImageUri
-                        )
-                        userViewModel.update(updatedUser)
-                        Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
-                        findNavController().navigate(R.id.action_profileSetupFragment_to_loginSuccessFragment)
+            val email = sessionManager.getUserEmail() ?: return@setOnClickListener
+
+            lifecycleScope.launch {
+                val user = userViewModel.getUserByEmail(email)
+                if (user != null) {
+                    if (selectedFileUri != null) {
+                        // START FIREBASE UPLOAD
+                        Toast.makeText(requireContext(), "Uploading to cloud...", Toast.LENGTH_SHORT).show()
+                        storageManager.uploadFile(selectedFileUri!!, "profiles", requireContext()) { success, url ->
+                            if (success) {
+                                saveUserData(user, name, bio, location, url)
+                            } else {
+                                Log.e("STORAGE_ERROR", url ?: "Unknown error")
+                                Toast.makeText(requireContext(), "Upload failed", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     } else {
-                        Toast.makeText(requireContext(), "Error: User not found", Toast.LENGTH_SHORT).show()
+                        // No new file, just save text changes
+                        saveUserData(user, name, bio, location, user.profileImageUri)
                     }
                 }
             }
@@ -95,5 +101,17 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         btnSkip.setOnClickListener {
             findNavController().navigate(R.id.action_profileSetupFragment_to_loginSuccessFragment)
         }
+    }
+
+    private fun saveUserData(user: UserEntity, name: String, bio: String, loc: String, photoUrl: String?) {
+        val updatedUser = user.copy(
+            name = name,
+            bio = bio,
+            region = loc,
+            profileImageUri = photoUrl
+        )
+        userViewModel.update(updatedUser)
+        Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
+        findNavController().navigate(R.id.action_profileSetupFragment_to_loginSuccessFragment)
     }
 }
