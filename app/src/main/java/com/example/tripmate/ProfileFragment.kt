@@ -21,6 +21,8 @@ package com.example.tripmate
     import java.text.SimpleDateFormat
     import java.util.Date
     import java.util.Locale
+    import com.google.firebase.auth.FirebaseAuth
+    import com.google.firebase.firestore.FirebaseFirestore
 
     class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
@@ -32,8 +34,14 @@ package com.example.tripmate
 
         private lateinit var tripViewModel: TripViewModel
 
+        private lateinit var auth: FirebaseAuth
+        private lateinit var db: FirebaseFirestore
+
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
+
+            auth = FirebaseAuth.getInstance()
+            db = FirebaseFirestore.getInstance()
 
             binding = FragmentProfileBinding.bind(view)
             userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
@@ -52,16 +60,39 @@ package com.example.tripmate
         }
 
         private fun observeUser() {
-            val userId = sessionManager.getUserId()
 
-            if (userId == SessionManager.NO_USER) {
+            val currentUser = auth.currentUser
+
+            if (currentUser == null) {
                 findNavController().navigate(R.id.welcomeFragment)
                 return
             }
 
-            userViewModel.getUserById(userId)
-                .observe(viewLifecycleOwner) { user ->
-                    user?.let { bindUser(it) }
+            val userId = currentUser.uid
+
+            db.collection("users")
+                .document(userId)
+                .get()
+                .addOnSuccessListener { document ->
+
+                    if (document.exists()) {
+
+                        val user = UserEntity(
+                            id = userId,
+                            name = document.getString("name") ?: "",
+                            bio = document.getString("bio") ?: "",
+                            gender = document.getString("gender") ?: "",
+                            region = document.getString("region") ?: "",
+                            age = document.getLong("age")?.toInt() ?: 0,
+                            profileImageUri = document.getString("profileImageUri"),
+                            createdAt = document.getLong("createdAt") ?: 0L
+                        )
+
+                        bindUser(user)
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(requireContext(), "Failed to load profile", Toast.LENGTH_SHORT).show()
                 }
         }
 
@@ -103,7 +134,7 @@ package com.example.tripmate
                 .setMessage("Are you sure you want to sign out?")
                 .setPositiveButton("Yes") { _, _ ->
 
-                    sessionManager.clearSession()
+                    auth.signOut()
 
                     Toast.makeText(
                         requireContext(),
@@ -119,25 +150,18 @@ package com.example.tripmate
         }
 
         private fun observeTripCount() {
-            val userId = sessionManager.getUserId()
 
-            if (userId == SessionManager.NO_USER) {
-                findNavController().navigate(R.id.welcomeFragment)
-                return
-            }
+            val userId = auth.currentUser?.uid ?: return
 
-            tripViewModel.getTripCount(userId.toString()).observe(viewLifecycleOwner) { count ->
+            tripViewModel.getTripCount(userId).observe(viewLifecycleOwner) { count ->
                 binding.tvTripsCount.text = "🏝️ Trips\n$count"
             }
         }
 
         private fun observeBuddyCount() {
-            val userId = sessionManager.getUserId()
 
-            if (userId == SessionManager.NO_USER) {
-                findNavController().navigate(R.id.welcomeFragment)
-                return
-            }
+            val userId = auth.currentUser?.uid ?: return
+
 
             tripParticipantViewModel.getBuddyCount(userId)
                 .observe(viewLifecycleOwner) { count ->
@@ -147,12 +171,8 @@ package com.example.tripmate
         }
 
         private fun observeTripsJoined() {
-            val userId = sessionManager.getUserId()
 
-            if (userId == SessionManager.NO_USER) {
-                findNavController().navigate(R.id.welcomeFragment)
-                return
-            }
+            val userId = auth.currentUser?.uid ?: return
 
             tripParticipantViewModel.getTripsJoinedCount(userId)
                 .observe(viewLifecycleOwner) { count ->
@@ -161,12 +181,8 @@ package com.example.tripmate
         }
 
         private fun observeCountriesVisited() {
-            val userId = sessionManager.getUserId()
 
-            if (userId == SessionManager.NO_USER) {
-                findNavController().navigate(R.id.welcomeFragment)
-                return
-            }
+            val userId = auth.currentUser?.uid ?: return
 
             tripViewModel.getCountriesVisited(userId.toString())
                 .observe(viewLifecycleOwner) { count ->

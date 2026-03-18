@@ -7,6 +7,6 @@ import androidx.room.Entity
     primaryKeys = ["tripId", "userId"]
 )
 data class TripParticipantEntity(
-    val tripId: Long,
-    val userId: Int
+    val tripId: String,
+    val userId: String
 )

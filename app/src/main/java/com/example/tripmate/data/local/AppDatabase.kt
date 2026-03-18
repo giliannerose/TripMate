@@ -26,7 +26,7 @@ import com.example.tripmate.data.model.TripParticipantEntity
         PollEntity::class,
         NotificationEntity::class
     ],
-    version = 15, exportSchema = false)
+    version = 22, exportSchema = false)
 
 abstract class AppDatabase : RoomDatabase() {
     // Connects the Database to the Queries
@@ -270,8 +270,10 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "app_database"
+
                 )
                     // Plug the migration
+                    .fallbackToDestructiveMigration()
                     .addMigrations(MIGRATION_1_2,
                         MIGRATION_2_3,
                         MIGRATION_3_4,

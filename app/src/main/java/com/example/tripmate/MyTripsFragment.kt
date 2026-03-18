@@ -11,20 +11,20 @@ import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tripmate.ui.trip.TripViewModel
 import com.example.tripmate.ui.trip.TripAdapter
-import com.example.tripmate.data.model.TripEntity
-import com.example.tripmate.data.utils.SessionManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+
 
 
 
 class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
 
-    private lateinit var viewModel: TripViewModel
     private lateinit var adapter: TripAdapter
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,12 +35,13 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
 
 
 
-        val userId = com.google.firebase.auth.FirebaseAuth
-            .getInstance()
-            .currentUser?.uid
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
 
+        if (userId == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        viewModel = ViewModelProvider(requireActivity())[TripViewModel::class.java]
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.tripsRecyclerView)
 
@@ -59,18 +60,35 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
             },
 
             onDelete = { trip ->
-                showDeleteConfirmation(trip)
+                showDeleteConfirmation(trip, userId)
             }
         )
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        if (userId != null) {
-            viewModel.getTripsByUser(userId).observe(viewLifecycleOwner) { trips ->
+        db.collection("trips")
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnSuccessListener { result ->
+
+                val trips = mutableListOf<Trip>()
+
+                for (document in result) {
+                    val trip = Trip(
+                        id = document.id,
+                        name = document.getString("name") ?: "",
+                        date = document.getString("date") ?: ""
+                    )
+
+                    trips.add(trip)
+                }
+
                 adapter.submitList(trips)
             }
-        }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to load trips", Toast.LENGTH_SHORT).show()
+            }
 
         bottomNav.selectedItemId = R.id.nav_create
 
@@ -98,12 +116,22 @@ class MyTripsFragment : Fragment(R.layout.fragment_my_trips) {
         }
     }
 
-    private fun showDeleteConfirmation(trip: TripEntity) {
+    private fun showDeleteConfirmation(trip: Trip, userId: String) {
         AlertDialog.Builder(requireContext())
             .setTitle("Delete Trip?")
             .setMessage("Delete \"${trip.name}\" permanently?")
             .setPositiveButton("Delete") { _, _ ->
-                viewModel.delete(trip)
+                db.collection("trips")
+                    .document(trip.id)
+                    .delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Trip deleted", Toast.LENGTH_SHORT).show()
+
+                        onViewCreated(requireView(), null)
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Delete failed", Toast.LENGTH_SHORT).show()
+                    }
             }
             .setNegativeButton("Cancel", null)
             .show()

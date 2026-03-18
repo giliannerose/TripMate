@@ -23,6 +23,8 @@ import com.example.tripmate.ui.itinerary.ActivityAdapter
 import com.example.tripmate.ui.itinerary.ActivityViewModel
 import com.example.tripmate.R
 import androidx.navigation.fragment.navArgs
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
@@ -30,9 +32,22 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
     private lateinit var activityViewModel: ActivityViewModel
     private lateinit var adapter: ActivityAdapter
     private val args: ItineraryFragmentArgs by navArgs()
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
+    private var userId: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
+        userId = auth.currentUser?.uid
+
+        if (userId == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
 
                 // Initialize ViewModel
                 activityViewModel = ViewModelProvider(
@@ -49,16 +64,25 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
                     showEditDialog(activity)
                 },
                 onDeleteClick = { activity ->
-                    activityViewModel.delete(activity.id)
+                    firestore.collection("activities")
+                        .document(activity.id)
+                        .delete()
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Deleted", Toast.LENGTH_SHORT).show()
+                            loadActivities()
+                        }
                 }
             )
                 recyclerView.adapter = adapter
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
 
+
         val tripId = args.tripId
         val tripTitle = args.tripTitle
         val tripDate = args.tripDate
+
+        loadActivities()
 
         val tripTitleView = view.findViewById<TextView>(R.id.tvTripTitle)
         val tripDateView = view.findViewById<TextView>(R.id.tvTripDate)
@@ -66,10 +90,6 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
         tripTitleView.text = args.tripTitle
         tripDateView.text = args.tripDate
 
-        activityViewModel.getActivitiesForTrip(tripId)
-            .observe(viewLifecycleOwner) { activities ->
-                adapter.setActivities(activities)
-            }
 
         val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
         val btnAddActivity = view.findViewById<Button>(R.id.btnAddActivity)
@@ -171,6 +191,31 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
         }
     }
 
+    private fun loadActivities() {
+        firestore.collection("activities")
+            .whereEqualTo("tripId", args.tripId)
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnSuccessListener { result ->
+
+                val activityList = mutableListOf<ActivityEntity>()
+
+                for (doc in result) {
+                    val activity = ActivityEntity(
+                        id = doc.id,
+                        title = doc.getString("title") ?: "",
+                        time = doc.getString("time") ?: "",
+                        tripId = doc.getString("tripId") ?: "",
+                        date = "",
+                        notes = ""
+                    )
+                    activityList.add(activity)
+                }
+
+                adapter.setActivities(activityList)
+            }
+    }
+
     private fun showEditDialog(activity: ActivityEntity) {
 
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_activity, null)
@@ -209,13 +254,19 @@ class ItineraryFragment : Fragment(R.layout.fragment_itinerary) {
                         time = etTime.text.toString()
                     )
 
-                    activityViewModel.update(updatedActivity)
-
-                    Toast.makeText(
-                        requireContext(),
-                        "Activity updated!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    firestore.collection("activities")
+                        .document(activity.id)
+                        .update(
+                            mapOf(
+                                "title" to updatedActivity.title,
+                                "time" to updatedActivity.time
+                            )
+                        )
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Activity updated!", Toast.LENGTH_SHORT).show()
+                            loadActivities()
+                            dialog.dismiss()
+                        }
 
                     dialog.dismiss()
                 }

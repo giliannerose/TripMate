@@ -1,23 +1,24 @@
 package com.example.tripmate.ui.trip
 
-import com.example.tripmate.data.model.TripEntity
+
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import com.example.tripmate.databinding.ItemTripBinding
+import com.example.tripmate.Trip
 
 
 class TripAdapter(
-    private val onClick: (TripEntity) -> Unit,
-    private val onDelete: (TripEntity) -> Unit
-) : ListAdapter<TripEntity, TripAdapter.TripViewHolder>(DiffCallback()) {
+    private val onClick: (Trip) -> Unit,
+    private val onDelete: (Trip) -> Unit
+) : ListAdapter<Trip, TripAdapter.TripViewHolder>(DiffCallback()) {
 
     inner class TripViewHolder(val binding: ItemTripBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(trip: TripEntity) {
+        fun bind(trip: Trip) {
             binding.tvTripName.text = trip.name
             binding.tvTripDate.text = trip.date
             binding.tvTripDescription.text = trip.description
@@ -45,11 +46,11 @@ class TripAdapter(
         holder.bind(getItem(position))
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<TripEntity>() {
-        override fun areItemsTheSame(oldItem: TripEntity, newItem: TripEntity) =
+    class DiffCallback : DiffUtil.ItemCallback<Trip>() {
+        override fun areItemsTheSame(oldItem: Trip, newItem: Trip) =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: TripEntity, newItem: TripEntity) =
+        override fun areContentsTheSame(oldItem: Trip, newItem: Trip) =
             oldItem == newItem
     }
 }

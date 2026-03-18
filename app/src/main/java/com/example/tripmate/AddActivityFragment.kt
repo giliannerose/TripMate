@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.tripmate.ui.itinerary.ActivityViewModel
 import com.example.tripmate.data.model.ActivityEntity
 import androidx.navigation.fragment.navArgs
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
 
@@ -22,10 +24,24 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
 
     private val args: AddActivityFragmentArgs by navArgs()
 
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
+    private var userId: String? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val tripId = args.tripId
+
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
+        userId = auth.currentUser?.uid
+
+        if (userId == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
 
 
         activityViewModel = ViewModelProvider(
@@ -70,24 +86,24 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
 
 
         // TIME PICKER
-                etTime.setOnClickListener {
-                    val calendar = Calendar.getInstance()
+        etTime.setOnClickListener {
+            val calendar = Calendar.getInstance()
 
-                    TimePickerDialog(
-                        requireContext(),
-                        { _, hour, minute ->
-                            val formattedTime = String.format(
-                                "%02d:%02d",
-                                hour,
-                                minute
-                            )
-                            etTime.setText(formattedTime)
-                        },
-                        calendar.get(Calendar.HOUR_OF_DAY),
-                        calendar.get(Calendar.MINUTE),
-                        true // 24-hour format
-                    ).show()
-                }
+            TimePickerDialog(
+                requireContext(),
+                { _, hour, minute ->
+                    val formattedTime = String.format(
+                        "%02d:%02d",
+                        hour,
+                        minute
+                    )
+                    etTime.setText(formattedTime)
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true // 24-hour format
+            ).show()
+        }
 
 
         btnSave.setOnClickListener {
@@ -119,27 +135,39 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
                 return@setOnClickListener
             }
 
-            val newActivity = ActivityEntity(
-                tripId = tripId,
-                date = date,
-                time = time,
-                title = title,
-                notes = notes
+            val activityData = hashMapOf(
+                "tripId" to tripId,
+                "userId" to userId,
+                "date" to date,
+                "time" to time,
+                "title" to title,
+                "notes" to notes
             )
 
-            activityViewModel.insert(newActivity)
+            firestore.collection("activities")
+                .add(activityData)
+                .addOnSuccessListener {
+                    Toast.makeText(
+                        requireContext(),
+                        "Activity added successfully!",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-            Toast.makeText(
-                requireContext(),
-                "Activity added successfully!",
-                Toast.LENGTH_SHORT
-            ).show()
+                    findNavController().popBackStack()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to add activity",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-            findNavController().popBackStack()
-        }
+                    findNavController().popBackStack()
+                }
 
-        btnCancel.setOnClickListener {
-            findNavController().popBackStack()
+            btnCancel.setOnClickListener {
+                findNavController().popBackStack()
+            }
         }
     }
 }

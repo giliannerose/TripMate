@@ -27,18 +27,18 @@ interface TripParticipantDao {
         DELETE FROM trip_participant_table
         WHERE tripId = :tripId AND userId = :userId
     """)
-    suspend fun removeParticipant(tripId: Long, userId: Int)
+    suspend fun removeParticipant(tripId: Long, userId: String)
 
     @Query("""
     SELECT COUNT(*) FROM trip_participant_table
     WHERE userId = :userId
 """)
-    fun getBuddyCount(userId: Int): LiveData<Int>
+    fun getBuddyCount(userId: String): LiveData<Int>
 
     @Query("""
     SELECT COUNT(DISTINCT tripId)
     FROM trip_participant_table
     WHERE userId = :userId
 """)
-    fun getTripsJoinedCount(userId: Int): LiveData<Int>
+    fun getTripsJoinedCount(userId: String): LiveData<Int>
 }

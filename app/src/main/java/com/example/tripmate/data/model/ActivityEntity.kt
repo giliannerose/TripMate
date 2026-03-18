@@ -6,10 +6,10 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "activity_table")
 data class ActivityEntity(
 
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: String,
 
-    val tripId: Long,   // Link to TripEntity
+    val tripId: String,   // Link to TripEntity
 
     val date: String,
     val time: String,

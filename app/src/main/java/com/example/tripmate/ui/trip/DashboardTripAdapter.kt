@@ -5,19 +5,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tripmate.data.model.TripEntity
 import com.example.tripmate.databinding.ItemDashboardTripBinding
+import com.example.tripmate.Trip
 
 class DashboardTripAdapter(
-    private val onClick: (TripEntity) -> Unit
-) : ListAdapter<TripEntity, DashboardTripAdapter.TripViewHolder>(DIFF) {
+    private val onClick: (Trip) -> Unit
+) : ListAdapter<Trip, DashboardTripAdapter.TripViewHolder>(DIFF) {
 
     companion object {
-        val DIFF = object : DiffUtil.ItemCallback<TripEntity>() {
-            override fun areItemsTheSame(old: TripEntity, new: TripEntity) =
+        val DIFF = object : DiffUtil.ItemCallback<Trip>() {
+            override fun areItemsTheSame(old: Trip, new: Trip) =
                 old.id == new.id
 
-            override fun areContentsTheSame(old: TripEntity, new: TripEntity) =
+            override fun areContentsTheSame(old: Trip, new: Trip) =
                 old == new
         }
     }

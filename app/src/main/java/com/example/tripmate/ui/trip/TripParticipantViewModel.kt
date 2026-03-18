@@ -31,16 +31,16 @@ class TripParticipantViewModel(application: Application)
             repository.insert(entity)
         }
 
-    fun remove(tripId: Long, userId: Int) =
+    fun remove(tripId: Long, userId: String) =
         viewModelScope.launch {
             repository.remove(tripId, userId)
         }
 
-    fun getBuddyCount(userId: Int): LiveData<Int> {
+    fun getBuddyCount(userId: String): LiveData<Int> {
         return repository.getBuddyCount(userId)
     }
 
-    fun getTripsJoinedCount(userId: Int): LiveData<Int> {
+    fun getTripsJoinedCount(userId: String): LiveData<Int> {
         return repository.getTripsJoinedCount(userId)
     }
 

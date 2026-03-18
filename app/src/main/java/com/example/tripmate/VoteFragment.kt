@@ -5,42 +5,116 @@ import android.view.View
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.tripmate.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tripmate.data.model.PollEntity
-import com.example.tripmate.ui.poll.PollViewModel
 import com.example.tripmate.ui.poll.PollAdapter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+
 
 class VoteFragment : Fragment(R.layout.fragment_vote) {
 
-    private lateinit var viewModel: PollViewModel
     private lateinit var adapter: PollAdapter
-    private val tripId: Long = 1   // TEMP for Sprint 3
+
+    private val args: VoteFragmentArgs by navArgs()
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[PollViewModel::class.java]
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+
+        val tripId = args.tripId
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerPolls)
 
         adapter = PollAdapter { poll: PollEntity, selectedOption: String ->
-            Toast.makeText(
-                requireContext(),
-                "Vote submitted: $selectedOption",
-                Toast.LENGTH_SHORT
-            ).show()
+
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+                return@PollAdapter
+            }
+
+            val userId = currentUser.uid
+
+            // Save vote inside poll document
+            db.collection("polls")
+                .whereEqualTo("tripId", poll.tripId)
+                .whereEqualTo("question", poll.question)
+                .get()
+                .addOnSuccessListener { result ->
+
+                    for (document in result) {
+
+                        val voteData = hashMapOf(
+                            "userId" to userId,
+                            "selectedOption" to selectedOption
+                        )
+
+                        db.collection("polls")
+                            .document(document.id)
+                            .collection("votes")
+                            .add(voteData)
+                    }
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Vote submitted: $selectedOption",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
         }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        viewModel.getPollsByTrip(tripId).observe(viewLifecycleOwner) { polls ->
-            adapter.submitList(polls)
+       // viewModel.getPollsByTrip(tripId).observe(viewLifecycleOwner) { polls ->
+        //    adapter.submitList(polls)
+       // }'
+
+
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            return
         }
+
+        val userId = currentUser.uid
+
+        db.collection("polls")
+            .whereEqualTo("tripId", tripId)
+            .get()
+            .addOnSuccessListener { result ->
+
+                val pollList = mutableListOf<PollEntity>()
+
+                for (document in result) {
+
+                    val poll = PollEntity(
+                        tripId = document.getString("tripId") ?: "",
+                        question = document.getString("question") ?: "",
+                        option1 = document.getString("option1") ?: "",
+                        option2 = document.getString("option2") ?: "",
+                        option3 = document.getString("option3"),
+                        option4 = document.getString("option4")
+                    )
+
+                    pollList.add(poll)
+                }
+
+                adapter.submitList(pollList)
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
 
         val btnViewResults = view.findViewById<Button>(R.id.btnViewResults)
 

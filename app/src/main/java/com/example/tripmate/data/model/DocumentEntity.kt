@@ -18,14 +18,17 @@ import androidx.room.PrimaryKey
     indices = [Index("tripId")]
 )
 data class DocumentEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
 
-    val tripId: Int,
+    @PrimaryKey
+    var id: String = "",
 
-    val fileName: String,
+    var userId: String = "",
 
-    val fileUri: String,
+    var tripId: String = "",
 
-    val uploadedAt: Long = System.currentTimeMillis()
+    var fileName: String = "",
+
+    var fileUri: String = "",
+
+    var uploadedAt: Long = System.currentTimeMillis()
 )

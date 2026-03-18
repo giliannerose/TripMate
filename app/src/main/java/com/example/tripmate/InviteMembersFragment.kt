@@ -17,6 +17,8 @@ import com.example.tripmate.ui.user.UserViewModel
 import com.example.tripmate.ui.trip.TripParticipantViewModel
 import com.example.tripmate.data.model.TripParticipantEntity
 import com.example.tripmate.ui.invite.InviteMembersAdapter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class InviteMembersFragment : Fragment(R.layout.fragment_invite_members) {
 
@@ -25,6 +27,9 @@ class InviteMembersFragment : Fragment(R.layout.fragment_invite_members) {
 
     private lateinit var adapter: InviteMembersAdapter
 
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
+
     private val tripId: Long by lazy {
         requireArguments().getLong("tripId")
     }
@@ -32,6 +37,8 @@ class InviteMembersFragment : Fragment(R.layout.fragment_invite_members) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         val btnSendInvite = view.findViewById<Button>(R.id.btnSendInvite)
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
@@ -67,13 +74,25 @@ class InviteMembersFragment : Fragment(R.layout.fragment_invite_members) {
                 .setMessage("Are you sure you want to add: $names?")
                 .setPositiveButton("Yes") { dialog, _ ->
 
+
+                    val currentUser = auth.currentUser
+                    val currentUserId = currentUser?.uid
+
+                    if (currentUserId == null) {
+                        Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+
                     selectedUsers.forEach { user ->
-                        participantViewModel.insert(
-                            TripParticipantEntity(
-                                tripId = tripId,
-                                userId = user.id
-                            )
+
+                        val participantData = hashMapOf(
+                            "tripId" to tripId,
+                            "userId" to user.id,
+                            "addedBy" to currentUserId
                         )
+
+                        db.collection("tripParticipants")
+                            .add(participantData)
                     }
 
                     Toast.makeText(

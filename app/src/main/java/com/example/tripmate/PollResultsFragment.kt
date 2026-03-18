@@ -8,25 +8,26 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tripmate.ui.poll.PollViewModel
 import com.example.tripmate.ui.poll.PollResultsAdapter
 import androidx.navigation.fragment.navArgs
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class PollResultsFragment : Fragment(R.layout.fragment_poll_results) {
-
-    private lateinit var viewModel: PollViewModel
     private lateinit var adapter: PollResultsAdapter
 
     private val args: PollResultsFragmentArgs by navArgs()
 
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[PollViewModel::class.java]
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         val tripId = args.tripId
         val tripTitle = args.tripTitle
@@ -39,9 +40,41 @@ class PollResultsFragment : Fragment(R.layout.fragment_poll_results) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        viewModel.getPollsByTrip(tripId).observe(viewLifecycleOwner) { polls ->
-            adapter.submitList(polls)
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            return
         }
+
+        val userId = currentUser.uid
+
+        db.collection("polls")
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("tripId", tripId)
+            .get()
+            .addOnSuccessListener { result ->
+
+                val pollList = mutableListOf<com.example.tripmate.data.model.PollEntity>()
+
+                for (document in result) {
+
+                    val poll = com.example.tripmate.data.model.PollEntity(
+                        tripId = document.getString("tripId") ?: "",
+                        question = document.getString("question") ?: "",
+                        option1 = document.getString("option1") ?: "",
+                        option2 = document.getString("option2") ?: "",
+                        option3 = document.getString("option3"),
+                        option4 = document.getString("option4")
+                    )
+
+                    pollList.add(poll)
+                }
+
+                adapter.submitList(pollList)
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
 
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
 

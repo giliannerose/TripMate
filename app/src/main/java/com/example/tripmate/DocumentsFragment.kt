@@ -16,96 +16,129 @@ import com.example.tripmate.data.repository.DocumentRepository
 import com.example.tripmate.databinding.FragmentDocumentsBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.fragment.navArgs
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class DocumentsFragment : Fragment(R.layout.fragment_documents) {
 
     private var _binding: FragmentDocumentsBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var viewModel: DocumentViewModel
     private lateinit var adapter: DocumentAdapter
 
+
     private val args: DocumentsFragmentArgs by navArgs()
-    private var tripId: Int = -1
+    private var tripId: String = ""
     private var tripTitle: String = ""
     private var tripDate: String = ""
 
-    // Modern file picker
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
+    private var userId: String = ""
+
 
 
     private val filePickerLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let { handleFileSelected(it, tripId) }
+            uri?.let { handleFileSelected(it) }
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentDocumentsBinding.bind(view)
 
-       tripId = args.tripId.toInt()
+        tripId = args.tripId.toString()
         tripTitle = args.tripTitle
         tripDate = args.tripDate
 
-        setupViewModel()
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+        userId = currentUser.uid
+
         setupRecyclerView()
-        observeDocuments(tripId)
-        setupUploadButton(tripId)
+        setupUploadButton()
         setupNavigation()
+        loadDocuments()
     }
 
-    private fun setupViewModel() {
-        val database = AppDatabase.getDatabase(requireContext())
-        val repository = DocumentRepository(database.documentDao())
-        val factory = DocumentViewModelFactory(repository)
+    private fun loadDocuments() {
+        firestore.collection("documents")
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("tripId", tripId)
+            .addSnapshotListener { snapshot, error ->
 
-        viewModel = ViewModelProvider(this, factory)
-            .get(DocumentViewModel::class.java)
+                if (error != null) {
+                    Toast.makeText(requireContext(), "Error loading documents", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                val list = mutableListOf<DocumentEntity>()
+
+                snapshot?.documents?.forEach { doc ->
+                    val document = doc.toObject(DocumentEntity::class.java)
+                    document?.id = doc.id
+                    document?.let { list.add(it) }
+                }
+
+                adapter.submitList(list)
+
+                binding.tvEmpty.visibility =
+                    if (list.isEmpty()) View.VISIBLE else View.GONE
+            }
     }
+
+    private fun deleteDocument(document: DocumentEntity) {
+        firestore.collection("documents")
+            .document(document.id)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Deleted", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 
     private fun setupRecyclerView() {
         adapter = DocumentAdapter { document ->
-            viewModel.delete(document)
+            deleteDocument(document)
         }
-
         binding.recyclerDocuments.layoutManager =
             LinearLayoutManager(requireContext())
 
         binding.recyclerDocuments.adapter = adapter
     }
 
-    private fun observeDocuments(tripId: Int) {
-        viewModel.getDocuments(tripId)
-            .observe(viewLifecycleOwner) { documents ->
-                adapter.submitList(documents)
 
-                binding.tvEmpty.visibility =
-                    if (documents.isEmpty()) View.VISIBLE else View.GONE
-            }
-    }
 
-    private fun setupUploadButton(tripId: Int) {
+    private fun setupUploadButton() {
         binding.btnUpload.setOnClickListener {
             filePickerLauncher.launch("*/*")
         }
     }
 
-    private fun handleFileSelected(uri: Uri, tripId: Int) {
+    private fun handleFileSelected(uri: Uri) {
 
         val fileName = uri.lastPathSegment ?: "Unknown File"
 
-        val document = DocumentEntity(
-            tripId = tripId,
-            fileName = fileName,
-            fileUri = uri.toString()
+        val document = hashMapOf(
+            "userId" to userId,
+            "tripId" to tripId,
+            "fileName" to fileName,
+            "fileUri" to uri.toString()
         )
 
-        viewModel.insert(document)
-
-        Toast.makeText(
-            requireContext(),
-            "File uploaded successfully!",
-            Toast.LENGTH_SHORT
-        ).show()
+        firestore.collection("documents")
+            .add(document)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "File uploaded!", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Upload failed", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun setupNavigation() {
@@ -114,7 +147,7 @@ class DocumentsFragment : Fragment(R.layout.fragment_documents) {
             val action =
                 DocumentsFragmentDirections
                     .actionDocumentsFragmentToTripDetailsFragment(
-                        tripId.toLong(),
+                        tripId,
                         tripTitle,
                         tripDate
                     )
@@ -127,7 +160,7 @@ class DocumentsFragment : Fragment(R.layout.fragment_documents) {
             val action =
                 DocumentsFragmentDirections
                     .actionDocumentsFragmentToCreatePollFragment(
-                        tripId.toLong(),
+                        tripId,
                         tripTitle,
                         tripDate
                     )
@@ -141,7 +174,7 @@ class DocumentsFragment : Fragment(R.layout.fragment_documents) {
             val action =
                 DocumentsFragmentDirections
                     .actionDocumentsFragmentToExpenseSummaryFragment(
-                        tripId.toLong(),
+                        tripId,
                         tripTitle,
                         tripDate
                     )
@@ -154,7 +187,7 @@ class DocumentsFragment : Fragment(R.layout.fragment_documents) {
             val action =
                 DocumentsFragmentDirections
                     .actionDocumentsFragmentToItineraryFragment(
-                        tripId.toLong(),
+                        tripId,
                         tripTitle,
                         tripDate
             )

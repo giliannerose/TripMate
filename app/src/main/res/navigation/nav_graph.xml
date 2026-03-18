@@ -157,7 +157,7 @@
 
         <argument
             android:name="tripId"
-            app:argType="long" />
+            app:argType="string" />
 
 
         <argument
@@ -196,7 +196,7 @@
 
          <argument
             android:name="tripId"
-            app:argType="long"/>
+            app:argType="string"/>
 
         <argument
             android:name="tripTitle"
@@ -228,7 +228,7 @@
 
             <argument
                 android:name="tripId"
-                app:argType="long" />
+                app:argType="string" />
 
             <argument
                 android:name="tripTitle"
@@ -255,7 +255,7 @@
 
                 <argument
                     android:name="tripId"
-                    app:argType="long"
+                    app:argType="string"
                     android:defaultValue="-1L" />
 
                 <argument
@@ -303,7 +303,7 @@
 
         <argument
             android:name="tripId"
-            app:argType="long" />
+            app:argType="string" />
     </fragment>
 
 
@@ -315,7 +315,7 @@
 
         <argument
             android:name="tripId"
-            app:argType="long" />
+            app:argType="string" />
 
         <argument
             android:name="tripTitle"
@@ -380,7 +380,7 @@
 
         <argument
             android:name="tripId"
-            app:argType="long" />
+            app:argType="string" />
 
         <argument
             android:name="tripTitle"
@@ -421,7 +421,7 @@
 
         <argument
             android:name="tripId"
-            app:argType="long" />
+            app:argType="string" />
 
         <argument
             android:name="tripTitle"
@@ -458,7 +458,7 @@
 
         <argument
             android:name="tripId"
-            app:argType="long" />
+            app:argType="string" />
 
 
         <argument
@@ -500,7 +500,7 @@
 
         <argument
             android:name="tripId"
-            app:argType="long" />
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -523,7 +523,7 @@
 
         <argument
             android:name="tripId"
-            app:argType="long" />
+            app:argType="string" />
 
         <argument
             android:name="tripTitle"

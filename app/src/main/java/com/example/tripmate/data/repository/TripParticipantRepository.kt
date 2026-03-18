@@ -14,14 +14,14 @@ class TripParticipantRepository(
     suspend fun insert(entity: TripParticipantEntity) =
         dao.insert(entity)
 
-    suspend fun remove(tripId: Long, userId: Int) =
+    suspend fun remove(tripId: Long, userId: String) =
         dao.removeParticipant(tripId, userId)
 
-    fun getBuddyCount(userId: Int): LiveData<Int> {
+    fun getBuddyCount(userId: String): LiveData<Int> {
         return dao.getBuddyCount(userId)
     }
 
-    fun getTripsJoinedCount(userId: Int): LiveData<Int> {
+    fun getTripsJoinedCount(userId: String): LiveData<Int> {
         return dao.getTripsJoinedCount(userId)
     }
 }

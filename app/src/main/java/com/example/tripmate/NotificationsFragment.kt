@@ -11,6 +11,9 @@ import com.example.tripmate.databinding.FragmentNotificationsBinding
 import com.example.tripmate.ui.notification.NotificationViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.fragment.navArgs
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.example.tripmate.data.model.NotificationEntity
 
 class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
 
@@ -22,6 +25,9 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
     private val args: NotificationsFragmentArgs by navArgs()
     private lateinit var adapter: NotificationAdapter
 
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,7 +38,19 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
         val tripTitle = args.tripTitle
         val tripDate = args.tripDate
 
-        if (tripId == -1L) {
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val userId = currentUser.uid
+
+
+        if (tripId.isEmpty()) {
             // Opened from bottom navigation without trip
             Toast.makeText(requireContext(), "Showing general notifications", Toast.LENGTH_SHORT).show()
         }
@@ -42,15 +60,21 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
             when (action) {
 
                 "ACCEPT" -> {
-                    viewModel.update(notification.copy(status = "ACCEPTED"))
+                    firestore.collection("notifications")
+                        .document(notification.id)
+                        .update("status", "ACCEPTED")
                 }
 
                 "DECLINE" -> {
-                    viewModel.update(notification.copy(status = "DECLINED"))
+                    firestore.collection("notifications")
+                        .document(notification.id)
+                        .update("status", "DECLINED")
                 }
 
                 "ACKNOWLEDGE" -> {
-                    viewModel.update(notification.copy(status = "ACKNOWLEDGED"))
+                    firestore.collection("notifications")
+                        .document(notification.id)
+                        .update("status", "ACKNOWLEDGED")
                 }
 
                 "VIEW_POLL" -> {
@@ -80,10 +104,19 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
 
         binding.recyclerNotifications.adapter = adapter
 
+        firestore.collection("notifications")
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot, error ->
 
+                if (error != null) {
+                    Toast.makeText(requireContext(), "Error loading notifications", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
 
-        viewModel.getNotifications(tripId)
-            .observe(viewLifecycleOwner) { list ->
+                val list = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(NotificationEntity::class.java)?.copy(id = doc.id)
+                } ?: emptyList()
+
                 adapter.submitList(list)
             }
 

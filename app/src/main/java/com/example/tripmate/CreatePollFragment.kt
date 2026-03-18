@@ -9,24 +9,28 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.lifecycle.ViewModelProvider
-import com.example.tripmate.ui.poll.PollViewModel
 import com.example.tripmate.data.model.PollEntity
 import androidx.navigation.fragment.navArgs
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class CreatePollFragment : Fragment(R.layout.fragment_create_poll) {
 
-    private lateinit var viewModel: PollViewModel
     private val args: CreatePollFragmentArgs by navArgs()
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[PollViewModel::class.java]
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         val tripId = args.tripId
         val tripTitle = args.tripTitle
         val tripDate = args.tripDate
+
+
 
         val etPollQuestion = view.findViewById<EditText>(R.id.etPollQuestion)
         val etOption1 = view.findViewById<EditText>(R.id.etOption1)
@@ -75,28 +79,59 @@ class CreatePollFragment : Fragment(R.layout.fragment_create_poll) {
             val option3 = etOption3.text.toString().trim()
             val option4 = etOption4.text.toString().trim()
 
-            val poll = PollEntity(
-                tripId = tripId,
-                question = question,
-                option1 = option1,
-                option2 = option2,
-                option3 = option3.ifEmpty { null },
-                option4 = option4.ifEmpty { null }
+            val currentUser = auth.currentUser
+            if (currentUser == null) {
+                Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val userId = currentUser.uid
+
+            val pollData = hashMapOf(
+                "userId" to userId,
+                "tripId" to tripId,
+                "question" to question,
+                "option1" to option1,
+                "option2" to option2,
+                "option3" to option3.ifEmpty { null },
+                "option4" to option4.ifEmpty { null },
+                "createdAt" to System.currentTimeMillis()
             )
 
-            viewModel.insertPoll(poll)
+            //val poll = PollEntity(
+              //  tripId = tripId,
+               // question = question,
+              //  option1 = option1,
+              //  option2 = option2,
+              //  option3 = option3.ifEmpty { null },
+               // option4 = option4.ifEmpty { null }
+                //  )
 
-            Toast.makeText(
-                requireContext(),
-                "Poll created successfully",
-                Toast.LENGTH_SHORT
-            ).show()
+           // viewModel.insertPoll(poll)
 
-            val action =
-                CreatePollFragmentDirections
-                    .actionCreatePollFragmentToVoteFragment(tripId)
+            db.collection("polls")
+                .add(pollData)
+                .addOnSuccessListener {
 
-            findNavController().navigate(action)
+                    Toast.makeText(
+                        requireContext(),
+                        "Poll created successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    val action =
+                        CreatePollFragmentDirections
+                            .actionCreatePollFragmentToVoteFragment(tripId)
+
+                    findNavController().navigate(action)
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(
+                        requireContext(),
+                        "Error: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
         }
 

@@ -15,12 +15,9 @@ import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import androidx.lifecycle.ViewModelProvider
 import com.example.tripmate.data.model.TripEntity
-import com.example.tripmate.ui.trip.TripViewModel
-
-import com.example.tripmate.data.remote.FirebaseStoreManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 
@@ -29,8 +26,8 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
 
         private var startDateCalendar: Calendar? = null
         private var endDateCalendar: Calendar? = null
-        private lateinit var viewModel: TripViewModel
-        private val firebaseStoreManager = FirebaseStoreManager()
+
+    private val db = FirebaseFirestore.getInstance()
     private val currentUserId: String?
         get() = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -38,8 +35,6 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(requireActivity())[TripViewModel::class.java]
 
         val etTripName = view.findViewById<EditText>(R.id.etTripName)
         val etDestination = view.findViewById<EditText>(R.id.etDestination)
@@ -124,16 +119,13 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
                 .setMessage("Are you sure you want to save this trip?")
                 .setPositiveButton("Save") { dialog, _ ->
 
-                    // Create the Trip object
-
-
                     val userId = currentUserId
                     if (userId == null) {
                         Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
                         return@setPositiveButton
                     }
 
-                    val trip = TripEntity(
+                    val trip = Trip(
                         userId = userId,
                         name = tripName,
                         description = destination,
@@ -142,29 +134,18 @@ class CreateTripFragment : Fragment(R.layout.fragment_create_trip) {
                     )
 
 
+                    db.collection("trips")
+                        .add(trip)
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Trip saved successfully!", Toast.LENGTH_SHORT).show()
 
-                    // Save to Local DB (Room/ViewModel)
-                    viewModel.insert(trip)
-
-                    // Save to Firebase
-                    firebaseStoreManager.saveTrip(
-                        trip = trip,
-                        userId = userId
-                    ) { success ->
-                        if (success) {
-                            Log.d("TRIPMATE_DEBUG", "Firebase Sync Successful")
-                        } else {
-                            Log.e("TRIPMATE_DEBUG", "Firebase Sync Failed")
+                            view.findNavController().navigate(R.id.myTripsFragment)
                         }
-                    }
-
-                    Toast.makeText(requireContext(), "Trip saved successfully!", Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-
-                    view.findNavController().navigate(R.id.myTripsFragment)
+                        .addOnFailureListener {
+                            Toast.makeText(requireContext(), "Failed to save trip", Toast.LENGTH_SHORT).show()
+                        }
 
                     dialog.dismiss()
-
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()

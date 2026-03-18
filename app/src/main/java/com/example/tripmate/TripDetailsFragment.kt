@@ -7,32 +7,27 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.tripmate.R
-import com.example.tripmate.data.model.UserEntity
 import com.example.tripmate.databinding.FragmentTripDetailsBinding
 import com.example.tripmate.ui.trip.ParticipantAdapter
-import com.example.tripmate.ui.trip.TripParticipantViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.tripmate.data.model.TripParticipantEntity
-import com.example.tripmate.ui.user.UserViewModel
 import androidx.navigation.fragment.navArgs
+import com.google.firebase.firestore.FirebaseFirestore
+import com.example.tripmate.data.model.UserEntity
 
 
 
 class TripDetailsFragment : Fragment() {
 
-    private lateinit var viewModel: TripParticipantViewModel
     private lateinit var adapter: ParticipantAdapter
 
     private var _binding: FragmentTripDetailsBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var userViewModel: UserViewModel
-
     private val args: TripDetailsFragmentArgs by navArgs()
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,12 +48,14 @@ class TripDetailsFragment : Fragment() {
         binding.tvTripTitle.text = tripTitle
         binding.tvTripDate.text = tripDate
 
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-        viewModel = ViewModelProvider(this)[TripParticipantViewModel::class.java]
 
         adapter = ParticipantAdapter(
             onDelete = { user ->
-                viewModel.remove(tripId, user.id)
+                db.collection("trips")
+                    .document(tripId)
+                    .collection("participants")
+                    .document(user.id.toString())
+                    .delete()
             },
             onEdit = { user ->
                 showEditDialog(user)
@@ -69,11 +66,22 @@ class TripDetailsFragment : Fragment() {
         binding.participantsRecyclerView.layoutManager =
             LinearLayoutManager(requireContext())
 
-        viewModel.getParticipants(tripId)
-            .observe(viewLifecycleOwner) { list ->
+        db.collection("trips")
+            .document(tripId)
+            .collection("participants")
+            .get()
+            .addOnSuccessListener { result ->
+
+                val list = mutableListOf<UserEntity>()
+
+                for (doc in result) {
+                    val user = doc.toObject(UserEntity::class.java)
+                    user.id = doc.id
+                    list.add(user)
+                }
+
                 adapter.submitList(list)
             }
-
 
         binding.tabParticipants
         val tabPolls = view.findViewById<Button>(R.id.tabPolls)
@@ -234,7 +242,11 @@ class TripDetailsFragment : Fragment() {
                             email = newEmail
                         )
 
-                        userViewModel.update(updatedUser)
+                        db.collection("trips")
+                            .document(args.tripId)
+                            .collection("participants")
+                            .document(user.id.toString())
+                            .set(updatedUser)
                         dialog.dismiss()
                     }
                 }
@@ -249,7 +261,7 @@ class TripDetailsFragment : Fragment() {
         _binding = null
     }
 
-    private fun showAddParticipantDialog(tripId: Long) {
+    private fun showAddParticipantDialog (tripId: String){
 
         val layout = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
@@ -303,23 +315,25 @@ class TripDetailsFragment : Fragment() {
 
                     else -> {
 
-                        // Create user
                         val newUser = UserEntity(
                             name = name,
                             email = email,
-                            passwordHash = "" // temporary
+                            passwordHash = ""
                         )
 
-                        // Insert user + link to trip
-                        userViewModel.insert(newUser) { userId ->
+                        db.collection("trips")
+                            .document(tripId)
+                            .collection("participants")
+                            .add(newUser)
+                            .addOnSuccessListener {
+                                Toast.makeText(requireContext(), "Participant added", Toast.LENGTH_SHORT).show()
 
-                            viewModel.insert(
-                                TripParticipantEntity(
-                                    tripId = tripId,
-                                    userId = userId?.toInt() ?: return@insert
-                                )
-                            )
-                        }
+                                // reload
+                                onViewCreated(requireView(), null)
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(requireContext(), "Failed to add", Toast.LENGTH_SHORT).show()
+                            }
 
                         dialog.dismiss()
                     }

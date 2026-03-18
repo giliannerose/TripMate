@@ -19,25 +19,32 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.*
 import android.app.DatePickerDialog
 import com.example.tripmate.data.model.ExpenseEntity
-import com.example.tripmate.ui.itinerary.ExpenseViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
-    private lateinit var viewModel: ExpenseViewModel
 
     private val args: AddExpenseFragmentArgs by navArgs()
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
 
         val tripId = args.tripId
         val tripTitle = args.tripTitle
         val tripDate = args.tripDate
+
+        val user = auth.currentUser
+        if (user == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val userId = user.uid
 
         val etTitle = view.findViewById<EditText>(R.id.etTitle)
         val etAmount = view.findViewById<EditText>(R.id.etAmount)
@@ -148,10 +155,10 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Save Expense")
                 .setMessage("Do you want to save this expense and go to the summary?")
-                .setPositiveButton("Yes") { dialog, _ ->
-
+                .setPositiveButton("Yes") { dialog: android.content.DialogInterface, _: Int ->
 
                     val expense = ExpenseEntity(
+                        userId = userId,
                         tripId = tripId,
                         title = title,
                         amount = amount,
@@ -161,32 +168,42 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
                         paidBy = paidBy
                     )
 
+                    db.collection("expenses")
+                        .add(expense)
+                        .addOnSuccessListener { document ->
 
-                    viewModel.insert(expense)
+                            db.collection("expenses")
+                                .document(document.id)
+                                .update("firestoreId", document.id)
 
-                    Toast.makeText(
-                        requireContext(),
-                        "Expense saved successfully!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Expense saved successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
 
-                    val action =
-                        AddExpenseFragmentDirections
-                            .actionAddExpenseFragmentToExpenseSummaryFragment(
-                                tripId,
-                                tripTitle,
-                                tripDate
-                            )
+                            val action =
+                                AddExpenseFragmentDirections
+                                    .actionAddExpenseFragmentToExpenseSummaryFragment(
+                                        tripId,
+                                        tripTitle,
+                                        tripDate
+                                    )
 
-                    view.findNavController().navigate(action)
-
-                    dialog.dismiss()
+                            view.findNavController().navigate(action)
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                requireContext(),
+                                "Failed to save expense",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                 }
-                .setNegativeButton("Cancel") { dialog, _ ->
+                .setNegativeButton("Cancel") { dialog: android.content.DialogInterface, _: Int ->
                     dialog.dismiss()
                 }
                 .show()
-        }
 
         btnViewSummary.setOnClickListener {
             val action =
@@ -230,4 +247,5 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
     }
 
 
+    }
 }

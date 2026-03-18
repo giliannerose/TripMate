@@ -19,14 +19,16 @@ import androidx.room.PrimaryKey
 )
 data class NotificationEntity(
 
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    var id: String = "",
 
-    val tripId: Long,
+    val userId: String = "",
 
-    val message: String,
+    val tripId: String = "",
 
-    val type: String,
+    val message: String = "",
+
+    val type: String = "",
     // "INVITATION", "POLL", "EXPENSE", "INFO"
 
     val status: String = "PENDING",

@@ -21,11 +21,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tripmate.ui.trip.DashboardTripAdapter
 import com.example.tripmate.ui.trip.TripViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.example.tripmate.Trip
 
 class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
     private lateinit var tripViewModel: TripViewModel
     private lateinit var adapter: DashboardTripAdapter
+
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,16 +67,21 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
         val tvGreeting = view.findViewById<TextView>(R.id.tvGreeting)
 
-        val sessionManager = SessionManager(requireContext())
-        val userName = sessionManager.getUserName()
+        val currentUser = auth.currentUser
 
-        android.util.Log.d("DEBUG_NAME", "The name in storage is: $userName")
-        tvGreeting.text = "Good day, ${userName ?: "Traveler"} 👋"
+        if (currentUser == null) {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val userId = currentUser.uid
+
+        tvGreeting.text = "Good day, ${currentUser.email ?: "Traveler"} 👋"
 
         // Swipe refresh
-        swipeRefresh.setOnRefreshListener {
-            swipeRefresh.isRefreshing = false
-        }
+            swipeRefresh.setOnRefreshListener {
+                swipeRefresh.isRefreshing = false
+            }
 
 
 
@@ -117,18 +128,27 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             }
         }
 
+        loadTrips(userId)
+    }
 
-        val userId = sessionManager.getUserId()
+    private fun loadTrips(userId: String) {
+        db.collection("trips")
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnSuccessListener { result: com.google.firebase.firestore.QuerySnapshot ->
 
-        if (userId == SessionManager.NO_USER) {
-            Toast.makeText(requireContext(), "User session not found", Toast.LENGTH_SHORT).show()
-            return
-        }
+                val tripList = result.map { document ->
+                    Trip(
+                        id = document.id,
+                        name = document.getString("name") ?: "",
+                        date = document.getString("date") ?: ""
+                    )
+                }
 
-        tripViewModel.getTripsByUser(userId.toString()).observe(viewLifecycleOwner) { trips ->
-            adapter.submitList(trips)
-        }
-
-
+                adapter.submitList(tripList)
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to load trips", Toast.LENGTH_SHORT).show()
+            }
     }
 }

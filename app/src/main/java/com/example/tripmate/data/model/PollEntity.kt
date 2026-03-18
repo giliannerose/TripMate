@@ -22,7 +22,7 @@ data class PollEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
-    val tripId: Long,
+    val tripId: String,
 
     val question: String,
 
