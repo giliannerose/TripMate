@@ -16,7 +16,7 @@ class FirebaseStoreManager {
             "description" to trip.description,
             "date" to trip.date,
             "country" to trip.country,
-            "ownerId" to userId
+            "userId" to userId
         )
 
         Log.d("TRIPMATE_DEBUG", "Attempting to save trip: ${trip.name}")

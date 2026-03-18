@@ -174,16 +174,34 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     // Validate current password if user is trying to change password
                     if (newPass.isNotEmpty()) {
 
-                        val currentPassHash = PasswordHasher.hash(currentPass)
+                        val firebaseUser = FirebaseAuth.getInstance().currentUser
+                        val email = firebaseUser?.email
 
-                        if (currentPassHash != user.passwordHash) {
-                            Toast.makeText(
-                                requireContext(),
-                                "Current password is incorrect",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        if (email == null) {
+                            Toast.makeText(requireContext(), "User email not found", Toast.LENGTH_SHORT).show()
                             return@setPositiveButton
                         }
+
+                        val credential = com.google.firebase.auth.EmailAuthProvider
+                            .getCredential(email, currentPass)
+
+                        firebaseUser.reauthenticate(credential)
+                            .addOnSuccessListener {
+
+                                firebaseUser.updatePassword(newPass)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(requireContext(), "Password updated successfully", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(requireContext(), "Failed to update password", Toast.LENGTH_SHORT).show()
+                                    }
+
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(requireContext(), "Current password is incorrect", Toast.LENGTH_SHORT).show()
+                            }
+
+                        return@setPositiveButton
                     }
 
                     val userId = auth.currentUser?.uid ?: return@setPositiveButton
@@ -191,12 +209,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     val updates = hashMapOf<String, Any>(
                         "notificationsEnabled" to switchNotifications.isChecked,
                         "privacyStatus" to tvPrivacyStatus.text.toString(),
-                        "passwordHash" to (
-                                if (newPass.isNotEmpty())
-                                    PasswordHasher.hash(newPass)
-                                else
-                                    user.passwordHash
-                                )
                     )
 
                     db.collection("users")

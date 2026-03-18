@@ -38,24 +38,26 @@ class TripViewModel(application: Application) : AndroidViewModel(application) {
     fun getTripCount(userId: String, onResult: (Int) -> Unit) {
         FirebaseFirestore.getInstance()
             .collection("trips")
-            .whereEqualTo("ownerId", userId)
-            .get()
-            .addOnSuccessListener { result ->
-                onResult(result.size())
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot != null) {
+                    onResult(snapshot.size())
+                }
             }
     }
 
     fun getCountriesVisited(userId: String, onResult: (Int) -> Unit) {
         FirebaseFirestore.getInstance()
             .collection("trips")
-            .whereEqualTo("ownerId", userId)
-            .get()
-            .addOnSuccessListener { result ->
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot, _ ->
 
-                val countries = result.mapNotNull { it.getString("country") }
-                val uniqueCountries = countries.toSet()
+                if (snapshot != null) {
+                    val countries = snapshot.mapNotNull { it.getString("country") }
+                    val uniqueCountries = countries.toSet()
 
-                onResult(uniqueCountries.size)
+                    onResult(uniqueCountries.size)
+                }
             }
     }
 

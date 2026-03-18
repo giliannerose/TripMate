@@ -17,6 +17,7 @@ import com.example.tripmate.databinding.FragmentEditProfileBinding
 import com.example.tripmate.ui.user.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
@@ -49,6 +50,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         binding = FragmentEditProfileBinding.bind(view)
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+
+
 
 
         binding.imgProfile.setOnClickListener {
@@ -213,7 +216,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         db.collection("users")
             .document(userId)
-            .update(updates)
+            .set(updates, SetOptions.merge())
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
