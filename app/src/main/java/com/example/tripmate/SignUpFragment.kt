@@ -11,6 +11,7 @@ import androidx.navigation.findNavController
 import com.example.tripmate.data.utils.SessionManager
 import com.example.tripmate.ui.user.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignupFragment : Fragment(R.layout.fragment_sign_up) {
 
@@ -24,7 +25,6 @@ class SignupFragment : Fragment(R.layout.fragment_sign_up) {
         val etPassword = view.findViewById<EditText>(R.id.etPassword)
         val btnCreateAccount = view.findViewById<Button>(R.id.btnCreateAccount)
         val btnBackLogin = view.findViewById<Button>(R.id.btnBackLogin)
-
 
         btnCreateAccount.setOnClickListener {
 
@@ -57,29 +57,47 @@ class SignupFragment : Fragment(R.layout.fragment_sign_up) {
 
             if (isValid) {
 
+                val db = FirebaseFirestore.getInstance()
+
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnSuccessListener {
 
-                        Toast.makeText(
-                            requireContext(),
-                            "Welcome, $name",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        val userId = auth.currentUser!!.uid
 
-                        view.findNavController()
-                            .navigate(R.id.action_signupFragment_to_profileSetupFragment)
+                        val user = hashMapOf(
+                            "name" to name,
+                            "bio" to "",
+                            "gender" to "",
+                            "region" to "",
+                            "age" to 0,
+                            "profileImageUri" to "",
+                            "createdAt" to System.currentTimeMillis()
+                        )
+
+                        db.collection("users")
+                            .document(userId)
+                            .set(user)
+                            .addOnSuccessListener {
+
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Welcome, $name",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                view.findNavController()
+                                    .navigate(R.id.action_signupFragment_to_loginSuccessFragment)
+                            }
                     }
                     .addOnFailureListener {
-
                         Toast.makeText(
                             requireContext(),
-                            "Signup failed (email may already exist)",
+                            "Signup failed",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
             }
         }
-
 
 
 

@@ -150,10 +150,9 @@ package com.example.tripmate
         }
 
         private fun observeTripCount() {
-
             val userId = auth.currentUser?.uid ?: return
 
-            tripViewModel.getTripCount(userId).observe(viewLifecycleOwner) { count ->
+            tripViewModel.getTripCount(userId) { count ->
                 binding.tvTripsCount.text = "🏝️ Trips\n$count"
             }
         }
@@ -181,14 +180,12 @@ package com.example.tripmate
         }
 
         private fun observeCountriesVisited() {
-
             val userId = auth.currentUser?.uid ?: return
 
-            tripViewModel.getCountriesVisited(userId.toString())
-                .observe(viewLifecycleOwner) { count ->
-                    binding.tvCountriesVisited.text = "🌍 Countries\n$count"
-                    binding.tvCountriesVisitedDetails.text = count.toString()
-                }
+            tripViewModel.getCountriesVisited(userId) { count ->
+                binding.tvCountriesVisited.text = "🌍 Countries\n$count"
+                binding.tvCountriesVisitedDetails.text = count.toString()
+            }
         }
 
         private fun setupBottomNav() {

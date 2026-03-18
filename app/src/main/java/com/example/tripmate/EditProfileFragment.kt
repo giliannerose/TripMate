@@ -15,6 +15,8 @@ import com.example.tripmate.data.remote.FirebaseStorageManager
 import com.example.tripmate.data.utils.SessionManager
 import com.example.tripmate.databinding.FragmentEditProfileBinding
 import com.example.tripmate.ui.user.UserViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
@@ -24,6 +26,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     private val storageManager = FirebaseStorageManager()
     private var currentUser: UserEntity? = null
     private var selectedImageUri: Uri? = null
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
 
     private val pickImageLauncher =
@@ -40,9 +44,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+
         binding = FragmentEditProfileBinding.bind(view)
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-        sessionManager = SessionManager(requireContext())
 
 
         binding.imgProfile.setOnClickListener {
@@ -56,21 +62,41 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             pickImageLauncher.launch("image/*")
         }
 
-        // Retrieve real ID from Session
-        val userId = sessionManager.getUserId()
 
+        val currentUserFirebase = auth.currentUser
 
-        if (userId != SessionManager.NO_USER) {
-            userViewModel.getUserById(userId).observe(viewLifecycleOwner) { user ->
-                user?.let {
-                    currentUser = it
-                    populateFields(it)
+        if (currentUserFirebase == null) {
+            Toast.makeText(requireContext(), "Session expired", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
+            return
+        }
+
+        val userId = currentUserFirebase.uid
+
+        db.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+
+                    val user = UserEntity(
+                        id = userId,
+                        name = document.getString("name") ?: "",
+                        bio = document.getString("bio") ?: "",
+                        gender = document.getString("gender") ?: "",
+                        region = document.getString("region") ?: "",
+                        age = document.getLong("age")?.toInt() ?: 0,
+                        profileImageUri = document.getString("profileImageUri"),
+                        createdAt = document.getLong("createdAt") ?: 0L
+                    )
+
+                    currentUser = user
+                    populateFields(user)
                 }
             }
-        } else {
-            Toast.makeText(requireContext(), "Error: Session expired", Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack()
-        }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to load profile", Toast.LENGTH_SHORT).show()
+            }
 
         binding.tvBack.setOnClickListener {
             findNavController().popBackStack()
@@ -174,22 +200,28 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         region: String,
         imageUri: String?
     ) {
-        val updatedUser = currentUser?.copy(
-            name = name,
-            bio = bio,
-            age = age,
-            gender = if (gender == "Select Gender") "" else gender,
-            region = if (region == "Select Region") "" else region,
-            profileImageUri = imageUri
+        val userId = auth.currentUser?.uid ?: return
+
+        val updates = hashMapOf<String, Any?>(
+            "name" to name,
+            "bio" to bio,
+            "age" to age,
+            "gender" to if (gender == "Select Gender") "" else gender,
+            "region" to if (region == "Select Region") "" else region,
+            "profileImageUri" to imageUri
         )
 
-        updatedUser?.let {
-            userViewModel.update(it)
-            Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack()
-        } ?: run {
-            binding.btnSaveProfile.isEnabled = true
-        }
+        db.collection("users")
+            .document(userId)
+            .update(updates)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Update failed", Toast.LENGTH_SHORT).show()
+                binding.btnSaveProfile.isEnabled = true
+            }
     }
 
     private fun setSpinnerSelection(spinner: Spinner, value: String) {

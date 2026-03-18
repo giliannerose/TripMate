@@ -15,6 +15,7 @@ class FirebaseStoreManager {
             "name" to trip.name,
             "description" to trip.description,
             "date" to trip.date,
+            "country" to trip.country,
             "ownerId" to userId
         )
 
@@ -32,16 +33,16 @@ class FirebaseStoreManager {
             }
     }
 
-    fun saveUser(user: com.example.tripmate.data.model.UserEntity, onResult: (Boolean) -> Unit) {
+    fun saveUser(user: com.example.tripmate.data.model.UserEntity, userId: String, onResult: (Boolean) -> Unit) {
         db.collection("users")
-            .document(user.email)
+            .document(userId)
             .set(user)
             .addOnCompleteListener { onResult(it.isSuccessful) }
     }
 
     // Get all trips for the logged-in user
     fun getTrips(userId: String, onResult: (List<TripEntity>) -> Unit) {
-        tripsCollection.whereEqualTo("ownerId", userId)
+        tripsCollection.whereEqualTo("userId", userId)
             .get()
             .addOnSuccessListener { documents ->
                 val tripList = documents.map { doc ->

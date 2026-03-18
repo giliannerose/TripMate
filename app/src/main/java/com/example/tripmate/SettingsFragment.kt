@@ -13,6 +13,9 @@ import com.example.tripmate.ui.user.UserViewModel
 import com.example.tripmate.data.model.UserEntity
 import com.example.tripmate.data.utils.PasswordHasher
 import com.example.tripmate.data.utils.SessionManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
@@ -20,21 +23,16 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private lateinit var viewModel: UserViewModel
     private var currentUser: UserEntity? = null
 
-    private var userId: Int = -1
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+
         viewModel = ViewModelProvider(this)[UserViewModel::class.java]
-
-        val sessionManager = SessionManager(requireContext())
-        userId = sessionManager.getUserId()
-
-        if (userId == -1) {
-            Toast.makeText(requireContext(), "User session not found", Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack()
-            return
-        }
 
         val tvBack = view.findViewById<TextView>(R.id.tvBack)
         val switchNotifications = view.findViewById<Switch>(R.id.switchNotifications)
@@ -44,15 +42,46 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val etConfirmPassword = view.findViewById<EditText>(R.id.etConfirmPassword)
         val btnSaveSettings = view.findViewById<Button>(R.id.btnSaveSettings)
 
-        viewModel.getUserById(userId).observe(viewLifecycleOwner) { user ->
+        val firebaseUser = auth.currentUser
 
-            if (user != null) {
-                currentUser = user
-
-                switchNotifications.isChecked = user.notificationsEnabled
-                tvPrivacyStatus.text = user.privacyStatus
-            }
+        if (firebaseUser == null) {
+            Toast.makeText(requireContext(), "User session not found", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
+            return
         }
+
+        val userId = firebaseUser.uid
+
+        db.collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+
+                if (document.exists()) {
+
+                    val user = UserEntity(
+                        id = userId,
+                        name = document.getString("name") ?: "",
+                        bio = document.getString("bio") ?: "",
+                        gender = document.getString("gender") ?: "",
+                        region = document.getString("region") ?: "",
+                        age = document.getLong("age")?.toInt() ?: 0,
+                        profileImageUri = document.getString("profileImageUri"),
+                        createdAt = document.getLong("createdAt") ?: 0L,
+                        notificationsEnabled = document.getBoolean("notificationsEnabled") ?: true,
+                        privacyStatus = document.getString("privacyStatus") ?: "Public",
+                        passwordHash = document.getString("passwordHash") ?: ""
+                    )
+
+                    currentUser = user
+
+                    switchNotifications.isChecked = user.notificationsEnabled
+                    tvPrivacyStatus.text = user.privacyStatus
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to load settings", Toast.LENGTH_SHORT).show()
+            }
 
 
         // Back
@@ -157,23 +186,29 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                         }
                     }
 
-                    val updatedUser = user.copy(
-                        notificationsEnabled = switchNotifications.isChecked,
-                        privacyStatus = tvPrivacyStatus.text.toString(),
-                        passwordHash =
-                            if (newPass.isNotEmpty())
-                                PasswordHasher.hash(newPass)
-                            else
-                                user.passwordHash
+                    val userId = auth.currentUser?.uid ?: return@setPositiveButton
+
+                    val updates = hashMapOf<String, Any>(
+                        "notificationsEnabled" to switchNotifications.isChecked,
+                        "privacyStatus" to tvPrivacyStatus.text.toString(),
+                        "passwordHash" to (
+                                if (newPass.isNotEmpty())
+                                    PasswordHasher.hash(newPass)
+                                else
+                                    user.passwordHash
+                                )
                     )
 
-                    viewModel.update(updatedUser)
-
-                    Toast.makeText(
-                        requireContext(),
-                        "Settings saved successfully!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    db.collection("users")
+                        .document(userId)
+                        .set(updates, SetOptions.merge())
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Settings saved successfully!", Toast.LENGTH_SHORT).show()
+                            findNavController().popBackStack()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(requireContext(), "Failed to save settings", Toast.LENGTH_SHORT).show()
+                        }
 
                     findNavController().popBackStack()
                 }

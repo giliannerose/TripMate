@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.tripmate.data.local.AppDatabase
 import com.example.tripmate.data.model.TripEntity
 import com.example.tripmate.data.repository.TripRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 class TripViewModel(application: Application) : AndroidViewModel(application) {
@@ -34,12 +35,28 @@ class TripViewModel(application: Application) : AndroidViewModel(application) {
         repository.update(trip)
     }
 
-    fun getTripCount(userId: String): LiveData<Int> {
-        return repository.getTripCount(userId)
+    fun getTripCount(userId: String, onResult: (Int) -> Unit) {
+        FirebaseFirestore.getInstance()
+            .collection("trips")
+            .whereEqualTo("ownerId", userId)
+            .get()
+            .addOnSuccessListener { result ->
+                onResult(result.size())
+            }
     }
 
-    fun getCountriesVisited(userId: String): LiveData<Int> {
-        return repository.getCountriesVisited(userId)
+    fun getCountriesVisited(userId: String, onResult: (Int) -> Unit) {
+        FirebaseFirestore.getInstance()
+            .collection("trips")
+            .whereEqualTo("ownerId", userId)
+            .get()
+            .addOnSuccessListener { result ->
+
+                val countries = result.mapNotNull { it.getString("country") }
+                val uniqueCountries = countries.toSet()
+
+                onResult(uniqueCountries.size)
+            }
     }
 
     fun getTripById(tripId: Long): LiveData<TripEntity> {
