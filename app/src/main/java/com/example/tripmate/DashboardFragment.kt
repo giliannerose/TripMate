@@ -63,7 +63,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
         val actionCreate = view.findViewById<LinearLayout>(R.id.actionCreate)
         val actionInvite = view.findViewById<LinearLayout>(R.id.actionInvite)
-        val actionExpenses = view.findViewById<LinearLayout>(R.id.actionExpenses)
+     //   val actionExpenses = view.findViewById<LinearLayout>(R.id.actionExpenses)
 
         val tvGreeting = view.findViewById<TextView>(R.id.tvGreeting)
 
@@ -76,7 +76,8 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
         val userId = currentUser.uid
 
-        tvGreeting.text = "Good day, ${currentUser.email ?: "Traveler"} 👋"
+        val name = currentUser.displayName ?: "Traveler"
+        tvGreeting.text = "Good day, $name 👋"
 
         // Swipe refresh
             swipeRefresh.setOnRefreshListener {
@@ -95,10 +96,10 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                 .navigate(R.id.action_dashboardFragment_to_inviteMembersFragment)
         }
 
-        actionExpenses.setOnClickListener {
-            view.findNavController()
-                .navigate(R.id.action_dashboardFragment_to_addExpenseFragment)
-        }
+      //  actionExpenses.setOnClickListener {
+       //     view.findNavController()
+       //         .navigate(R.id.action_dashboardFragment_to_addExpenseFragment)
+      //  }
 
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {

@@ -56,6 +56,13 @@ class TripDetailsFragment : Fragment() {
                     .collection("participants")
                     .document(user.id.toString())
                     .delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Deleted", Toast.LENGTH_SHORT).show()
+                        loadParticipants(tripId)
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Delete failed", Toast.LENGTH_SHORT).show()
+                    }
             },
             onEdit = { user ->
                 showEditDialog(user)
@@ -66,22 +73,7 @@ class TripDetailsFragment : Fragment() {
         binding.participantsRecyclerView.layoutManager =
             LinearLayoutManager(requireContext())
 
-        db.collection("trips")
-            .document(tripId)
-            .collection("participants")
-            .get()
-            .addOnSuccessListener { result ->
-
-                val list = mutableListOf<UserEntity>()
-
-                for (doc in result) {
-                    val user = doc.toObject(UserEntity::class.java)
-                    user.id = doc.id
-                    list.add(user)
-                }
-
-                adapter.submitList(list)
-            }
+        loadParticipants(tripId)
 
         binding.tabParticipants
         val tabPolls = view.findViewById<Button>(R.id.tabPolls)
@@ -181,6 +173,25 @@ class TripDetailsFragment : Fragment() {
         }
     }
 
+    private fun loadParticipants(tripId: String) {
+        db.collection("trips")
+            .document(tripId)
+            .collection("participants")
+            .get()
+            .addOnSuccessListener { result ->
+
+                val list = mutableListOf<UserEntity>()
+
+                for (doc in result) {
+                    val user = doc.toObject(UserEntity::class.java)
+                    user.id = doc.id
+                    list.add(user)
+                }
+
+                adapter.submitList(list)
+            }
+    }
+
     private fun showEditDialog(user: UserEntity) {
 
         val layout = LinearLayout(requireContext()).apply {
@@ -247,7 +258,14 @@ class TripDetailsFragment : Fragment() {
                             .collection("participants")
                             .document(user.id.toString())
                             .set(updatedUser)
-                        dialog.dismiss()
+                            .addOnSuccessListener {
+                                Toast.makeText(requireContext(), "Updated", Toast.LENGTH_SHORT).show()
+                                loadParticipants(args.tripId)
+                                dialog.dismiss()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(requireContext(), "Update failed", Toast.LENGTH_SHORT).show()
+                            }
                     }
                 }
             }
@@ -329,7 +347,7 @@ class TripDetailsFragment : Fragment() {
                                 Toast.makeText(requireContext(), "Participant added", Toast.LENGTH_SHORT).show()
 
                                 // reload
-                                onViewCreated(requireView(), null)
+                                loadParticipants(tripId)
                             }
                             .addOnFailureListener {
                                 Toast.makeText(requireContext(), "Failed to add", Toast.LENGTH_SHORT).show()
