@@ -210,6 +210,22 @@
             android:id="@+id/action_addExpenseFragment_to_expenseSummaryFragment"
             app:destination="@id/expenseSummaryFragment" />
 
+        <action
+            android:id="@+id/action_addExpenseFragment_to_tripDetailsFragment"
+            app:destination="@id/tripDetailsFragment" />
+
+        <action
+            android:id="@+id/action_addExpenseFragment_to_createPollFragment"
+            app:destination="@id/createPollFragment" />
+
+        <action
+            android:id="@+id/action_addExpenseFragment_to_documentsFragment"
+            app:destination="@id/documentsFragment" />
+
+        <action
+            android:id="@+id/action_addExpenseFragment_to_itineraryFragment"
+            app:destination="@id/itineraryFragment" />
+
     </fragment>
 
     <fragment
@@ -500,6 +516,14 @@
 
         <argument
             android:name="tripId"
+            app:argType="string" />
+
+        <argument
+            android:name="tripTitle"
+            app:argType="string" />
+
+        <argument
+            android:name="tripDate"
             app:argType="string" />
     </fragment>
 

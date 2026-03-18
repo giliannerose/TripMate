@@ -18,8 +18,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.*
 import android.app.DatePickerDialog
+import androidx.navigation.fragment.findNavController
 import com.example.tripmate.data.model.ExpenseEntity
 import androidx.navigation.fragment.navArgs
+import com.example.tripmate.ui.expense.ExpenseSummaryFragmentDirections
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -198,12 +200,15 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
                                 "Failed to save expense",
                                 Toast.LENGTH_SHORT
                             ).show()
+
                         }
                 }
                 .setNegativeButton("Cancel") { dialog: android.content.DialogInterface, _: Int ->
                     dialog.dismiss()
                 }
                 .show()
+        }
+
 
         btnViewSummary.setOnClickListener {
             val action =
@@ -219,20 +224,55 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
         // Top Tabs
         view.findViewById<Button>(R.id.tabParticipants).setOnClickListener {
-            view.findNavController().navigate(R.id.tripDetailsFragment)
+
+            val action =
+                AddExpenseFragmentDirections
+                    .actionAddExpenseFragmentToTripDetailsFragment(
+                        tripId,
+                        tripTitle,
+                        tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.tabPolls).setOnClickListener {
-            view.findNavController().navigate(R.id.createPollFragment)
+            val action =
+                AddExpenseFragmentDirections
+                    .actionAddExpenseFragmentToCreatePollFragment( tripId,
+                        tripTitle,
+                        tripDate)
+
+            findNavController().navigate(action)
+
+        }
+
+        view.findViewById<Button>(R.id.tabExpenses).setOnClickListener {
+            Toast.makeText(requireContext(), "You're already on Expenses", Toast.LENGTH_SHORT).show()
         }
 
         view.findViewById<Button>(R.id.tabDocs).setOnClickListener {
-            view.findNavController().navigate(R.id.documentsFragment)
+            val action =
+                AddExpenseFragmentDirections
+                    .actionAddExpenseFragmentToDocumentsFragment( tripId,
+                        tripTitle,
+                        tripDate)
+
+
+            findNavController().navigate(action)
         }
 
         view.findViewById<Button>(R.id.tabItinerary).setOnClickListener {
-            view.findNavController().navigate(R.id.itineraryFragment)
+            val action =
+                AddExpenseFragmentDirections
+                    .actionAddExpenseFragmentToItineraryFragment( tripId,
+                        tripTitle,
+                        tripDate)
+
+
+            findNavController().navigate(action)
         }
+
 
         // Bottom Navigation
         bottomNav.setOnItemSelectedListener { item ->
@@ -248,4 +288,3 @@ class AddExpenseFragment : Fragment(R.layout.fragment_add_expense) {
 
 
     }
-}

@@ -81,7 +81,9 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
                     val action =
                         NotificationsFragmentDirections
                             .actionNotificationsFragmentToVoteFragment(
-                                tripId
+                                tripId,
+                                tripTitle,
+                                tripDate
                             )
 
                     findNavController().navigate(action)

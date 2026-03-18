@@ -166,8 +166,15 @@ class VoteFragment : Fragment(R.layout.fragment_vote) {
         }
 
         btnViewResults.setOnClickListener {
-            findNavController()
-                .navigate(R.id.action_voteFragment_to_pollResultsFragment)
+            val action =
+                VoteFragmentDirections
+                    .actionVoteFragmentToPollResultsFragment(
+                        args.tripId,
+                        args.tripTitle,
+                        args.tripDate
+                    )
+
+            findNavController().navigate(action)
         }
 
         // Bottom navigation
