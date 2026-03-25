@@ -209,90 +209,39 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Discover"
+                            android:text="Trip Tips"
                             android:textColor="#1976D2"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="14dp"
-                            android:orientation="horizontal">
+                            android:layout_marginTop="12dp"
+                            android:background="@drawable/recent_bg"
+                            android:padding="12dp"
+                            android:text="Plan your itinerary early to stay organized."
+                            android:textColor="#222222" />
 
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/cardPalawan"
-                                android:layout_width="0dp"
-                                android:layout_height="160dp"
-                                android:layout_weight="1"
-                                app:cardCornerRadius="16dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/recent_bg"
+                            android:padding="12dp"
+                            android:text="Invite your travel buddies to keep everyone updated."
+                            android:textColor="#222222" />
 
-                                <FrameLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent">
-
-                                    <ImageView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:scaleType="centerCrop"
-                                        android:src="@drawable/palawan" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="bottom|start"
-                                        android:layout_margin="12dp"
-                                        android:background="#66000000"
-                                        android:paddingLeft="10dp"
-                                        android:paddingTop="6dp"
-                                        android:paddingRight="10dp"
-                                        android:paddingBottom="6dp"
-                                        android:text="Palawan"
-                                        android:textColor="@android:color/white"
-                                        android:textStyle="bold" />
-                                </FrameLayout>
-                            </com.google.android.material.card.MaterialCardView>
-
-                            <Space
-                                android:layout_width="12dp"
-                                android:layout_height="wrap_content" />
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/cardBaguio"
-                                android:layout_width="0dp"
-                                android:layout_height="160dp"
-                                android:layout_weight="1"
-                                app:cardCornerRadius="16dp">
-
-                                <FrameLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent">
-
-                                    <ImageView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:scaleType="centerCrop"
-                                        android:src="@drawable/baguio" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="bottom|start"
-                                        android:layout_margin="12dp"
-                                        android:background="#66000000"
-                                        android:paddingLeft="10dp"
-                                        android:paddingTop="6dp"
-                                        android:paddingRight="10dp"
-                                        android:paddingBottom="6dp"
-                                        android:text="Baguio"
-                                        android:textColor="@android:color/white"
-                                        android:textStyle="bold" />
-                                </FrameLayout>
-                            </com.google.android.material.card.MaterialCardView>
-                        </LinearLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/recent_bg"
+                            android:padding="12dp"
+                            android:text="Review your trip details before your travel date."
+                            android:textColor="#222222" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
-
                 <!-- Recent Activity Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
@@ -320,6 +269,17 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:nestedScrollingEnabled="false"/>
+
+                        <TextView
+                            android:id="@+id/tvEmptyActivity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center"
+                            android:text="No recent activity yet"
+                            android:textColor="#888888"
+                            android:textSize="14sp"
+                            android:visibility="gone" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 

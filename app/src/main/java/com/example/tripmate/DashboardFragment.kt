@@ -42,6 +42,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     private lateinit var tvEmptyTrips: TextView
     private lateinit var recyclerTrips: RecyclerView
     private lateinit var activityAdapter: DashboardActivityAdapter
+    private lateinit var tvEmptyActivity: TextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,14 +53,13 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
         tvGreeting = view.findViewById(R.id.tvGreeting)
         tvEmptyTrips = view.findViewById(R.id.tvEmptyTrips)
+        tvEmptyActivity = view.findViewById(R.id.tvEmptyActivity)
 
 
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
         val actionCreate = view.findViewById<LinearLayout>(R.id.actionCreate)
         val actionInvite = view.findViewById<LinearLayout>(R.id.actionInvite)
         //   val actionExpenses = view.findViewById<LinearLayout>(R.id.actionExpenses)
-        val cardPalawan = view.findViewById<MaterialCardView>(R.id.cardPalawan)
-        val cardBaguio = view.findViewById<MaterialCardView>(R.id.cardBaguio)
         val recyclerActivity = view.findViewById<RecyclerView>(R.id.recyclerActivity)
 
         activityAdapter = DashboardActivityAdapter()
@@ -114,13 +114,13 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                 .navigate(R.id.action_dashboardFragment_to_inviteMembersFragment)
         }
 
-        cardPalawan.setOnClickListener {
-            Toast.makeText(requireContext(), "Discover Palawan", Toast.LENGTH_SHORT).show()
-        }
+      //  cardPalawan.setOnClickListener {
+           // Toast.makeText(requireContext(), "Discover Palawan", Toast.LENGTH_SHORT).show()
+      //  }
 
-        cardBaguio.setOnClickListener {
-            Toast.makeText(requireContext(), "Discover Baguio", Toast.LENGTH_SHORT).show()
-        }
+     //   cardBaguio.setOnClickListener {
+          //  Toast.makeText(requireContext(), "Discover Baguio", Toast.LENGTH_SHORT).show()
+     //   }
 
       //  actionExpenses.setOnClickListener {
        //     view.findNavController()
@@ -216,8 +216,18 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                 }
 
                 activityAdapter.submitList(list)
+
+                if (list.isEmpty()) {
+                    tvEmptyActivity.visibility = View.VISIBLE
+                    view?.findViewById<RecyclerView>(R.id.recyclerActivity)?.visibility = View.GONE
+                } else {
+                    tvEmptyActivity.visibility = View.GONE
+                    view?.findViewById<RecyclerView>(R.id.recyclerActivity)?.visibility = View.VISIBLE
+                }
             }
             .addOnFailureListener {
+                tvEmptyActivity.visibility = View.VISIBLE
+                view?.findViewById<RecyclerView>(R.id.recyclerActivity)?.visibility = View.GONE
                 Toast.makeText(requireContext(), "Failed to load activity", Toast.LENGTH_SHORT).show()
             }
     }
