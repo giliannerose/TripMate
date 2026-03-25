@@ -141,7 +141,8 @@ class AddActivityFragment : Fragment(R.layout.fragment_add_activity) {
                 "date" to date,
                 "time" to time,
                 "title" to title,
-                "notes" to notes
+                "notes" to notes,
+                "timestamp" to com.google.firebase.Timestamp.now()
             )
 
             firestore.collection("activities")

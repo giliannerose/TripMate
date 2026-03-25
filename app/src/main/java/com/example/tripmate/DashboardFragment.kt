@@ -25,6 +25,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.tripmate.Trip
 import com.google.android.material.card.MaterialCardView
+import com.example.tripmate.ui.dashboard.DashboardActivityAdapter
+import com.example.tripmate.ui.dashboard.DashboardActivity
+
 
 class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
@@ -38,6 +41,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     private lateinit var tvGreeting: TextView
     private lateinit var tvEmptyTrips: TextView
     private lateinit var recyclerTrips: RecyclerView
+    private lateinit var activityAdapter: DashboardActivityAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,12 +53,18 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         tvGreeting = view.findViewById(R.id.tvGreeting)
         tvEmptyTrips = view.findViewById(R.id.tvEmptyTrips)
 
+
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
         val actionCreate = view.findViewById<LinearLayout>(R.id.actionCreate)
         val actionInvite = view.findViewById<LinearLayout>(R.id.actionInvite)
         //   val actionExpenses = view.findViewById<LinearLayout>(R.id.actionExpenses)
         val cardPalawan = view.findViewById<MaterialCardView>(R.id.cardPalawan)
         val cardBaguio = view.findViewById<MaterialCardView>(R.id.cardBaguio)
+        val recyclerActivity = view.findViewById<RecyclerView>(R.id.recyclerActivity)
+
+        activityAdapter = DashboardActivityAdapter()
+        recyclerActivity.layoutManager = LinearLayoutManager(requireContext())
+        recyclerActivity.adapter = activityAdapter
 
         adapter = DashboardTripAdapter { trip ->
 
@@ -146,6 +156,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         }
 
         loadTrips(userId)
+        loadRecentActivity(userId)
     }
 
     private fun loadTrips(userId: String) {
@@ -180,6 +191,34 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             .addOnFailureListener {
                 swipeRefresh.isRefreshing = false
                 Toast.makeText(requireContext(), "Failed to load trips", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun loadRecentActivity(userId: String) {
+
+        db.collection("activities")
+            .whereEqualTo("userId", userId)
+            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .limit(3)
+            .get()
+            .addOnSuccessListener { result ->
+
+                val list = result.map { doc ->
+
+                    val title = doc.getString("title") ?: ""
+                    val date = doc.getString("date") ?: ""
+                    val time = doc.getString("time") ?: ""
+
+                    DashboardActivity(
+                        title = "You added activity: $title",
+                        dateTime = "$date • $time"
+                    )
+                }
+
+                activityAdapter.submitList(list)
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to load activity", Toast.LENGTH_SHORT).show()
             }
     }
 }
