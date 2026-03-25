@@ -8,6 +8,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import com.example.tripmate.databinding.ItemTripBinding
 import com.example.tripmate.Trip
+import java.util.Locale
+import java.util.Calendar
+import java.text.SimpleDateFormat
+import android.view.View
 
 
 class TripAdapter(
@@ -21,7 +25,15 @@ class TripAdapter(
         fun bind(trip: Trip) {
             binding.tvTripName.text = trip.name
             binding.tvTripDate.text = trip.date
-            binding.tvTripDescription.text = trip.description
+
+            if (trip.description.isNullOrBlank()) {
+                binding.tvTripDescription.visibility = View.GONE
+            } else {
+                binding.tvTripDescription.visibility = View.VISIBLE
+                binding.tvTripDescription.text = trip.description
+            }
+
+            binding.tvTripStatus.text = getTripStatus(trip.date)
 
             binding.root.setOnClickListener {
                 onClick(trip)
@@ -31,7 +43,30 @@ class TripAdapter(
                 onDelete(trip)
             }
         }
+
+        private fun getTripStatus(dateRange: String): String {
+            return try {
+                val parts = dateRange.split("-")
+                if (parts.size < 2) return "Planned"
+
+                val formatter = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
+                val startDate = formatter.parse(parts[0].trim())
+                val endDate = formatter.parse(parts[1].trim())
+
+                val today = Calendar.getInstance().time
+
+                when {
+                    startDate == null || endDate == null -> "Planned"
+                    today.before(startDate) -> "Upcoming"
+                    today.after(endDate) -> "Completed"
+                    else -> "Ongoing"
+                }
+            } catch (e: Exception) {
+                "Planned"
+            }
+        }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TripViewHolder {
         val binding = ItemTripBinding.inflate(

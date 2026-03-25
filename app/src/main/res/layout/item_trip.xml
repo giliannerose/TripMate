@@ -1,55 +1,76 @@
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvTripName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
-
-            <Button
-                android:id="@+id/btnDeleteTrip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DELETE"
-                android:backgroundTint="#F44336"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"/>
+                android:text="Boracay Trip"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#1F2937" />
+
+            <TextView
+                android:id="@+id/tvTripDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="26/3/2026 - 30/3/2026"
+                android:textSize="14sp"
+                android:textColor="#6B7280" />
+
+            <TextView
+                android:id="@+id/tvTripDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Beach vacation with friends"
+                android:textSize="13sp"
+                android:textColor="#6B7280" />
+
+            <TextView
+                android:id="@+id/tvTripStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingStart="10dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="4dp"
+                android:text="Upcoming"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#1976D2"
+                android:background="@android:color/transparent" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvTripDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:layout_marginTop="4dp"/>
-
-        <TextView
-            android:id="@+id/tvTripDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="#555"/>
+        <ImageButton
+            android:id="@+id/btnDeleteTrip"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="Delete Trip" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
