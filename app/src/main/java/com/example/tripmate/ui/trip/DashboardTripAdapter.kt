@@ -22,8 +22,27 @@ class DashboardTripAdapter(
         }
     }
 
-    inner class TripViewHolder(val binding: ItemDashboardTripBinding)
-        : RecyclerView.ViewHolder(binding.root)
+    inner class TripViewHolder(
+        private val binding: ItemDashboardTripBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(trip: Trip) {
+            binding.tvTripName.text = trip.name
+            binding.tvTripDate.text = trip.date
+
+            val firstLetter = if (trip.name.isNotBlank()) {
+                trip.name.trim().first().uppercaseChar().toString()
+            } else {
+                "T"
+            }
+
+            binding.tvTripInitial.text = firstLetter
+
+            binding.root.setOnClickListener {
+                onClick(trip)
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TripViewHolder {
         val binding = ItemDashboardTripBinding.inflate(
@@ -35,13 +54,6 @@ class DashboardTripAdapter(
     }
 
     override fun onBindViewHolder(holder: TripViewHolder, position: Int) {
-        val trip = getItem(position)
-
-        holder.binding.tvTripName.text = trip.name
-        holder.binding.tvTripDate.text = trip.date
-
-        holder.binding.root.setOnClickListener {
-            onClick(trip)
-        }
+        holder.bind(getItem(position))
     }
-}
+    }

@@ -24,6 +24,7 @@ import com.example.tripmate.ui.trip.TripViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.tripmate.Trip
+import com.google.android.material.card.MaterialCardView
 
 class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
@@ -33,12 +34,27 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
+    private lateinit var swipeRefresh: SwipeRefreshLayout
+    private lateinit var tvGreeting: TextView
+    private lateinit var tvEmptyTrips: TextView
+    private lateinit var recyclerTrips: RecyclerView
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         tripViewModel = ViewModelProvider(this)[TripViewModel::class.java]
 
-        val recyclerTrips = view.findViewById<RecyclerView>(R.id.recyclerTrips)
+        recyclerTrips = view.findViewById(R.id.recyclerTrips)
+        swipeRefresh = view.findViewById(R.id.swipeRefresh)
+        tvGreeting = view.findViewById(R.id.tvGreeting)
+        tvEmptyTrips = view.findViewById(R.id.tvEmptyTrips)
+
+        val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
+        val actionCreate = view.findViewById<LinearLayout>(R.id.actionCreate)
+        val actionInvite = view.findViewById<LinearLayout>(R.id.actionInvite)
+        //   val actionExpenses = view.findViewById<LinearLayout>(R.id.actionExpenses)
+        val cardPalawan = view.findViewById<MaterialCardView>(R.id.cardPalawan)
+        val cardBaguio = view.findViewById<MaterialCardView>(R.id.cardBaguio)
 
         adapter = DashboardTripAdapter { trip ->
 
@@ -58,14 +74,6 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         recyclerTrips.adapter = adapter
 
 
-        val swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
-        val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottomNav)
-
-        val actionCreate = view.findViewById<LinearLayout>(R.id.actionCreate)
-        val actionInvite = view.findViewById<LinearLayout>(R.id.actionInvite)
-     //   val actionExpenses = view.findViewById<LinearLayout>(R.id.actionExpenses)
-
-        val tvGreeting = view.findViewById<TextView>(R.id.tvGreeting)
 
         val currentUser = auth.currentUser
 
@@ -76,13 +84,13 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
 
         val userId = currentUser.uid
 
-        val name = currentUser.displayName ?: "Traveler"
+        val name = currentUser.displayName?.takeIf { it.isNotBlank() } ?: "Traveler"
         tvGreeting.text = "Good day, $name 👋"
 
         // Swipe refresh
-            swipeRefresh.setOnRefreshListener {
-                swipeRefresh.isRefreshing = false
-            }
+        swipeRefresh.setOnRefreshListener {
+            loadTrips(userId)
+        }
 
 
 
@@ -94,6 +102,14 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         actionInvite.setOnClickListener {
             view.findNavController()
                 .navigate(R.id.action_dashboardFragment_to_inviteMembersFragment)
+        }
+
+        cardPalawan.setOnClickListener {
+            Toast.makeText(requireContext(), "Discover Palawan", Toast.LENGTH_SHORT).show()
+        }
+
+        cardBaguio.setOnClickListener {
+            Toast.makeText(requireContext(), "Discover Baguio", Toast.LENGTH_SHORT).show()
         }
 
       //  actionExpenses.setOnClickListener {
@@ -133,6 +149,8 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     }
 
     private fun loadTrips(userId: String) {
+        swipeRefresh.isRefreshing = true
+
         db.collection("trips")
             .whereEqualTo("userId", userId)
             .get()
@@ -144,11 +162,23 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                         name = document.getString("name") ?: "",
                         date = document.getString("date") ?: ""
                     )
-                }
+                }.sortedByDescending { it.date }
+                    .take(3)
 
                 adapter.submitList(tripList)
+
+                if (tripList.isEmpty()) {
+                    tvEmptyTrips.visibility = View.VISIBLE
+                    recyclerTrips.visibility = View.GONE
+                } else {
+                    tvEmptyTrips.visibility = View.GONE
+                    recyclerTrips.visibility = View.VISIBLE
+                }
+
+                swipeRefresh.isRefreshing = false
             }
             .addOnFailureListener {
+                swipeRefresh.isRefreshing = false
                 Toast.makeText(requireContext(), "Failed to load trips", Toast.LENGTH_SHORT).show()
             }
     }
