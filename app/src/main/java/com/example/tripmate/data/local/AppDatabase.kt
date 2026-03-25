@@ -26,7 +26,7 @@ import com.example.tripmate.data.model.TripParticipantEntity
         PollEntity::class,
         NotificationEntity::class
     ],
-    version = 22, exportSchema = false)
+    version = 23, exportSchema = false)
 
 abstract class AppDatabase : RoomDatabase() {
     // Connects the Database to the Queries

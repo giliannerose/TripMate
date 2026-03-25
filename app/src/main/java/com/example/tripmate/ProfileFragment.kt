@@ -26,6 +26,8 @@ package com.example.tripmate
 
     class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
+
+
         private lateinit var tripParticipantViewModel: TripParticipantViewModel
 
         private lateinit var binding: FragmentProfileBinding
@@ -40,43 +42,45 @@ package com.example.tripmate
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
 
+            binding = FragmentProfileBinding.bind(view)
+
             auth = FirebaseAuth.getInstance()
             db = FirebaseFirestore.getInstance()
 
-            binding = FragmentProfileBinding.bind(view)
             userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
             sessionManager = SessionManager(requireContext())
             tripViewModel = ViewModelProvider(this)[TripViewModel::class.java]
             tripParticipantViewModel = ViewModelProvider(this)[TripParticipantViewModel::class.java]
 
 
+            checkCurrentUser()
+            setupClickListeners()
+            setupBottomNav()
+            setupStatCardClicks()
+
             observeUser()
             observeTripCount()
             observeCountriesVisited()
-            setupClickListeners()
-            setupBottomNav()
             observeBuddyCount()
             observeTripsJoined()
         }
 
-        private fun observeUser() {
-
-            val currentUser = auth.currentUser
-
-            if (currentUser == null) {
+        private fun checkCurrentUser() {
+            if (auth.currentUser == null) {
                 findNavController().navigate(R.id.welcomeFragment)
-                return
             }
+        }
 
+
+        private fun observeUser() {
+            val currentUser = auth.currentUser ?: return
             val userId = currentUser.uid
 
             db.collection("users")
                 .document(userId)
                 .get()
                 .addOnSuccessListener { document ->
-
                     if (document.exists()) {
-
                         val user = UserEntity(
                             id = userId,
                             name = document.getString("name") ?: "",
@@ -89,71 +93,68 @@ package com.example.tripmate
                         )
 
                         bindUser(user)
+                    } else {
+                        showDefaultProfile()
                     }
                 }
                 .addOnFailureListener {
                     Toast.makeText(requireContext(), "Failed to load profile", Toast.LENGTH_SHORT).show()
+                    showDefaultProfile()
                 }
         }
 
         private fun bindUser(user: UserEntity) {
-
-            binding.tvUserName.text = user.name
-            binding.tvUserBio.text = user.bio
-
-            if (!user.profileImageUri.isNullOrEmpty()) {
-                try {
-                    binding.imgProfile.setImageURI(Uri.parse(user.profileImageUri))
-                } catch (e: SecurityException) {
-                    binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
-                }
-            } else {
-                binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
-            }
+            binding.tvUserName.text = user.name.ifBlank { "Traveler" }
+            binding.tvUserBio.text = user.bio.ifBlank { "No bio added yet" }
 
             binding.tvGender.text =
-                if (user.gender.isEmpty()) "-" else user.gender
+                if (user.gender.isBlank()) "Not specified" else user.gender
 
             binding.tvRegion.text =
-                if (user.region.isEmpty()) "-" else "${user.region} based"
+                if (user.region.isBlank()) "No region added" else "${user.region} based"
 
             binding.tvAge.text =
-                if (user.age == 0) "-" else "${user.age} years old"
+                if (user.age <= 0) "Age not set" else "${user.age} years old"
 
+            if (user.createdAt > 0L) {
+                val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
+                binding.tvMemberSince.text = formatter.format(Date(user.createdAt))
+            } else {
+                binding.tvMemberSince.text = "Recently joined"
+            }
 
-            val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
-            val memberSince = formatter.format(Date(user.createdAt))
-
-            binding.tvMemberSince.text = memberSince
+            loadProfileImage(user.profileImageUri)
         }
 
-
-        private fun showSignOutDialog() {
-            AlertDialog.Builder(requireContext())
-                .setTitle("Sign Out")
-                .setMessage("Are you sure you want to sign out?")
-                .setPositiveButton("Yes") { _, _ ->
-
-                    auth.signOut()
-
-                    Toast.makeText(
-                        requireContext(),
-                        "Signed out successfully",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    findNavController()
-                        .navigate(R.id.action_profileFragment_to_welcomeFragment)
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
+        private fun showDefaultProfile() {
+            binding.tvUserName.text = "Traveler"
+            binding.tvUserBio.text = "No bio added yet"
+            binding.tvGender.text = "Not specified"
+            binding.tvRegion.text = "No region added"
+            binding.tvAge.text = "Age not set"
+            binding.tvMemberSince.text = "Recently joined"
+            binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
         }
+
+        private fun loadProfileImage(imageUri: String?) {
+            if (imageUri.isNullOrBlank()) {
+                binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
+                return
+            }
+
+            try {
+                binding.imgProfile.setImageURI(Uri.parse(imageUri))
+            } catch (e: Exception) {
+                binding.imgProfile.setImageResource(R.drawable.ic_default_avatar)
+            }
+        }
+
 
         private fun observeTripCount() {
             val userId = auth.currentUser?.uid ?: return
 
             tripViewModel.getTripCount(userId) { count ->
-                binding.tvTripsCount.text = "🏝️ Trips\n$count"
+                binding.tvTripsCount.text = count.toString()
             }
         }
 
@@ -164,7 +165,7 @@ package com.example.tripmate
 
             tripParticipantViewModel.getBuddyCount(userId)
                 .observe(viewLifecycleOwner) { count ->
-                    binding.tvBuddyCount.text = "👥 Buddies\n$count"
+                    binding.tvBuddyCount.text = count.toString()
                     binding.tvBuddyCountDetails.text = count.toString()
                 }
         }
@@ -183,7 +184,7 @@ package com.example.tripmate
             val userId = auth.currentUser?.uid ?: return
 
             tripViewModel.getCountriesVisited(userId) { count ->
-                binding.tvCountriesVisited.text = "🌍 Countries\n$count"
+                binding.tvCountriesVisited.text = count.toString()
                 binding.tvCountriesVisitedDetails.text = count.toString()
             }
         }
@@ -216,20 +217,56 @@ package com.example.tripmate
         }
 
         private fun setupClickListeners() {
-
             binding.btnEditProfile.setOnClickListener {
-                findNavController()
-                    .navigate(R.id.action_profileFragment_to_editProfileFragment)
+                findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
             }
 
             binding.btnSettings.setOnClickListener {
-                findNavController()
-                    .navigate(R.id.action_profileFragment_to_settingsFragment)
+                findNavController().navigate(R.id.action_profileFragment_to_settingsFragment)
             }
 
             binding.btnSignOut.setOnClickListener {
                 showSignOutDialog()
             }
+
+            binding.imgProfile.setOnClickListener {
+                Toast.makeText(requireContext(), "Profile photo", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        private fun setupStatCardClicks() {
+            binding.cardTrips.setOnClickListener {
+                findNavController().navigate(R.id.myTripsFragment)
+            }
+
+            binding.cardCountries.setOnClickListener {
+                Toast.makeText(requireContext(), "Countries visited", Toast.LENGTH_SHORT).show()
+            }
+
+            binding.cardBuddies.setOnClickListener {
+                Toast.makeText(requireContext(), "Buddy list", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        private fun showSignOutDialog() {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Sign Out")
+                .setMessage("Are you sure you want to sign out?")
+                .setPositiveButton("Yes") { _, _ ->
+
+                    auth.signOut()
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Signed out successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    findNavController()
+                        .navigate(R.id.action_profileFragment_to_welcomeFragment)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
 
     }

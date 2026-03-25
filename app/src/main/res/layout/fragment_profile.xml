@@ -27,21 +27,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:padding="20dp"
-                android:background="@drawable/rounded_card_bg"
+                android:padding="16dp"
+                android:background="#FFFFFF"
                 android:elevation="2dp"
                 android:layout_marginBottom="16dp">
 
                 <ImageView
                     android:id="@+id/imgProfile"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="12dp"
                     android:src="@drawable/ic_default_avatar"
                     android:scaleType="centerCrop"
                     android:background="@drawable/circle_bg"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:padding="2dp"/>
 
 
@@ -50,41 +48,119 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Jane Doe"
-                    android:textSize="20sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
-                    android:textColor="#000000"/>
+                    android:textColor="#1A1A1A"/>
 
                 <TextView
                     android:id="@+id/tvUserBio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Traveller | Explorer | Island Lover 🌴"
-                    android:textColor="#555"
+                    android:textColor="#707070"
                     android:textSize="13sp"
-                    android:layout_marginTop="2dp"/>
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"/>
 
                 <!-- Stats Row -->
+                <!-- CLEAN Stats Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="16dp">
 
-                    <TextView
-                        android:id="@+id/tvTripsCount"
-                        style="@style/ProfileStatStyle"
-                        android:text="🏝️ Trips\n0"/>
+                    <!-- Trips -->
+                    <LinearLayout
+                        android:id="@+id/cardTrips"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
 
-                    <TextView
-                        android:id="@+id/tvCountriesVisited"
-                        style="@style/ProfileStatStyle"
-                        android:text="🌍 Countries\n0"/>
+                        <TextView
+                            android:id="@+id/tvTripsCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#1E88E5"/>
 
-                    <TextView
-                        android:id="@+id/tvBuddyCount"
-                        style="@style/ProfileStatStyle"
-                        android:text="👥 Buddies\n0"/>
+                        <TextView
+                            android:text="Trips"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="#777"/>
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="30dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Countries -->
+                    <LinearLayout
+                        android:id="@+id/cardCountries"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tvCountriesVisited"
+                            android:text="0"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#1E88E5"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Countries"
+                            android:textSize="12sp"
+                            android:textColor="#777"/>
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="30dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Buddies -->
+                    <LinearLayout
+                        android:id="@+id/cardBuddies"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tvBuddyCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#1E88E5"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Buddies"
+                            android:textSize="12sp"
+                            android:textColor="#777"/>
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -101,10 +177,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnEditProfile"
-                        style="@style/ProfileButton"
-                        android:text="✏️ Edit Profile"/>
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Edit Profile"
+                        android:textAllCaps="false"
+                        android:textColor="#1E88E5"
+                        app:backgroundTint="#F4F8FF"/>
 
                     <View
                         android:layout_width="match_parent"
@@ -316,8 +396,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Sign Out"
-                android:backgroundTint="#E3F2FD"
-                android:textColor="#1E88E5"
+                android:backgroundTint="#FDECEC"
+                android:textColor="#D32F2F"
                 android:textStyle="bold"
                 android:padding="12dp"
                 android:layout_marginBottom="40dp"/>

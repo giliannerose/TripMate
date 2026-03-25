@@ -26,6 +26,10 @@ data class NotificationEntity(
 
     val tripId: String = "",
 
+
+    val tripTitle: String = "",
+    val tripDate: String = "",
+
     val message: String = "",
 
     val type: String = "",
