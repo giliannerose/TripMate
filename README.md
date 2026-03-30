@@ -2,7 +2,7 @@
 ## Project Overview
 
 *TripMate is a mobile application designed to simplify travel planning and collaboration. It allows users to create trips, manage itineraries, track expenses, invite participants, and interact through polls and notifications, all in one platform.*
-**This project was developed as part of the academic requirements for MO-IT119 – Mobile Development Application.**
+*This project was developed as part of the academic requirements for MO-IT119 – Mobile Development Application.*
 
 ## Features
 **Authentication & User Management**
@@ -59,10 +59,10 @@
 - File selection using modern Android APIs
 
 ## Technologies Used
-**Language: Kotlin**
-**Database (Local): Room**
-**Backend (Cloud): Firebase (Auth, Firestore, Storage)**
-**UI Components: RecyclerView, Navigation Component, ViewBinding**
+* **Language:** Kotlin
+* **Database (Local):**  Room
+* **Backend (Cloud):**  Firebase (Auth, Firestore, Storage)
+* **UI Components:**  RecyclerView, Navigation Component, ViewBinding
 
 ## Installation
 1. Clone the repository:
