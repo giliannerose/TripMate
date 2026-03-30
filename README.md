@@ -75,5 +75,5 @@ git clone https://github.com/giliannerose/TripMate.git
 
 ## Team
 * Gillian Rose Baguio
-* Krisna Danessa Jusay
+* Krishna Danessa Jusay
 * Shirly Rose Montes
